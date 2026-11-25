@@ -43,6 +43,7 @@ export function Composer() {
   const menuFromDemo = useDemo((s) => s.menuVariant);
   const menuB = mobile && (params.get("menu") === "b" || (params.get("menu") !== "a" && menuFromDemo === "b"));
   const setDockHost = useActionDockHost((s) => s.setHost);
+  const dockClaimed = useActionDockHost((s) => s.claimed > 0);
   const scenarioId = usePlayer((s) => s.scenario?.id);
   const [mode, setMode] = useState<Mode>("voice");
   const [draft, setDraft] = useState("");
@@ -55,8 +56,11 @@ export function Composer() {
   const holding = useRef(false);
   /** Préférence saisie dans ce besoin : voix par défaut ; texte seulement si l'utilisateur l'a choisi. */
   const inputPreference = useRef<"voice" | "text">("voice");
-  // allowFreeInput : le composer reste ; le confirm est dans le bloc (pas d'ActionDock).
-  const showActionDock = mobile && !!awaiting && ACTION_AWAIT_KINDS.has(awaiting.kind) && !choiceFree;
+  // Dock uniquement si un ActionSlot a une action à y porter (pas de barre vide).
+  const showActionDock = mobile && dockClaimed && !choiceFree;
+  /** Attente dont les actions sont dans le fil (ex. quick replies) : pas de chrome bas. */
+  const silentAwait =
+    mobile && !!awaiting && ACTION_AWAIT_KINDS.has(awaiting.kind) && !dockClaimed && !choiceFree;
 
   useEffect(() => {
     inputPreference.current = "voice";
@@ -72,12 +76,16 @@ export function Composer() {
 
   useEffect(() => () => setDockHost(null), [setDockHost]);
 
-  // Hauteur réelle du dock → padding du fil (NeedView).
+  // Hauteur réelle du dock → padding du fil (NeedView). Sans chrome : offset retiré.
   useEffect(() => {
     const el = dockRef.current;
     if (!el) return;
     const root = document.documentElement;
     const apply = () => {
+      if (silentAwait) {
+        root.style.removeProperty("--composer-offset");
+        return;
+      }
       const h = Math.ceil(el.getBoundingClientRect().height);
       root.style.setProperty("--composer-offset", `${h}px`);
     };
@@ -88,7 +96,7 @@ export function Composer() {
       ro.disconnect();
       root.style.removeProperty("--composer-offset");
     };
-  }, [showActionDock, choiceFree, mode, compactOpen, awaiting?.kind]);
+  }, [showActionDock, silentAwait, choiceFree, mode, compactOpen, awaiting?.kind]);
 
   // Pièces jointes proposées par la dernière question.
   const lastQuestion = [...turns].reverse().flatMap((t) => (t.from === "elea" ? t.blocks : [])).find((b) => b.type === "question") as
@@ -179,12 +187,12 @@ export function Composer() {
   }
 
   return (
-    <div ref={dockRef} className={styles.dock}>
+    <div ref={dockRef} className={[styles.dock, silentAwait && styles.dockEmpty].filter(Boolean).join(" ")}>
       {showActionDock ? (
         <ActionDock key="actions" role="region" aria-label="Actions">
           <div ref={(el) => setDockHost(el)} className={styles.actionHost} />
         </ActionDock>
-      ) : !inputOpen ? (
+      ) : silentAwait ? null : !inputOpen ? (
         <div className={styles.status}>
           <Orb size={20} state={orb} decorative />
           <span>{orb === "thinking" ? "Éléa réfléchit…" : orb === "speaking" ? "Éléa vous répond" : "Éléa est là"}</span>

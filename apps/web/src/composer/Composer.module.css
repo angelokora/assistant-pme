@@ -12,6 +12,13 @@
 }
 .dock > * { pointer-events: auto; width: 100%; max-width: var(--content-max); }
 
+/* Attente sans action à porter : pas de barre ni de padding bas. */
+.dockEmpty {
+  padding: 0;
+  background: none;
+  pointer-events: none;
+}
+
 .actionHost {
   display: grid;
   gap: var(--space-2);

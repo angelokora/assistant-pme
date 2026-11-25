@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Keyboard, Mic, SendHorizontal } from "lucide-react";
 import { Callout, IconButton, Orb, spring } from "@elea/ds";
@@ -46,13 +46,14 @@ export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeC
   const [unknown, setUnknown] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const speech = useSimulatedSpeech(FALLBACK_SIMULATED);
+  const startSpeech = speech.start;
 
-  function listen() {
+  const listen = useCallback(() => {
     setMode("listening");
-    speech.start();
-  }
+    startSpeech();
+  }, [startSpeech]);
 
-  useImperativeHandle(ref, () => ({ listen }), [speech]);
+  useImperativeHandle(ref, () => ({ listen }), [listen]);
 
   const radial = useRadialMic({
     enabled: menuB && !hideVoiceOrb && mode === "voice",

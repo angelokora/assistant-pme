@@ -1,10 +1,11 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { ChevronUp, Mic } from "lucide-react";
 import { Orb, spring } from "@elea/ds";
 import { useDemo } from "../demo/demo";
 import { DESTINATIONS, type DestinationId } from "./destinations";
+import { fanOffset, layoutRadialFan } from "./radialLayout";
 import { useRadialHost } from "./radialHost";
 import { useRadialMic } from "./useRadialMic";
 import styles from "./RadialMenu.module.css";
@@ -15,7 +16,7 @@ type Props = {
   needsFallbackOrb: boolean;
 };
 
-const ANGLES = [-50, -18, 18, 50];
+type AnchorBox = { x: number; y: number; rect: DOMRect };
 
 /** Variante B : arc de navigation ancré sur l'orbe micro (ou orbe de secours). */
 export function RadialMenu({ active, needsFallbackOrb }: Props) {
@@ -26,7 +27,7 @@ export function RadialMenu({ active, needsFallbackOrb }: Props) {
   const hintSeen = useDemo((s) => s.radialHintSeen);
   const setHintSeen = useDemo((s) => s.setRadialHintSeen);
   const [showHint, setShowHint] = useState(!hintSeen);
-  const [origin, setOrigin] = useState<{ x: number; y: number } | null>(null);
+  const [anchorBox, setAnchorBox] = useState<AnchorBox | null>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
 
   const fallback = useRadialMic({
@@ -52,11 +53,11 @@ export function RadialMenu({ active, needsFallbackOrb }: Props) {
         anchor ??
         (needsFallbackOrb ? wrapRef.current?.querySelector<HTMLElement>(`.${styles.orbBtn}`) : null);
       if (!el) {
-        setOrigin(null);
+        setAnchorBox(null);
         return;
       }
-      const r = el.getBoundingClientRect();
-      setOrigin({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
+      const rect = el.getBoundingClientRect();
+      setAnchorBox({ x: rect.left + rect.width / 2, y: rect.top + rect.height / 2, rect });
     };
     measure();
     window.addEventListener("resize", measure);
@@ -66,6 +67,14 @@ export function RadialMenu({ active, needsFallbackOrb }: Props) {
       window.removeEventListener("scroll", measure, true);
     };
   }, [anchor, needsFallbackOrb, open, showHint]);
+
+  const fan = useMemo(() => {
+    if (!open || !anchorBox) return null;
+    return layoutRadialFan(anchorBox.rect, DESTINATIONS.length, {
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  }, [open, anchorBox]);
 
   useEffect(() => {
     if (!needsFallbackOrb) {
@@ -88,7 +97,7 @@ export function RadialMenu({ active, needsFallbackOrb }: Props) {
     };
   }, [needsFallbackOrb, showHint]);
 
-  const hintVisible = showHint && !open && !hintSeen && !!origin;
+  const hintVisible = showHint && !open && !hintSeen && !!anchorBox;
 
   return (
     <div ref={wrapRef} className={[styles.wrap, needsFallbackOrb && styles.wrapFallback].filter(Boolean).join(" ")}>
@@ -108,30 +117,29 @@ export function RadialMenu({ active, needsFallbackOrb }: Props) {
 
       <AnimatePresence>
         {open &&
-          origin &&
+          anchorBox &&
+          fan &&
           DESTINATIONS.map((d, i) => {
-            const rad = (ANGLES[i] * Math.PI) / 180;
-            const r = 92;
-            const x = Math.sin(rad) * r;
-            const y = -Math.cos(rad) * r - 8;
+            const offset = fanOffset(fan, i);
             const Icon = d.icon;
             return (
               <motion.button
                 key={d.id}
                 type="button"
                 className={[styles.dest, active === d.id && styles.destActive].filter(Boolean).join(" ")}
-                style={{ left: origin.x, top: origin.y }}
-                initial={{ opacity: 0, scale: 0.6, x: 0, y: 0 }}
-                animate={{ opacity: 1, scale: 1, x, y }}
-                exit={{ opacity: 0, scale: 0.6, x: 0, y: 0 }}
-                transition={{ ...spring.snappy, delay: i * 0.03 }}
+                style={{ left: anchorBox.x + offset.x, top: anchorBox.y + offset.y }}
+                aria-label={d.label}
+                initial={{ opacity: 0, scale: 0.6, x: -offset.x, y: -offset.y }}
+                animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+                exit={{ opacity: 0, scale: 0.5, x: -offset.x * 0.3, y: -offset.y * 0.3 }}
+                transition={{ type: "spring", stiffness: 520, damping: 34, mass: 0.7, delay: i * 0.03 }}
                 onClick={() => {
                   navigate(d.path);
                   setOpen(false);
                 }}
               >
                 <Icon size={20} strokeWidth={1.75} aria-hidden />
-                <span>{d.label}</span>
+                <span>{d.menuLabel}</span>
               </motion.button>
             );
           })}
@@ -141,7 +149,7 @@ export function RadialMenu({ active, needsFallbackOrb }: Props) {
         {hintVisible && (
           <motion.p
             className={styles.hint}
-            style={{ left: origin!.x, top: origin!.y }}
+            style={{ left: anchorBox!.x, top: anchorBox!.y }}
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 4 }}

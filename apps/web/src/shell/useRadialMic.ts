@@ -98,12 +98,13 @@ export function useRadialMic({ enabled, onShortPress }: Options): MicBind {
     },
     onClick: (e) => {
       e.preventDefault();
-      if (open) {
-        setOpen(false);
-        return;
-      }
+      // Après un glisser / appui long, le click de relâchement ne doit pas refermer le menu.
       if (openedByGesture.current) {
         openedByGesture.current = false;
+        return;
+      }
+      if (open) {
+        setOpen(false);
         return;
       }
       onShortPress();

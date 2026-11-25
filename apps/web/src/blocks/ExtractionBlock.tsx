@@ -57,7 +57,7 @@ export function ExtractionBlockView({ block, active }: BlockProps<ExtractionBloc
                   className={styles.extractionItem}
                   initial={{ opacity: 0, y: 8, filter: "blur(3px)" }}
                   animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  transition={spring.gentle}
+                  transition={{ ...spring.gentle, filter: { duration: 0.3, ease: "easeOut" } }}
                   layout
                 >
                   {isEditing ? (

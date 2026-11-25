@@ -173,7 +173,7 @@ export type Effect =
 
 // ---------- Scénario ----------
 export type Await =
-  | { kind: "input"; simulated: string; next: string }
+  | { kind: "input"; simulated: string; next: string; quickRoutes?: Record<string, string> }
   | { kind: "choice"; blockId: string; routes: Record<string, string> }
   | { kind: "connector"; blockId: string; onConnect: string; onSkip: string }
   | { kind: "upload"; blockId: string; onUpload: string; onSkip: string }
@@ -195,7 +195,7 @@ export type Scenario = {
 export type Reply =
   | { kind: "text"; text: string; mode: "voice" | "text" }
   | { kind: "quick"; id: string; label: string }
-  | { kind: "event"; blockId: string; value: string; label?: string; doneLabel?: string };
+  | { kind: "event"; blockId: string; value: string; label?: string; doneLabel?: string; vars?: StepVars };
 
 /** Variables d'étape (ex. fournisseur choisi), utilisées pour interpoler les effets `{{jeton}}`. */
 export type StepVars = Record<string, string>;

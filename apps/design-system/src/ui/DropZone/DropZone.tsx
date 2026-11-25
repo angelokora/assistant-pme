@@ -1,5 +1,5 @@
 import { useRef, useState, type DragEvent, type ReactNode } from "react";
-import { Upload } from "lucide-react";
+import { Camera, FileUp, Upload } from "lucide-react";
 import { press, spring } from "../../motion/springs";
 import { motion } from "motion/react";
 import styles from "./DropZone.module.css";
@@ -7,16 +7,18 @@ import styles from "./DropZone.module.css";
 export type DropZoneAccept = "pdf" | "image";
 
 type Props = {
-  /** Libellé principal (ex. « Déposer des fichiers »). */
+  /** Libellé de la zone desktop (ex. « Déposer des fichiers »). */
   label: string;
-  hint?: string;
+  /** Indice desktop uniquement (glisser-déposer), visible à partir de 640 px. */
+  desktopHint?: string;
+  /** Libellé du bouton mobile « choisir ». */
+  chooseLabel?: string;
+  /** Libellé du bouton mobile « photo ». */
+  photoLabel?: string;
   accept?: DropZoneAccept[];
   multiple?: boolean;
   disabled?: boolean;
-  /** Capture appareil photo (mobile). */
-  capture?: boolean;
   onFiles: (files: File[]) => void;
-  /** Fichiers refusés (type non accepté). */
   onReject?: (names: string[]) => void;
   children?: ReactNode;
   className?: string;
@@ -27,21 +29,24 @@ const MIME: Record<DropZoneAccept, string[]> = {
   image: ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"],
 };
 
-/** Zone de dépôt générique : glisser-déposer, clic, ou capture photo. */
+/** Zone de dépôt générique : glisser-déposer sur ordinateur ; choisir / photo sur mobile. */
 export function DropZone({
   label,
-  hint,
+  desktopHint,
+  chooseLabel = "Choisir un fichier",
+  photoLabel = "Prendre une photo",
   accept = ["pdf", "image"],
   multiple = true,
   disabled,
-  capture,
   onFiles,
   onReject,
   children,
   className,
 }: Props) {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const photoRef = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
+  const allowPhoto = accept.includes("image");
 
   const acceptAttr = accept
     .flatMap((a) => (a === "pdf" ? [".pdf", "application/pdf"] : [".jpg", ".jpeg", ".png", ".webp", "image/*"]))
@@ -82,14 +87,15 @@ export function DropZone({
 
   return (
     <div className={[styles.wrap, className].filter(Boolean).join(" ")}>
+      {/* Desktop : une zone de dépôt */}
       <motion.button
         type="button"
-        className={[styles.zone, over && styles.over, disabled && styles.disabled].filter(Boolean).join(" ")}
+        className={[styles.zone, styles.desktop, over && styles.over, disabled && styles.disabled].filter(Boolean).join(" ")}
         whileTap={disabled ? undefined : press}
         transition={spring.snappy}
         disabled={disabled}
         aria-label={label}
-        onClick={() => inputRef.current?.click()}
+        onClick={() => fileRef.current?.click()}
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
         onDrop={onDrop}
@@ -98,21 +104,63 @@ export function DropZone({
           <Upload size={22} strokeWidth={1.75} />
         </span>
         <span className={styles.label}>{label}</span>
-        {hint && <span className={styles.hint}>{hint}</span>}
+        {desktopHint && <span className={styles.hint}>{desktopHint}</span>}
       </motion.button>
+
+      {/* Mobile : deux actions */}
+      <div className={styles.mobile} role="group" aria-label={label}>
+        <motion.button
+          type="button"
+          className={[styles.mobileBtn, disabled && styles.disabled].filter(Boolean).join(" ")}
+          whileTap={disabled ? undefined : press}
+          transition={spring.snappy}
+          disabled={disabled}
+          onClick={() => fileRef.current?.click()}
+        >
+          <FileUp size={18} strokeWidth={1.75} aria-hidden />
+          {chooseLabel}
+        </motion.button>
+        {allowPhoto && (
+          <motion.button
+            type="button"
+            className={[styles.mobileBtn, disabled && styles.disabled].filter(Boolean).join(" ")}
+            whileTap={disabled ? undefined : press}
+            transition={spring.snappy}
+            disabled={disabled}
+            onClick={() => photoRef.current?.click()}
+          >
+            <Camera size={18} strokeWidth={1.75} aria-hidden />
+            {photoLabel}
+          </motion.button>
+        )}
+      </div>
+
       <input
-        ref={inputRef}
+        ref={fileRef}
         type="file"
         className={styles.input}
         accept={acceptAttr}
         multiple={multiple}
-        capture={capture ? "environment" : undefined}
         disabled={disabled}
         onChange={(e) => {
           if (e.target.files?.length) filter(e.target.files);
           e.target.value = "";
         }}
       />
+      {allowPhoto && (
+        <input
+          ref={photoRef}
+          type="file"
+          className={styles.input}
+          accept="image/*"
+          capture="environment"
+          disabled={disabled}
+          onChange={(e) => {
+            if (e.target.files?.length) filter(e.target.files);
+            e.target.value = "";
+          }}
+        />
+      )}
       {children}
     </div>
   );

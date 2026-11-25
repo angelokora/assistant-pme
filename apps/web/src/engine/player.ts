@@ -153,12 +153,17 @@ export const usePlayer = create<PlayerState>((set, get) => {
       let resolution: { blockId: string; summary: string } | null = null;
 
       if (awaiting.kind === "input") {
-        next = awaiting.next;
+        if (reply.kind === "quick" && awaiting.quickRoutes?.[reply.id]) {
+          next = awaiting.quickRoutes[reply.id];
+        } else {
+          next = awaiting.next;
+        }
         if (reply.kind === "text") echo = { id: `u-${Date.now()}`, from: "user", text: reply.text, mode: reply.mode };
         if (reply.kind === "quick") echo = { id: `u-${Date.now()}`, from: "user", text: reply.label, mode: "choice" };
       } else if (reply.kind === "event" || reply.kind === "quick") {
         const value = reply.kind === "event" ? reply.value : reply.id;
         const label = reply.label;
+        if (reply.kind === "event" && reply.vars) nextVars = { ...nextVars, ...reply.vars };
         switch (awaiting.kind) {
           case "choice":
             next = awaiting.routes[value];

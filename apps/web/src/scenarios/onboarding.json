@@ -194,7 +194,7 @@
           ]
         }
       ],
-      "next": "extraction"
+      "next": "extraction-mail"
     },
     "upload": {
       "delayMs": 400,
@@ -233,7 +233,7 @@
             "provider": "upload",
             "label": "Documents déposés",
             "status": "connected",
-            "detail": "7 factures",
+            "detail": "{{fileCountLabel}}",
             "lastSync": "2026-11-25T10:42:00"
           }
         }
@@ -257,9 +257,9 @@
           ]
         }
       ],
-      "next": "extraction"
+      "next": "extraction-upload"
     },
-    "extraction": {
+    "extraction-mail": {
       "delayMs": 300,
       "effects": [
         {
@@ -286,7 +286,7 @@
       ],
       "blocks": [
         {
-          "id": "ex-extraction",
+          "id": "exm-extraction",
           "type": "extraction",
           "title": "J'ai trouvé 7 factures et 3 relevés",
           "items": [
@@ -332,7 +332,94 @@
           }
         },
         {
-          "id": "ex-noted",
+          "id": "exm-noted",
+          "type": "noted",
+          "target": {
+            "kind": "dimension",
+            "id": "finances",
+            "label": "Mes finances"
+          },
+          "text": "Charges : environ 58 000 € par mois",
+          "confidence": "estimated",
+          "editable": true
+        }
+      ],
+      "next": "restaurant-question"
+    },
+    "extraction-upload": {
+      "delayMs": 300,
+      "effects": [
+        {
+          "kind": "progress",
+          "dimensionId": "finances",
+          "to": 0.7,
+          "status": "active",
+          "summary": "Charges connues, ventes à préciser"
+        },
+        {
+          "kind": "finding",
+          "finding": {
+            "id": "f-charges",
+            "type": "fact",
+            "topicId": "finances",
+            "title": "Charges mensuelles : environ 58 000 €",
+            "summary": "Masse salariale 38 000 €, matières premières 11 000 €, loyer 3 200 €, énergie 2 600 €, assurances et divers 3 200 €. Lues dans {{fileCountLabel}}.",
+            "createdAt": "2026-11-25T10:43:00",
+            "origin": "upload",
+            "confidence": "estimated",
+            "scenarioId": "onboarding"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "exu-extraction",
+          "type": "extraction",
+          "title": "J'ai lu {{fileCountLabel}}",
+          "items": [
+            {
+              "id": "ex-1",
+              "label": "Masse salariale",
+              "value": "38 000 € / mois",
+              "source": "Bulletins et charges sociales, oct. 2026",
+              "confidence": "confirmed"
+            },
+            {
+              "id": "ex-2",
+              "label": "Matières premières",
+              "value": "11 000 € / mois",
+              "source": "Factures Moulins Bourgeois et Sodiaal, 3 mois",
+              "confidence": "estimated"
+            },
+            {
+              "id": "ex-3",
+              "label": "Loyer",
+              "value": "3 200 € / mois",
+              "source": "Facture SCI Bellecour, nov. 2026",
+              "confidence": "confirmed"
+            },
+            {
+              "id": "ex-4",
+              "label": "Énergie",
+              "value": "2 600 € / mois",
+              "source": "Factures EDF Pro, moyenne 3 mois",
+              "confidence": "estimated"
+            },
+            {
+              "id": "ex-5",
+              "label": "Assurances et divers",
+              "value": "3 200 € / mois",
+              "source": "Relevés bancaires",
+              "confidence": "to-check"
+            }
+          ],
+          "total": {
+            "label": "Charges mensuelles",
+            "value": "environ 58 000 €"
+          }
+        },
+        {
+          "id": "exu-noted",
           "type": "noted",
           "target": {
             "kind": "dimension",

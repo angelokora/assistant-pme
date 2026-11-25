@@ -200,9 +200,12 @@ export function Showcase() {
       <section className={styles.section}>
         <h2 className={styles.h2}>Dépôt de fichiers</h2>
         <div style={{ maxWidth: 420, display: "grid", gap: 12 }}>
+          <p className="muted" style={{ marginBottom: 8 }}>
+            Sous 640 px : boutons « Choisir un fichier » et « Prendre une photo ». Au-delà : zone de glisser-déposer.
+          </p>
           <DropZone
             label="Déposer des fichiers"
-            hint="PDF ou image. Glisser-déposer sur ordinateur."
+            desktopHint="PDF ou image. Glisser-déposer pour ajouter."
             accept={["pdf", "image"]}
             onFiles={(files) => {
               setDropReject(null);

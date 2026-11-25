@@ -92,11 +92,16 @@ export function UploadBlockView({ block, active }: BlockProps<UploadBlock>) {
 
   function continueUpload() {
     if (!canAct || !ready) return;
+    const n = entries.length;
     reply({
       kind: "event",
       blockId: block.id,
       value: "upload",
-      doneLabel: entries.length > 1 ? `${entries.length} documents déposés` : "Document déposé",
+      doneLabel: n > 1 ? `${n} documents déposés` : "Document déposé",
+      vars: {
+        fileCount: String(n),
+        fileCountLabel: n === 1 ? "1 document" : `${n} documents`,
+      },
     });
   }
 
@@ -130,7 +135,7 @@ export function UploadBlockView({ block, active }: BlockProps<UploadBlock>) {
 
       <DropZone
         label="Déposer des fichiers"
-        hint="PDF ou photo. Glisser-déposer sur ordinateur."
+        desktopHint="PDF ou photo. Glisser-déposer pour ajouter."
         accept={accept}
         disabled={!canAct}
         onFiles={addFiles}

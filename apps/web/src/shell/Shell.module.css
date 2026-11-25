@@ -1,0 +1,36 @@
+.shell {
+  min-height: 100dvh;
+  background: var(--color-bg);
+}
+
+.mobile {
+  display: block;
+}
+
+.tablet {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+}
+
+.desktop {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr) auto;
+}
+
+.main {
+  min-width: 0;
+  min-height: 100dvh;
+}
+
+/* Besoin en feuille plein écran sur mobile. */
+.needSheet {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-sticky) + 1);
+  background: var(--color-bg);
+  overflow: auto;
+}
+
+.mobile:not(.inNeed) .main {
+  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+}

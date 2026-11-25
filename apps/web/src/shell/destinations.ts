@@ -1,0 +1,28 @@
+import type { LucideIcon } from "lucide-react";
+import { Building2, CalendarDays, ListChecks, Search } from "lucide-react";
+
+export type DestinationId = "today" | "company" | "plans" | "search";
+
+export type Destination = {
+  id: DestinationId;
+  label: string;
+  path: string;
+  icon: LucideIcon;
+  /** Ticket qui livrera l'écran (affiché sur les placeholders). */
+  ticket?: { id: number; name: string };
+};
+
+export const DESTINATIONS: Destination[] = [
+  { id: "today", label: "Aujourd'hui", path: "/", icon: CalendarDays },
+  { id: "company", label: "Mon entreprise", path: "/entreprise", icon: Building2, ticket: { id: 25, name: "Mon entreprise et sujets" } },
+  { id: "plans", label: "Plans", path: "/plans", icon: ListChecks, ticket: { id: 27, name: "Plans et sources" } },
+  { id: "search", label: "Recherche", path: "/recherche", icon: Search, ticket: { id: 22, name: "Retrouver une information" } },
+];
+
+export function destinationForPath(pathname: string): DestinationId | null {
+  if (pathname === "/" || pathname.startsWith("/besoin")) return "today";
+  if (pathname.startsWith("/entreprise") || pathname.startsWith("/finding")) return "company";
+  if (pathname.startsWith("/plans")) return "plans";
+  if (pathname.startsWith("/recherche")) return "search";
+  return null;
+}

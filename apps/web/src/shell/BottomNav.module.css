@@ -1,0 +1,76 @@
+.bar {
+  position: fixed;
+  z-index: var(--z-sticky);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr) auto repeat(2, 1fr);
+  align-items: end;
+  gap: 2px;
+  padding: var(--space-2) var(--space-2) calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
+  background: rgb(251 248 243 / 0.92);
+  backdrop-filter: saturate(1.4) blur(14px);
+  -webkit-backdrop-filter: saturate(1.4) blur(14px);
+  box-shadow: 0 -1px 0 var(--color-border);
+}
+
+.item {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: var(--space-1) var(--space-1) var(--space-2);
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: var(--weight-medium);
+  min-width: 0;
+}
+
+.itemActive {
+  color: var(--color-action-text);
+}
+
+.iconWrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 32px;
+}
+
+.activePip {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-action-soft);
+}
+
+.iconWrap svg {
+  position: relative;
+  z-index: 1;
+}
+
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.composer {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin: 0 var(--space-1) 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-action);
+  color: #fff;
+  box-shadow: var(--shadow-2);
+  transform: translateY(-10px);
+}
+
+.composer:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring), var(--shadow-2);
+}

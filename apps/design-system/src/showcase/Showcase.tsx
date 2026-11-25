@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Briefcase, Mic, Target, User, Wallet } from "lucide-react";
 import {
-  ActionDock, Button, Callout, Chip, ChoiceCard, ChoiceGroup, ConfidenceBadge, DateField, DimensionCard, DropZone, FileTile, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, StepList, TranscriptText, Waveform,
+  ActionDock, Button, Callout, Chip, ChoiceCard, ChoiceGroup, ConfidenceBadge, DateField, DimensionCard, DropZone, FileTile, FindingCard, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, Skeleton, StepList, ToastProvider, TranscriptText, Waveform, useToast,
   type OrbState, type ProviderId, type StepItem, type StepStatus,
 } from "../index";
 import styles from "./Showcase.module.css";
@@ -30,6 +30,15 @@ function contrast(a: string, b: string) {
 const SAMPLE = "Les salaires avec les charges, autour de 38 000. Le loyer 3 200, je dirais 58 000 en tout.";
 
 export function Showcase() {
+  return (
+    <ToastProvider>
+      <ShowcaseInner />
+    </ToastProvider>
+  );
+}
+
+function ShowcaseInner() {
+  const toast = useToast();
   const [orb, setOrb] = useState<OrbState>("idle");
   const [level, setLevel] = useState(0.4);
   const [progress, setProgress] = useState(0.35);
@@ -274,6 +283,56 @@ export function Showcase() {
             <FileTile key={f.name + f.progress} name={f.name} progress={f.progress} kind={f.name.endsWith(".pdf") ? "pdf" : "image"} />
           ))}
         </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.h2}>FindingCard</h2>
+        <p className="muted">default, compact, expanded.</p>
+        <div style={{ maxWidth: 420, display: "grid", gap: 12 }}>
+          <FindingCard
+            findingType="fact"
+            title="Seuil de rentabilité : 2 170 € par jour"
+            topicLabel="Finances"
+            createdAt="2026-12-15T07:00:00"
+            today="2026-12-16"
+            origin="conversation"
+            confidence="confirmed"
+          />
+          <FindingCard
+            variant="compact"
+            findingType="decision"
+            title="Priorité : connaître le seuil"
+            topicLabel="Finances"
+            createdAt="2026-11-25T10:52:00"
+            today="2026-12-16"
+            origin="conversation"
+            confidence="confirmed"
+          />
+          <FindingCard
+            variant="expanded"
+            findingType="fact"
+            title="9 600 € attendus du Comptoir des Halles"
+            topicLabel="Clients"
+            createdAt="2026-12-16T08:00:00"
+            today="2026-12-16"
+            origin="gmail"
+            confidence="to-check"
+            summary="La facture d'octobre est échue depuis 16 jours."
+          />
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.h2}>Skeleton</h2>
+        <div style={{ maxWidth: 320, display: "grid", gap: 12 }}>
+          <Skeleton lines={3} />
+          <Skeleton variant="block" height={88} />
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.h2}>Toast</h2>
+        <Button onClick={() => toast.show("C'est noté dans Mes finances.")}>Afficher un toast</Button>
       </section>
 
       <section className={styles.section}>

@@ -195,7 +195,7 @@ Quand `planId` est posé (choix de plan), le moteur enrichit automatiquement les
 
 **Auth déjà faite.** Si l'étape attend un `await.kind === "auth"` et que `account.created` est vrai en mémoire (compte créé plus tôt, p.ex. au connecteur), le moteur saute l'étape sans afficher le bloc.
 
-Routes (`react-router`) : `/`, `/entreprise`, `/entreprise/:topicId`, `/plans`, `/plans/:planId`, `/recherche`, `/besoin/:scenarioId`, `/finding/:findingId`. Le paramètre `?v=a|b|c` choisit la variante des écrans qui en ont.
+Routes (`react-router`) : `/`, `/entreprise`, `/entreprise/:topicId`, `/plans`, `/plans/:planId`, `/recherche`, `/besoin/:scenarioId`, `/finding/:findingId`. Le paramètre `?v=a|b|c` choisit la variante de l'accueil ; `?menu=a|b` choisit la variante du menu mobile (barre basse ou radial). Les choix du panneau démo sont persistés et utilisés en l'absence de paramètre d'URL.
 
 ## 6. Mouvement
 

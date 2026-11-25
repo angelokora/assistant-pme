@@ -1,0 +1,25 @@
+.page {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-5) calc(120px + env(safe-area-inset-bottom, 0px));
+  display: grid;
+  gap: var(--space-4);
+  align-content: start;
+}
+
+.title {
+  font-size: var(--text-3xl);
+  text-wrap: balance;
+}
+
+.text {
+  color: var(--color-text-muted);
+  max-width: 36ch;
+  line-height: var(--leading-normal);
+}
+
+@media (min-width: 640px) {
+  .page {
+    padding: var(--space-10) var(--space-6);
+  }
+}

@@ -1,0 +1,50 @@
+.host {
+  position: fixed;
+  z-index: var(--z-toast, 80);
+  left: 50%;
+  bottom: calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  display: grid;
+  gap: var(--space-2);
+  width: min(420px, calc(100vw - 2 * var(--space-5)));
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-inverse);
+  color: var(--color-text-inverse, #fbf8f3);
+  box-shadow: var(--shadow-3);
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+}
+
+.toast p {
+  margin: 0;
+  flex: 1;
+  text-wrap: pretty;
+}
+
+.close {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  color: inherit;
+  opacity: 0.8;
+}
+
+.close:hover {
+  opacity: 1;
+  background: rgb(255 255 255 / 0.08);
+}
+
+.close:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}

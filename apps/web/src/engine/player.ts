@@ -16,10 +16,10 @@ export type Turn =
   | { id: string; from: "user"; text: string; mode?: "voice" | "text" | "choice" };
 
 /** Await qui publient leurs actions dans l'ActionDock mobile (pas de saisie libre). */
-export const ACTION_AWAIT_KINDS = new Set<Await["kind"]>(["choice", "connector", "upload", "auth", "form"]);
+export const ACTION_AWAIT_KINDS = new Set<Await["kind"]>(["choice", "connector", "upload", "auth", "form", "plan"]);
 
 /** Événements de bloc : pas d'écho « Vous : … », état fait sur le bloc. */
-const SILENT_EVENT_KINDS = new Set<Await["kind"]>(["connector", "auth", "upload"]);
+const SILENT_EVENT_KINDS = new Set<Await["kind"]>(["connector", "auth", "upload", "plan"]);
 
 type PlayerState = {
   scenario: Scenario | null;
@@ -43,7 +43,8 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 /** Temps laissé à l'utilisateur pour lire un tour avant l'étape suivante automatique. */
 function readingTime(blocks: Block[]) {
   const analysis = blocks.find((b) => b.type === "analysis");
-  if (analysis && analysis.type === "analysis") return analysis.steps.reduce((t, s) => t + s.durationMs, 0) + 700;
+  // +1,1 s après les étapes : l'orbe passe en `done` (coche) avant le tour suivant.
+  if (analysis && analysis.type === "analysis") return analysis.steps.reduce((t, s) => t + s.durationMs, 0) + 1100;
   const hasNoted = blocks.some((b) => b.type === "noted");
   return 900 + blocks.length * 350 + (hasNoted ? 1600 : 0);
 }
@@ -161,6 +162,19 @@ export const usePlayer = create<PlayerState>((set, get) => {
         }
         if (reply.kind === "text") echo = { id: `u-${Date.now()}`, from: "user", text: reply.text, mode: reply.mode };
         if (reply.kind === "quick") echo = { id: `u-${Date.now()}`, from: "user", text: reply.label, mode: "choice" };
+      } else if (awaiting.kind === "choice" && reply.kind === "text") {
+        // Saisie libre sous un choix (allowFreeInput) : on suit la route recommandée / première.
+        const stepId = get().currentStep;
+        const turn = [...get().turns].reverse().find((t) => t.from === "elea" && t.stepId === stepId);
+        const choiceBlock = turn && turn.from === "elea" ? turn.blocks.find((b) => b.type === "choice" && b.id === awaiting.blockId) : undefined;
+        const preferred =
+          (choiceBlock && choiceBlock.type === "choice" && choiceBlock.options.find((o) => o.recommended)?.id) ||
+          Object.keys(awaiting.routes)[0];
+        next = awaiting.routes[preferred];
+        if (choiceBlock && choiceBlock.type === "choice" && choiceBlock.sideDetail === "plan") {
+          nextVars = { ...nextVars, planId: preferred };
+        }
+        echo = { id: `u-${Date.now()}`, from: "user", text: reply.text, mode: reply.mode };
       } else if (reply.kind === "event" || reply.kind === "quick") {
         const value = reply.kind === "event" ? reply.value : reply.id;
         const label = reply.label;
@@ -168,6 +182,9 @@ export const usePlayer = create<PlayerState>((set, get) => {
         switch (awaiting.kind) {
           case "choice":
             next = awaiting.routes[value];
+            break;
+          case "plan":
+            next = value === "start" ? awaiting.next : undefined;
             break;
           case "connector":
             next = value === "skip" ? awaiting.onSkip : awaiting.onConnect;
@@ -188,7 +205,8 @@ export const usePlayer = create<PlayerState>((set, get) => {
             break;
         }
 
-        if (reply.kind === "event" && SILENT_EVENT_KINDS.has(awaiting.kind)) {
+        const silent = SILENT_EVENT_KINDS.has(awaiting.kind) || (reply.kind === "event" && !!reply.doneLabel && !reply.label);
+        if (reply.kind === "event" && silent) {
           const blockId = reply.blockId;
           const summary = reply.doneLabel ?? label ?? value;
           if (summary) resolution = { blockId, summary };

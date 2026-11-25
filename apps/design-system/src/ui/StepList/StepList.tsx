@@ -8,6 +8,10 @@ export type StepItem = {
   id: string;
   label: string;
   status: StepStatus;
+  /** Détail sous le titre (plans). */
+  detail?: string;
+  /** Échéance déjà formatée (ex. « jeu. 27 nov. »). */
+  due?: string;
 };
 
 type Props = {
@@ -75,11 +79,15 @@ export function StepList({ steps, title, className }: Props) {
                 )}
               </AnimatePresence>
             </span>
-            <span className={styles.label}>
-              <span className="sr-only">
-                {step.status === "done" ? "Fait : " : step.status === "active" ? "En cours : " : "En attente : "}
+            <span className={styles.copy}>
+              <span className={styles.label}>
+                <span className="sr-only">
+                  {step.status === "done" ? "Fait : " : step.status === "active" ? "En cours : " : "En attente : "}
+                </span>
+                {step.label}
               </span>
-              {step.label}
+              {step.detail && <span className={styles.detail}>{step.detail}</span>}
+              {step.due && <span className={styles.due}>{step.due}</span>}
             </span>
           </li>
         ))}

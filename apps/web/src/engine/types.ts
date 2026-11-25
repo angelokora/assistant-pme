@@ -29,9 +29,13 @@ export type AnalysisBlock = Base<"analysis"> & { title: string; steps: { id: str
 export type ChoiceBlock = Base<"choice"> & {
   title: string;
   subtitle?: string;
+  eyebrow?: string;
   options: { id: string; title: string; body?: string; recommended?: boolean; meta?: string }[];
   confirmLabel: string;
   allowFreeInput?: boolean;
+  freeInputHint?: string;
+  freeSimulated?: string;
+  sideDetail?: "plan";
 };
 export type PlanBlock = Base<"plan"> & { planId: string; mode: "preview" | "editable" | "live"; startLabel?: string };
 export type FormBlock = Base<"form"> & {
@@ -178,7 +182,8 @@ export type Await =
   | { kind: "connector"; blockId: string; onConnect: string; onSkip: string }
   | { kind: "upload"; blockId: string; onUpload: string; onSkip: string }
   | { kind: "form"; blockId: string; next: string }
-  | { kind: "auth"; next: string };
+  | { kind: "auth"; next: string }
+  | { kind: "plan"; blockId: string; next: string };
 
 export type Step = { blocks: Block[]; effects?: Effect[]; delayMs?: number; await?: Await; next?: string };
 

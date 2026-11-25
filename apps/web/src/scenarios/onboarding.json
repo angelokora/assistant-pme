@@ -806,6 +806,7 @@
           "type": "choice",
           "title": "J'ai repéré deux priorités",
           "subtitle": "Laquelle voulez-vous traiter en premier ?",
+          "eyebrow": "Analyse terminée",
           "options": [
             {
               "id": "breakeven",
@@ -820,7 +821,9 @@
             }
           ],
           "confirmLabel": "Commencer par celle-ci",
-          "allowFreeInput": true
+          "allowFreeInput": true,
+          "freeInputHint": "Ou dites-moi ce que vous aimeriez traiter",
+          "freeSimulated": "Commençons par le seuil de rentabilité, je veux savoir combien vendre chaque jour."
         }
       ],
       "await": {
@@ -874,6 +877,72 @@
               }
             ]
           }
+        },
+        {
+          "kind": "plan",
+          "plan": {
+            "id": "p-prices",
+            "title": "Revoir le prix de vos 5 produits phares",
+            "goal": "Aligner coût de revient et prix de vente sur ce que vous vendez le plus.",
+            "status": "draft",
+            "topicId": "finances",
+            "steps": [
+              {
+                "id": "pr1",
+                "title": "Lister vos 5 produits phares",
+                "detail": "Ceux qui font le plus de volume en boutique.",
+                "due": "2026-11-28",
+                "status": "todo"
+              },
+              {
+                "id": "pr2",
+                "title": "Calculer le coût de revient",
+                "detail": "Matières, énergie et main-d'œuvre par produit.",
+                "due": "2026-12-02",
+                "status": "todo"
+              },
+              {
+                "id": "pr3",
+                "title": "Ajuster les prix affichés",
+                "detail": "Je vous propose une fourchette ; vous validez.",
+                "due": "2026-12-05",
+                "status": "todo"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "plan",
+          "plan": {
+            "id": "p-costs",
+            "title": "Réduire vos charges variables",
+            "goal": "Trouver des écarts sur les matières et l'énergie, et des marges de négociation.",
+            "status": "draft",
+            "topicId": "finances",
+            "steps": [
+              {
+                "id": "c1",
+                "title": "Comparer trois mois de matières",
+                "detail": "Je mets en évidence les hausses inhabituelles.",
+                "due": "2026-11-29",
+                "status": "todo"
+              },
+              {
+                "id": "c2",
+                "title": "Relire vos contrats énergie",
+                "detail": "Puissance souscrite et options tarifaires.",
+                "due": "2026-12-06",
+                "status": "todo"
+              },
+              {
+                "id": "c3",
+                "title": "Préparer deux demandes fournisseurs",
+                "detail": "Messages prêts à envoyer, avec les chiffres.",
+                "due": "2026-12-13",
+                "status": "todo"
+              }
+            ]
+          }
         }
       ],
       "blocks": [
@@ -908,7 +977,10 @@
             }
           ],
           "confirmLabel": "Voir ce plan",
-          "allowFreeInput": true
+          "allowFreeInput": true,
+          "freeInputHint": "Ou dites-moi comment vous voulez procéder",
+          "freeSimulated": "Le plan sur le seuil de rentabilité, celui que vous recommandez.",
+          "sideDetail": "plan"
         }
       ],
       "await": {
@@ -959,17 +1031,15 @@
         {
           "id": "pp-plan",
           "type": "plan",
-          "planId": "p-breakeven",
+          "planId": "{{planId}}",
           "mode": "preview",
           "startLabel": "Mettre en place ce plan"
         }
       ],
       "await": {
-        "kind": "choice",
+        "kind": "plan",
         "blockId": "pp-plan",
-        "routes": {
-          "start": "account-or-plan"
-        }
+        "next": "account-or-plan"
       }
     },
     "account-or-plan": {

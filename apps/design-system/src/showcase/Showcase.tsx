@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Briefcase, Mic, Target, User, Wallet } from "lucide-react";
 import {
-  ActionDock, Button, Callout, Chip, ConfidenceBadge, DimensionCard, DropZone, FileTile, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, StepList, TranscriptText, Waveform,
+  ActionDock, Button, Callout, Chip, ChoiceCard, ChoiceGroup, ConfidenceBadge, DimensionCard, DropZone, FileTile, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, StepList, TranscriptText, Waveform,
   type OrbState, type ProviderId, type StepItem, type StepStatus,
 } from "../index";
 import styles from "./Showcase.module.css";
@@ -40,6 +40,7 @@ export function Showcase() {
   const [stepDemo, setStepDemo] = useState(0);
   const [dropFiles, setDropFiles] = useState<{ name: string; progress: number }[]>([]);
   const [dropReject, setDropReject] = useState<string | null>(null);
+  const [choice, setChoice] = useState("breakeven");
 
   useEffect(() => {
     if (orb !== "listening") return;
@@ -166,6 +167,42 @@ export function Showcase() {
         </div>
         <div style={{ maxWidth: 420 }}>
           <StepList title="J'analyse ce que vous m'avez dit" steps={demoSteps(stepDemo)} />
+        </div>
+        <div style={{ maxWidth: 420, marginTop: 16 }}>
+          <StepList
+            title="Aperçu de plan"
+            steps={[
+              { id: "p1", label: "Vérifier vos charges du mois", detail: "10 minutes.", due: "jeu. 27 nov.", status: "pending" },
+              { id: "p2", label: "Fixer votre seuil journalier", detail: "Je calcule le montant.", due: "mar. 3 déc.", status: "pending" },
+            ]}
+          />
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.h2}>Choix (ChoiceCard)</h2>
+        <p className="muted">Radio clavier : flèches, Espace. L'option non sélectionnée s'estompe.</p>
+        <div style={{ maxWidth: 480 }}>
+          <ChoiceGroup label="Priorité" value={choice} onChange={setChoice}>
+            <ChoiceCard
+              id="breakeven"
+              title="Savoir combien vendre chaque jour pour couvrir vos charges"
+              body="Vous vendez autour de 2 400 € par jour pour environ 58 000 € de charges par mois."
+              meta="4 étapes · 2 semaines"
+              recommended
+              selected={choice === "breakeven"}
+              dimmed={choice !== "breakeven"}
+              onSelect={() => setChoice("breakeven")}
+            />
+            <ChoiceCard
+              id="late"
+              title="Être payée à temps par le restaurant voisin"
+              body="Il vous doit 9 600 € et paie de plus en plus tard."
+              selected={choice === "late"}
+              dimmed={choice !== "late"}
+              onSelect={() => setChoice("late")}
+            />
+          </ChoiceGroup>
         </div>
       </section>
 

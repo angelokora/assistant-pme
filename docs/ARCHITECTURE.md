@@ -94,13 +94,16 @@ type Await =
   | { kind: "connector"; blockId: string; onConnect: string; onSkip: string }
   | { kind: "upload"; blockId: string; onUpload: string; onSkip: string }
   | { kind: "form"; blockId: string; next: string }
-  | { kind: "auth"; next: string };
+  | { kind: "auth"; next: string }
+  | { kind: "plan"; blockId: string; next: string }; // démarrage d'un plan (événement "start")
 ```
 
 Règles du moteur :
 - **Saisie libre** : en mode voix, le moteur joue la transcription `simulated` mot à mot ; en mode texte, le champ est prérempli avec `simulated` en suggestion, mais l'utilisateur peut taper ce qu'il veut. Dans tous les cas, le scénario continue sur `next`.
 - **Réponses rapides** (« Je ne sais pas », « Passer ») : par défaut, même étape que `next`. Si `quickRoutes` est fourni, l'id de la réponse rapide peut mener à une autre étape (ex. noter « à vérifier » avant de continuer).
 - **Préférence de saisie du composer** : à chaque nouvelle question d'un besoin, le composer revient en mode voix, sauf si l'utilisateur a choisi le texte dans ce besoin (il reste alors en texte jusqu'à ce qu'il repasse en voix ou que le besoin se termine).
+- **Choix avec `allowFreeInput`** : le composer reste disponible (hint + voix/texte) ; le bouton de confirmation reste dans le bloc (pas d'ActionDock) pour ne pas masquer la saisie libre.
+- **Analyse → résultat** : l'orbe 96 px passe en état `done` (coche) ; le bloc suivant peut reprendre la présence via `layoutId: "elea-presence"` et un `eyebrow`.
 - **Échos dans le fil** : une saisie libre et une réponse rapide s'affichent comme une parole de l'utilisateur. Un événement de bloc (`connector`, `auth`, `upload`, `plan`) ne crée pas d'écho « Vous : … » ; le bloc passe en état « fait » compact. Un `choice` peut garder un écho, sous la forme de l'option retenue.
 - **Délais** : chaque étape d'Éléa attend `delayMs` (défaut 600 ms) avec l'orbe en état « réfléchit », puis les blocs entrent en cascade.
 - **Effets idempotents** : rejouer une étape ne duplique rien (identifiants stables).

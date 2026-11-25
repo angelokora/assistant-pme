@@ -11,6 +11,8 @@ import { SuggestionsBlockView } from "./SuggestionsBlock";
 import { ConnectorBlockView } from "./ConnectorBlock";
 import { AuthBlockView } from "./AuthBlock";
 import { AnalysisBlockView } from "./AnalysisBlock";
+import { ChoiceBlockView } from "./ChoiceBlock";
+import { PlanBlockView } from "./PlanBlock";
 import { ExtractionBlockView } from "./ExtractionBlock";
 import { UploadBlockView } from "./UploadBlock";
 import styles from "./blocks.module.css";
@@ -29,6 +31,8 @@ const RENDERERS: Partial<Record<Block["type"], ComponentType<BlockProps<never>>>
   connector: ConnectorBlockView,
   auth: AuthBlockView,
   analysis: AnalysisBlockView,
+  choice: ChoiceBlockView,
+  plan: PlanBlockView,
   extraction: ExtractionBlockView,
   upload: UploadBlockView,
 };

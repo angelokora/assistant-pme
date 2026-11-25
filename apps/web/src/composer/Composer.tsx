@@ -5,7 +5,7 @@ import { ActionDock, Button, IconButton, Orb, TranscriptText, Waveform, spring }
 import { pickFiles } from "../blocks/pickFiles";
 import { useUploadInbox } from "../blocks/uploadInbox";
 import { ACTION_AWAIT_KINDS, usePlayer } from "../engine/player";
-import type { QuestionBlock } from "../engine/types";
+import type { ChoiceBlock, QuestionBlock } from "../engine/types";
 import { useActionDockHost } from "./actionDockHost";
 import { useMediaQuery } from "./useMediaQuery";
 import { useSimulatedSpeech } from "./useSimulatedSpeech";
@@ -22,7 +22,15 @@ export function Composer() {
   const orb = usePlayer((s) => s.orb);
   const reply = usePlayer((s) => s.reply);
   const turns = usePlayer((s) => s.turns);
-  const simulated = awaiting?.kind === "input" ? awaiting.simulated : "";
+  const activeChoice =
+    awaiting?.kind === "choice"
+      ? ([...turns].reverse().flatMap((t) => (t.from === "elea" ? t.blocks : [])).find((b) => b.type === "choice" && b.id === awaiting.blockId) as
+          | ChoiceBlock
+          | undefined)
+      : undefined;
+  const choiceFree = !!activeChoice?.allowFreeInput;
+  const simulated =
+    awaiting?.kind === "input" ? awaiting.simulated : choiceFree ? (activeChoice?.freeSimulated ?? "") : "";
   const speech = useSimulatedSpeech(simulated);
   const mobile = useMediaQuery("(max-width: 639px)");
   const setDockHost = useActionDockHost((s) => s.setHost);
@@ -34,7 +42,8 @@ export function Composer() {
   const holding = useRef(false);
   /** Préférence saisie dans ce besoin : voix par défaut ; texte seulement si l'utilisateur l'a choisi. */
   const inputPreference = useRef<"voice" | "text">("voice");
-  const showActionDock = mobile && !!awaiting && ACTION_AWAIT_KINDS.has(awaiting.kind);
+  // allowFreeInput : le composer reste ; le confirm est dans le bloc (pas d'ActionDock).
+  const showActionDock = mobile && !!awaiting && ACTION_AWAIT_KINDS.has(awaiting.kind) && !choiceFree;
 
   useEffect(() => {
     inputPreference.current = "voice";
@@ -58,22 +67,22 @@ export function Composer() {
   useEffect(() => {
     setDraft("");
     speech.stop();
-    // Nouvelle question : voix par défaut, sauf si l'utilisateur a choisi le texte dans ce besoin.
-    if (awaiting?.kind === "input") {
+    // Nouvelle question / choix libre : voix par défaut, sauf si l'utilisateur a choisi le texte.
+    if (awaiting?.kind === "input" || choiceFree) {
       setMode(inputPreference.current === "text" ? "text" : "voice");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [simulated]);
+  }, [simulated, choiceFree, awaiting?.kind]);
 
-  // Quitter l'écoute si l'attente n'est plus une saisie libre (évite un envoi hors route).
+  // Quitter l'écoute si l'attente n'accepte plus de saisie (évite un envoi hors route).
   useEffect(() => {
-    if (awaiting?.kind === "input") return;
+    if (awaiting?.kind === "input" || choiceFree) return;
     speech.stop();
     if (mode === "listening") setMode(inputPreference.current === "text" ? "text" : "voice");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [awaiting?.kind]);
+  }, [awaiting?.kind, choiceFree]);
 
-  const inputOpen = awaiting?.kind === "input";
+  const inputOpen = awaiting?.kind === "input" || choiceFree;
 
   useEffect(() => {
     if (inputOpen && mode === "text") textRef.current?.focus();
@@ -82,7 +91,7 @@ export function Composer() {
   // Barre d'espace maintenue = parler (hors champ texte).
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.code !== "Space" || e.repeat || awaiting?.kind !== "input" || mode !== "voice") return;
+      if (e.code !== "Space" || e.repeat || !inputOpen || mode !== "voice") return;
       if ((e.target as HTMLElement).closest("input, textarea, button")) return;
       e.preventDefault();
       listen();
@@ -97,15 +106,15 @@ export function Composer() {
   }
   function submitVoice() {
     speech.stop();
-    if (awaiting?.kind !== "input") {
+    if (!inputOpen) {
       setMode(inputPreference.current === "text" ? "text" : "voice");
       return;
     }
-    reply({ kind: "text", text: simulated, mode: "voice" });
+    reply({ kind: "text", text: simulated || draft.trim(), mode: "voice" });
     setMode(inputPreference.current === "text" ? "text" : "voice");
   }
   function submitText() {
-    if (awaiting?.kind !== "input") return;
+    if (!inputOpen) return;
     const text = draft.trim() || simulated;
     reply({ kind: "text", text, mode: "text" });
     setDraft("");
@@ -150,7 +159,7 @@ export function Composer() {
                 <Orb size={72} state="idle" decorative className={styles.micOrb} />
                 <Mic className={styles.micIcon} size={26} strokeWidth={2} />
               </motion.button>
-              <p className={styles.hint}>Toucher pour parler</p>
+              <p className={styles.hint}>{choiceFree ? activeChoice?.freeInputHint ?? "Toucher pour parler" : "Toucher pour parler"}</p>
               <button
                 className={styles.switch}
                 onClick={() => {

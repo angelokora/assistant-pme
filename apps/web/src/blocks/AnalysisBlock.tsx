@@ -5,14 +5,13 @@ import { usePlayer } from "../engine/player";
 import type { BlockProps } from "./BlockRenderer";
 import styles from "./blocks.module.css";
 
-/** Éléa réfléchit : étapes qui s'enchaînent, orbe en « thinking ». */
+/** Éléa réfléchit : étapes qui s'enchaînent, orbe 96 px en thinking puis done (coche). */
 export function AnalysisBlockView({ block, active }: BlockProps<AnalysisBlock>) {
   const [index, setIndex] = useState(0);
   const [done, setDone] = useState(false);
 
   useEffect(() => {
     if (!active) {
-      // Tour passé : tout est fait.
       setIndex(block.steps.length);
       setDone(true);
       return;
@@ -30,7 +29,7 @@ export function AnalysisBlockView({ block, active }: BlockProps<AnalysisBlock>) 
       if (cancelled) return;
       if (i >= block.steps.length) {
         setDone(true);
-        usePlayer.setState({ orb: "idle" });
+        usePlayer.setState({ orb: "done" });
         return;
       }
       setIndex(i);
@@ -59,7 +58,12 @@ export function AnalysisBlockView({ block, active }: BlockProps<AnalysisBlock>) 
   return (
     <section className={styles.analysis}>
       <div className={styles.analysisHead}>
-        <Orb size={56} state={active && !done ? "thinking" : "idle"} decorative />
+        <Orb
+          size={96}
+          state={active && !done ? "thinking" : done ? "done" : "idle"}
+          layoutId={active ? "elea-presence" : undefined}
+          decorative
+        />
         <StepList title={block.title} steps={steps} />
       </div>
     </section>

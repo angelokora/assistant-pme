@@ -77,12 +77,30 @@
   animation: spin 0.9s linear infinite;
 }
 
-.label {
+.copy {
+  display: grid;
+  gap: 2px;
   padding-top: 4px;
+  min-width: 0;
+}
+
+.label {
   font-size: var(--text-md);
   line-height: var(--leading-snug);
   color: var(--color-text-muted);
   transition: color var(--dur-fast) var(--ease-out);
+}
+
+.detail {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: var(--leading-snug);
+}
+
+.due {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-weight: var(--weight-medium);
 }
 
 .active .label {

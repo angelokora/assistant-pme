@@ -85,6 +85,31 @@
   animation: morph 5s var(--ease-in-out) infinite alternate, talk 0.9s var(--ease-in-out) infinite;
 }
 
+.live {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.doneMark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--color-action);
+}
+
+.doneSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.doneRing {
+  fill: var(--color-action-soft);
+  stroke: none;
+}
+
 .done .halo {
   opacity: 0.9;
 }

@@ -81,7 +81,7 @@ type DimensionsBlock = BaseBlock & {
 ```
 
 ### `analysis` : Éléa réfléchit
-Liste d'étapes qui passent de « en attente » à « en cours » (spinner) puis « fait » (coche animée). L'orbe passe en état « réfléchit ».
+Liste d'étapes qui passent de « en attente » à « en cours » (spinner) puis « fait » (coche animée). Orbe 96 px en `thinking`, puis état `done` (l'orbe devient une coche) avec `layoutId` partagé vers le bloc suivant si celui-ci affiche un `eyebrow` de conclusion.
 ```ts
 type AnalysisBlock = BaseBlock & {
   type: "analysis";
@@ -93,12 +93,14 @@ type AnalysisBlock = BaseBlock & {
 ## 3. Décision et action
 
 ### `choice` : choisir parmi des options
-Options en cartes, une seule sélectionnable, une recommandée (badge). Bouton de confirmation. Possibilité de répondre autrement par le composer (« Ou dites-moi ce que vous aimeriez traiter »).
+Options en cartes (`ChoiceCard`), une seule sélectionnable, une recommandée (badge). L'option recommandée est présélectionnée. Bouton de confirmation (ActionDock sur mobile, sauf si `allowFreeInput` : le bouton reste dans le bloc pour laisser le composer accessible). L'écho dans le fil reprend le **titre de l'option**, pas le libellé du bouton.
 ```ts
 type ChoiceBlock = BaseBlock & {
   type: "choice";
   title: string;
   subtitle?: string;
+  /** Libellé au-dessus du titre, souvent après une analyse (« Analyse terminée »). */
+  eyebrow?: string;
   options: {
     id: string;
     title: string;
@@ -108,17 +110,27 @@ type ChoiceBlock = BaseBlock & {
   }[];
   confirmLabel: string;            // « Commencer par celle-ci »
   allowFreeInput?: boolean;
+  /** Hint sous le choix quand allowFreeInput (« Ou dites-moi ce que vous aimeriez traiter »). */
+  freeInputHint?: string;
+  /** Transcription simulée si l'utilisateur parle plutôt que de confirmer une carte. */
+  freeSimulated?: string;
+  /**
+   * Sur grand écran (≥ 1024 px) : panneau à droite mis à jour à la sélection, sans valider.
+   * `"plan"` : l'id de l'option est un `planId` en mémoire ; le panneau montre titre, objectif et étapes.
+   * Mobile / tablette : enchaînement normal (confirmation puis étape suivante).
+   */
+  sideDetail?: "plan";
 };
 ```
 
 ### `plan` : un plan d'action
-Titre, objectif, étapes avec échéance. En mode `editable`, les dates se changent (sélecteur de date) et les étapes se réordonnent. Bouton de démarrage.
+Titre, objectif, étapes avec échéance (dates en français, ex. « jeu. 27 nov. », via `formatDate`). En mode `preview` (ticket #17) : lecture seule et bouton de mise en place (événement `"start"`, ActionDock sur mobile, état « fait » compact). Les modes `editable` et `live` viennent avec #18 et #27.
 ```ts
 type PlanBlock = BaseBlock & {
   type: "plan";
   planId: string;                  // le plan vit dans la mémoire
   mode: "preview" | "editable" | "live";
-  startLabel?: string;             // « Démarrer le plan »
+  startLabel?: string;             // « Mettre en place ce plan »
 };
 ```
 

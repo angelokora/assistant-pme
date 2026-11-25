@@ -1,0 +1,21 @@
+{
+  "name": "assistant-pme",
+  "private": true,
+  "type": "module",
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev": "npm run dev -w @elea/web",
+    "ds": "npm run dev -w @elea/ds",
+    "build": "npm run build -w @elea/ds && npm run build -w @elea/web",
+    "lint": "tsc -p apps/design-system && tsc -p apps/web && eslint ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "eslint": "^9.15.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "globals": "^15.12.0",
+    "prettier": "^3.4.0",
+    "typescript": "~5.6.3",
+    "typescript-eslint": "^8.15.0"
+  }
+}

@@ -124,13 +124,16 @@ type ChoiceBlock = BaseBlock & {
 ```
 
 ### `plan` : un plan d'action
-Titre, objectif, étapes avec échéance (dates en français, ex. « jeu. 27 nov. », via `formatDate`). En mode `preview` (ticket #17) : lecture seule et bouton de mise en place (événement `"start"`, ActionDock sur mobile, état « fait » compact). Les modes `editable` et `live` viennent avec #18 et #27.
+Titre, objectif, étapes avec échéance (dates en français, ex. « jeu. 27 nov. », via `formatDate`).
+- `preview` (#17) : lecture seule, bouton de mise en place.
+- `editable` (#18) : échéances via `DateField`, réordonnancement (glisser + flèches clavier), bouton « Démarrer le plan » avec célébration sobre puis événement `"start"`.
+- `live` (#27) : suivi.
 ```ts
 type PlanBlock = BaseBlock & {
   type: "plan";
-  planId: string;                  // le plan vit dans la mémoire
+  planId: string;                  // le plan vit dans la mémoire (souvent « {{planId}} »)
   mode: "preview" | "editable" | "live";
-  startLabel?: string;             // « Mettre en place ce plan »
+  startLabel?: string;             // « Mettre en place ce plan » / « Démarrer le plan »
 };
 ```
 
@@ -236,7 +239,7 @@ type SuggestionsBlock = BaseBlock & {
 ## 6. Compte
 
 ### `auth` : créer un compte au bon moment
-Rappel de ce que le compte permet de garder (récapitulatif du plan), puis Google, Apple ou e-mail. Simulé. Si `consent` est présent, une feuille de confirmation s'ouvre après le choix de la méthode (quel que soit le fournisseur) ; sinon la méthode crée le compte immédiatement.
+Rappel de ce que le compte permet de garder (récapitulatif du plan), puis Google, Apple ou e-mail. Simulé. Si `consent` est présent, une feuille de confirmation s'ouvre après le choix de la méthode ; sinon la méthode crée le compte immédiatement. Si le compte existe déjà en mémoire, le moteur saute l'étape (`await.auth.next`).
 ```ts
 type AuthBlock = BaseBlock & {
   type: "auth";
@@ -244,7 +247,8 @@ type AuthBlock = BaseBlock & {
   title: string;                    // « Gardez votre plan, Sophie. »
   text: string;
   recap?: { label: string; value: string; highlight?: string };
-  keeps: string[];                  // « Votre synthèse », « Votre plan et ses étapes »
+  keepsTitle?: string;              // « Avec votre compte, vous gardez »
+  keeps: string[];                  // « Votre synthèse », « Votre plan et ses {{planStepCountLabel}} »
   consent?: {
     title: string;                  // « Autoriser la lecture »
     text: string;

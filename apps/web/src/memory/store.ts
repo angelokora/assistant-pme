@@ -9,6 +9,8 @@ type MemoryState = Memory & {
   apply: (effects: Effect[]) => void;
   /** Correction manuelle d'un finding ou d'une dimension (exigence : pouvoir rectifier la mémoire). */
   patchFinding: (id: string, patch: Partial<Memory["findings"][number]>) => void;
+  /** Met à jour les étapes d'un plan (dates, ordre) depuis le bloc editable. */
+  patchPlanSteps: (planId: string, steps: Memory["plans"][number]["steps"]) => void;
 };
 
 const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v));
@@ -63,6 +65,8 @@ export const useMemory = create<MemoryState>()(
       reset: (preset) => set({ ...clone(PRESETS[preset]), preset }),
       apply: (effects) => set((s) => effects.reduce<Memory>(reduce, s) as MemoryState),
       patchFinding: (id, patch) => set((s) => ({ findings: s.findings.map((f) => (f.id === id ? { ...f, ...patch } : f)) })),
+      patchPlanSteps: (planId, steps) =>
+        set((s) => ({ plans: s.plans.map((p) => (p.id === planId ? { ...p, steps } : p)) })),
     }),
     { name: "elea-memory", version: 1 },
   ),

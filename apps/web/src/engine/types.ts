@@ -85,6 +85,8 @@ export type AuthBlock = Base<"auth"> & {
   title: string;
   text: string;
   recap?: { label: string; value: string; highlight?: string };
+  /** Titre au-dessus de la liste (ex. « Avec votre compte, vous gardez »). */
+  keepsTitle?: string;
   keeps: string[];
   consent?: {
     title: string;

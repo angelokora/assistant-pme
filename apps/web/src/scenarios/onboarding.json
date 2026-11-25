@@ -1052,12 +1052,13 @@
           "text": "Créez votre compte pour enregistrer votre synthèse et suivre votre plan.",
           "recap": {
             "label": "Votre plan",
-            "value": "Connaître et suivre votre seuil de rentabilité",
-            "highlight": "Vous commencez par : vérifier vos charges du mois"
+            "value": "{{planTitle}}",
+            "highlight": "Vous commencez par : {{planFirstStep}}"
           },
+          "keepsTitle": "Avec votre compte, vous gardez",
           "keeps": [
             "Votre synthèse",
-            "Votre plan et ses quatre étapes",
+            "Votre plan et ses {{planStepCountLabel}}",
             "Ce que vous m'avez appris sur Maison Martin"
           ]
         }
@@ -1078,17 +1079,15 @@
         {
           "id": "pe-plan",
           "type": "plan",
-          "planId": "p-breakeven",
+          "planId": "{{planId}}",
           "mode": "editable",
           "startLabel": "Démarrer le plan"
         }
       ],
       "await": {
-        "kind": "choice",
+        "kind": "plan",
         "blockId": "pe-plan",
-        "routes": {
-          "start": "done"
-        }
+        "next": "done"
       }
     },
     "done": {
@@ -1096,7 +1095,7 @@
       "effects": [
         {
           "kind": "update-plan",
-          "planId": "p-breakeven",
+          "planId": "{{planId}}",
           "patch": {
             "status": "active"
           }
@@ -1111,11 +1110,11 @@
         {
           "kind": "finding",
           "finding": {
-            "id": "f-decision-breakeven",
+            "id": "f-decision-{{planId}}",
             "type": "decision",
             "topicId": "finances",
-            "title": "Priorité : connaître le seuil de rentabilité",
-            "summary": "Sophie choisit de traiter d'abord le seuil de rentabilité. Les retards du restaurant voisin restent la deuxième priorité.",
+            "title": "Priorité : {{planTitle}}",
+            "summary": "Sophie choisit de traiter d'abord : {{planTitle}}. Première étape : {{planFirstStep}}.",
             "createdAt": "2026-11-25T10:52:00",
             "origin": "conversation",
             "confidence": "confirmed",
@@ -1129,7 +1128,7 @@
           "type": "callout",
           "tone": "success",
           "title": "C'est parti",
-          "text": "Je vous rappelle la première étape jeudi matin. Tout ce que vous m'avez dit est rangé dans Mon entreprise."
+          "text": "Je vous rappelle la première étape : {{planFirstStep}}. Tout ce que vous m'avez dit est rangé dans Mon entreprise."
         },
         {
           "id": "dn-suggestions",

@@ -10,6 +10,7 @@ export { TranscriptText } from "./ui/TranscriptText/TranscriptText";
 export { Waveform } from "./ui/Waveform/Waveform";
 export { Callout } from "./ui/Callout/Callout";
 export { ChoiceCard, ChoiceGroup } from "./ui/ChoiceCard/ChoiceCard";
+export { DateField } from "./ui/DateField/DateField";
 export { StepList, type StepItem, type StepStatus } from "./ui/StepList/StepList";
 export { ProviderLogo, type ProviderId } from "./ui/ProviderLogo/ProviderLogo";
 export { Sheet } from "./ui/Sheet/Sheet";

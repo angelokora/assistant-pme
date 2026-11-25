@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Briefcase, Mic, Target, User, Wallet } from "lucide-react";
 import {
-  ActionDock, Button, Callout, Chip, ChoiceCard, ChoiceGroup, ConfidenceBadge, DimensionCard, DropZone, FileTile, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, StepList, TranscriptText, Waveform,
+  ActionDock, Button, Callout, Chip, ChoiceCard, ChoiceGroup, ConfidenceBadge, DateField, DimensionCard, DropZone, FileTile, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, StepList, TranscriptText, Waveform,
   type OrbState, type ProviderId, type StepItem, type StepStatus,
 } from "../index";
 import styles from "./Showcase.module.css";
@@ -41,6 +41,7 @@ export function Showcase() {
   const [dropFiles, setDropFiles] = useState<{ name: string; progress: number }[]>([]);
   const [dropReject, setDropReject] = useState<string | null>(null);
   const [choice, setChoice] = useState("breakeven");
+  const [due, setDue] = useState("2026-11-27");
 
   useEffect(() => {
     if (orb !== "listening") return;
@@ -177,6 +178,12 @@ export function Showcase() {
             ]}
           />
         </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.h2}>Date (DateField)</h2>
+        <p className="muted">Sélecteur léger en français, flèches clavier dans la grille.</p>
+        <DateField value={due} onChange={setDue} label="Échéance" />
       </section>
 
       <section className={styles.section}>

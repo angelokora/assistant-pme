@@ -72,14 +72,19 @@ export function AuthBlockView({ block, active }: BlockProps<AuthBlock>) {
         </Card>
       )}
 
-      <ul className={styles.keeps}>
-        {block.keeps.map((line) => (
-          <li key={line}>
-            <BookmarkCheck size={16} strokeWidth={2.2} aria-hidden />
-            <span>{line}</span>
-          </li>
-        ))}
-      </ul>
+      {(block.keepsTitle || block.keeps.length > 0) && (
+        <div className={styles.keepsBlock}>
+          {block.keepsTitle && <p className={styles.keepsTitle}>{block.keepsTitle}</p>}
+          <ul className={styles.keeps}>
+            {block.keeps.map((line) => (
+              <li key={line}>
+                <BookmarkCheck size={16} strokeWidth={2.2} aria-hidden />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <ActionSlot active={canAct}>
         <div className={styles.authMethods} role="group" aria-label="Créer un compte">

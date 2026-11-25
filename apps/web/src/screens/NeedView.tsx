@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { Mic, Keyboard, X } from "lucide-react";
 import { IconButton, blockList, spring } from "@elea/ds";
-import { usePlayer, type Turn } from "../engine/player";
+import { ACTION_AWAIT_KINDS, usePlayer, type Turn } from "../engine/player";
 import { presetFor, SCENARIOS } from "../engine/scenarios";
 import { useMemory } from "../memory/store";
 import { BlockRenderer } from "../blocks/BlockRenderer";
@@ -32,11 +32,20 @@ export function NeedView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scenarioId]);
 
-  // Suit le dernier tour.
+  // Suit le dernier tour ; si une action est attendue, assure qu'elle n'est pas sous le composer.
   useEffect(() => {
-    // Fait apparaître le début du dernier tour (ce qu'Éléa vient de dire ou de noter).
     const t = setTimeout(() => {
-      const last = flowRef.current?.lastElementChild?.previousElementSibling as HTMLElement | null;
+      const flow = flowRef.current;
+      if (!flow) return;
+      if (awaiting && ACTION_AWAIT_KINDS.has(awaiting.kind)) {
+        const actions = flow.querySelectorAll("button");
+        const lastAction = [...actions].reverse().find((b) => !b.disabled && b.offsetParent);
+        if (lastAction) {
+          lastAction.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          return;
+        }
+      }
+      const last = flow.lastElementChild?.previousElementSibling as HTMLElement | null;
       last?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 80);
     return () => clearTimeout(t);

@@ -186,6 +186,14 @@ Jetons courants :
 - `{{provider}}` / `{{providerLabel}}` : fournisseur connecté (gmail, Outlook…)
 - `{{fileCount}}` : nombre de fichiers déposés (chiffre)
 - `{{fileCountLabel}}` : libellé accordé (« 1 document », « 3 documents »)
+- `{{planId}}` : plan choisi (id en mémoire)
+- `{{planTitle}}` : titre du plan
+- `{{planFirstStep}}` : titre de la première étape
+- `{{planStepCount}}` / `{{planStepCountLabel}}` : nombre d'étapes (« 4 étapes »)
+
+Quand `planId` est posé (choix de plan), le moteur enrichit automatiquement les jetons à partir de la mémoire. Ils sont rafraîchis à l'entrée de chaque étape (utile après édition des dates ou de l'ordre).
+
+**Auth déjà faite.** Si l'étape attend un `await.kind === "auth"` et que `account.created` est vrai en mémoire (compte créé plus tôt, p.ex. au connecteur), le moteur saute l'étape sans afficher le bloc.
 
 Routes (`react-router`) : `/`, `/entreprise`, `/entreprise/:topicId`, `/plans`, `/plans/:planId`, `/recherche`, `/besoin/:scenarioId`, `/finding/:findingId`. Le paramètre `?v=a|b|c` choisit la variante des écrans qui en ont.
 

@@ -124,6 +124,7 @@ Chaque composant vit dans `src/ui/{Nom}/` avec `Nom.tsx`, `Nom.module.css` et un
 | `DimensionCard` | Carte de dimension (icône, titre, résumé, jauge, statut) | todo, active, enough ; compact |
 | `NotedTag` | « Noté dans… » + Modifier | default, editing |
 | `ChoiceCard` | Option sélectionnable avec badge recommandé | default, selected, recommended |
+| `DateField` | Sélecteur de date (français, clavier) | fermé, ouvert |
 | `StepList` | Étapes (analyse, plan) | pending, active, done |
 | `Sheet` | Feuille du bas (mobile), panneau latéral (desktop) | ouverte, fermée |
 | `Waveform` | Visualisation de la voix | active, idle |

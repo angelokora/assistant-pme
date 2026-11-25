@@ -66,6 +66,25 @@ function varsFromConnector(value: string): StepVars {
   return { provider, providerLabel: labels[provider] ?? provider };
 }
 
+/** Jetons dérivés du plan choisi en mémoire (docs/ARCHITECTURE.md). */
+export function varsFromPlan(planId: string): StepVars {
+  const plan = useMemory.getState().plans.find((p) => p.id === planId);
+  if (!plan) return { planId };
+  const n = plan.steps.length;
+  return {
+    planId: plan.id,
+    planTitle: plan.title,
+    planFirstStep: plan.steps[0]?.title ?? "",
+    planStepCount: String(n),
+    planStepCountLabel: n <= 1 ? `${n} étape` : `${n} étapes`,
+  };
+}
+
+function enrichPlanVars(vars: StepVars): StepVars {
+  if (!vars.planId) return vars;
+  return { ...vars, ...varsFromPlan(vars.planId) };
+}
+
 export const usePlayer = create<PlayerState>((set, get) => {
   async function goTo(stepId: string, token: number) {
     const scenario = get().scenario;
@@ -76,10 +95,18 @@ export const usePlayer = create<PlayerState>((set, get) => {
       return;
     }
     set({ orb: "thinking", awaiting: null, currentStep: stepId });
+
+    // Compte déjà créé : on saute l'étape auth sans afficher le bloc.
+    if (step.await?.kind === "auth" && useMemory.getState().account.created) {
+      set({ orb: "idle" });
+      return goTo(step.await.next, token);
+    }
+
     await sleep(step.delayMs ?? DEFAULT_DELAY);
     if (token !== runToken) return;
 
-    const vars = get().vars;
+    const vars = enrichPlanVars(get().vars);
+    if (vars !== get().vars) set({ vars });
     if (step.effects?.length) {
       const effects = interpolateVars(step.effects, vars);
       const gauges = useGauges.getState();
@@ -100,10 +127,6 @@ export const usePlayer = create<PlayerState>((set, get) => {
     if (token !== runToken) return;
 
     if (step.await) {
-      if (step.await.kind === "auth" && useMemory.getState().account.created) {
-        set({ orb: "idle" });
-        return goTo(step.await.next, token);
-      }
       set({ orb: "idle", awaiting: step.await });
       return;
     }
@@ -172,13 +195,16 @@ export const usePlayer = create<PlayerState>((set, get) => {
           Object.keys(awaiting.routes)[0];
         next = awaiting.routes[preferred];
         if (choiceBlock && choiceBlock.type === "choice" && choiceBlock.sideDetail === "plan") {
-          nextVars = { ...nextVars, planId: preferred };
+          nextVars = enrichPlanVars({ ...nextVars, planId: preferred });
         }
         echo = { id: `u-${Date.now()}`, from: "user", text: reply.text, mode: reply.mode };
       } else if (reply.kind === "event" || reply.kind === "quick") {
         const value = reply.kind === "event" ? reply.value : reply.id;
         const label = reply.label;
-        if (reply.kind === "event" && reply.vars) nextVars = { ...nextVars, ...reply.vars };
+        if (reply.kind === "event" && reply.vars) {
+          nextVars = { ...nextVars, ...reply.vars };
+          if (reply.vars.planId) nextVars = enrichPlanVars(nextVars);
+        }
         switch (awaiting.kind) {
           case "choice":
             next = awaiting.routes[value];

@@ -11,7 +11,7 @@ type Props = {
   active: DestinationId | null;
 };
 
-const ANGLES = [-50, -18, 18, 50]; // degrés autour du bas
+const ANGLES = [-50, -18, 18, 50];
 
 /** Variante B : un orbe ; appui long ou glissement vers le haut ouvre l'arc. */
 export function RadialMenu({ active }: Props) {
@@ -22,6 +22,24 @@ export function RadialMenu({ active }: Props) {
   const [showHint, setShowHint] = useState(!hintSeen);
   const holdTimer = useRef<number | null>(null);
   const startY = useRef(0);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const root = document.documentElement;
+    const apply = () => {
+      const h = Math.ceil(el.getBoundingClientRect().height);
+      root.style.setProperty("--nav-offset", `${Math.max(h, 96)}px`);
+    };
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      root.style.removeProperty("--nav-offset");
+    };
+  }, []);
 
   useEffect(() => {
     if (hintSeen) return;
@@ -45,7 +63,7 @@ export function RadialMenu({ active }: Props) {
   }
 
   return (
-    <div className={styles.wrap}>
+    <div ref={wrapRef} className={styles.wrap}>
       <AnimatePresence>
         {open && (
           <motion.button
@@ -99,7 +117,7 @@ export function RadialMenu({ active }: Props) {
             transition={spring.gentle}
           >
             <ChevronUp size={14} strokeWidth={1.75} aria-hidden />
-            Glisser ou appuyer longuement
+            <span>Glisser ou appui long</span>
           </motion.p>
         )}
       </AnimatePresence>

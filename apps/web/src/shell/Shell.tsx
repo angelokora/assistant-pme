@@ -45,12 +45,10 @@ export function Shell() {
         .filter(Boolean)
         .join(" ")}
       style={
-        mobile && !inNeed
+        mobile && !inNeed && menuVariant !== "b"
           ? ({
               ["--nav-offset" as string]:
-                menuVariant === "b"
-                  ? "calc(88px + max(env(safe-area-inset-bottom, 0px), var(--safe-bottom, 0px)))"
-                  : "calc(72px + max(env(safe-area-inset-bottom, 0px), var(--safe-bottom, 0px)))",
+                "calc(72px + max(env(safe-area-inset-bottom, 0px), var(--safe-bottom, 0px)))",
             } as CSSProperties)
           : undefined
       }

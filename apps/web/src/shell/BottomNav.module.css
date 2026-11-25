@@ -96,7 +96,8 @@
 .composerMic {
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.25));
+  color: #fff;
+  filter: drop-shadow(0 1px 2px rgb(107 7 36 / 0.5));
 }
 
 .composer:focus-visible {

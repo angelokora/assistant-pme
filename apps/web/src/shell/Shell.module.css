@@ -43,6 +43,7 @@
   padding-bottom: var(--nav-offset, calc(72px + max(env(safe-area-inset-bottom, 0px), var(--safe-bottom, 0px))));
 }
 
+/* Menu B : --nav-offset mesuré par RadialMenu (hauteur réelle de l'orbe + indice). */
 .mobile.menuB:not(.inNeed) .main {
-  padding-bottom: var(--nav-offset, calc(88px + max(env(safe-area-inset-bottom, 0px), var(--safe-bottom, 0px))));
+  padding-bottom: var(--nav-offset, calc(120px + max(env(safe-area-inset-bottom, 0px), var(--safe-bottom, 0px))));
 }

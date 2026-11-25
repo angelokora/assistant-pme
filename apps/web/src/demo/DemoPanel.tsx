@@ -11,7 +11,7 @@ import { SCENARIO_INDEX, SCENARIOS, presetFor } from "../engine/scenarios";
 import styles from "./DemoPanel.module.css";
 
 type Props = {
-  /** Hôte de l'émulateur : commande l'iframe via BroadcastChannel. */
+  /** Hôte de l'émulateur : commande l'iframe via postMessage. */
   host?: boolean;
 };
 

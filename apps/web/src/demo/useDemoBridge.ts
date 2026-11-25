@@ -4,9 +4,38 @@ import { useMemory } from "../memory/store";
 import { usePlayer } from "../engine/player";
 import { presetFor } from "../engine/scenarios";
 import { useDemo } from "./demo";
-import { isFrameMode, subscribeDemoCommands, type DemoCommand } from "./bridge";
+import {
+  applySafeInsets,
+  detectAndPersistFrameMode,
+  isFrameMode,
+  postDemoReady,
+  readStoredSafeInsets,
+  subscribeDemoCommands,
+  type DemoCommand,
+  type DemoSyncState,
+} from "./bridge";
 
-/** Dans l'iframe (`?frame=1`), exécute les commandes du panneau hôte. */
+function applySyncState(
+  state: DemoSyncState,
+  setters: {
+    setHomeVariant: (v: DemoSyncState["homeVariant"]) => void;
+    setMenuVariant: (v: DemoSyncState["menuVariant"]) => void;
+    setFindVariant: (v: DemoSyncState["findVariant"]) => void;
+    setAnimations: (v: boolean) => void;
+    setMailInterrupted: (v: boolean) => void;
+    setShowVariantPill: (v: boolean) => void;
+  },
+) {
+  setters.setHomeVariant(state.homeVariant);
+  setters.setMenuVariant(state.menuVariant);
+  setters.setFindVariant(state.findVariant);
+  setters.setAnimations(state.animations);
+  setters.setMailInterrupted(state.mailInterrupted);
+  setters.setShowVariantPill(false);
+  applySafeInsets(state.safeTop, state.safeBottom);
+}
+
+/** Dans l'iframe appareil : poignée de main + exécution des commandes du panneau. */
 export function useDemoBridge() {
   const navigate = useNavigate();
   const reset = useMemory((s) => s.reset);
@@ -21,28 +50,36 @@ export function useDemoBridge() {
   const setShowVariantPill = useDemo((s) => s.setShowVariantPill);
 
   useEffect(() => {
+    detectAndPersistFrameMode();
     if (!isFrameMode()) return;
 
-    const params = new URLSearchParams(window.location.search);
-    const top = params.get("safeTop");
-    const bottom = params.get("safeBottom");
-    const root = document.documentElement;
-    if (top) root.style.setProperty("--safe-top", `${top}px`);
-    if (bottom) root.style.setProperty("--safe-bottom", `${bottom}px`);
-    root.dataset.frame = "1";
+    const stored = readStoredSafeInsets();
+    applySafeInsets(stored.top, stored.bottom);
+    document.documentElement.dataset.frame = "1";
+    postDemoReady();
 
     return () => {
-      root.style.removeProperty("--safe-top");
-      root.style.removeProperty("--safe-bottom");
-      delete root.dataset.frame;
+      delete document.documentElement.dataset.frame;
     };
   }, []);
 
   useEffect(() => {
     if (!isFrameMode()) return;
 
+    const setters = {
+      setHomeVariant,
+      setMenuVariant,
+      setFindVariant,
+      setAnimations,
+      setMailInterrupted,
+      setShowVariantPill,
+    };
+
     return subscribeDemoCommands((cmd: DemoCommand) => {
       switch (cmd.type) {
+        case "sync":
+          applySyncState(cmd.state, setters);
+          break;
         case "reset":
           stop();
           reset(cmd.preset);
@@ -82,7 +119,7 @@ export function useDemoBridge() {
           setMailInterrupted(cmd.value);
           break;
         case "setShowVariantPill":
-          setShowVariantPill(cmd.value);
+          setShowVariantPill(false);
           break;
       }
     });

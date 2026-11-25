@@ -7,8 +7,10 @@ import { NeedView } from "../screens/NeedView";
 import { DemoPanel } from "../demo/DemoPanel";
 import { DeviceStage } from "../demo/DeviceStage";
 import { useDemo } from "../demo/demo";
-import { isFrameMode } from "../demo/bridge";
+import { detectAndPersistFrameMode, isFrameMode } from "../demo/bridge";
 import { useDemoBridge } from "../demo/useDemoBridge";
+
+detectAndPersistFrameMode();
 import { useMediaQuery } from "../composer/useMediaQuery";
 import { FlightLayer } from "../blocks/flight/FlightLayer";
 import { Shell } from "../shell/Shell";

@@ -26,7 +26,7 @@ export const blockList: Variants = {
 
 export const blockItem: Variants = {
   hidden: { opacity: 0, y: 14, filter: "blur(4px)" },
-  shown: { opacity: 1, y: 0, filter: "blur(0px)", transition: spring.gentle },
+  shown: { opacity: 1, y: 0, filter: "blur(0px)", transition: { ...spring.gentle, filter: { duration: 0.3, ease: "easeOut" } } },
   exit: { opacity: 0, y: -8, transition: { duration: 0.16 } },
 };
 

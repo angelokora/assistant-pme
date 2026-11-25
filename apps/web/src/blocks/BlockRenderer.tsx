@@ -8,6 +8,10 @@ import { NotedBlockView } from "./NotedBlock";
 import { DimensionsBlockView } from "./DimensionsBlock";
 import { CalloutBlockView } from "./CalloutBlock";
 import { SuggestionsBlockView } from "./SuggestionsBlock";
+import { ConnectorBlockView } from "./ConnectorBlock";
+import { AuthBlockView } from "./AuthBlock";
+import { AnalysisBlockView } from "./AnalysisBlock";
+import { ExtractionBlockView } from "./ExtractionBlock";
 import styles from "./blocks.module.css";
 
 /** Props communes à tous les rendus de bloc. `active` = le bloc appartient au tour en attente de réponse. */
@@ -21,6 +25,10 @@ const RENDERERS: Partial<Record<Block["type"], ComponentType<BlockProps<never>>>
   dimensions: DimensionsBlockView,
   callout: CalloutBlockView,
   suggestions: SuggestionsBlockView,
+  connector: ConnectorBlockView,
+  auth: AuthBlockView,
+  analysis: AnalysisBlockView,
+  extraction: ExtractionBlockView,
 };
 
 export function BlockRenderer({ block, active }: BlockProps) {

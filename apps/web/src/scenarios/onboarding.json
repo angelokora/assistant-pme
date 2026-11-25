@@ -1,0 +1,868 @@
+{
+  "id": "onboarding",
+  "intent": "onboarding",
+  "title": "Faisons connaissance",
+  "start": "welcome",
+  "steps": {
+    "welcome": {
+      "blocks": [
+        {
+          "id": "welcome-lead",
+          "type": "lead",
+          "text": "Bonjour Sophie, je suis Éléa."
+        },
+        {
+          "id": "welcome-q",
+          "type": "question",
+          "text": "Qu'est-ce qui vous occupe le plus en ce moment dans votre entreprise ?",
+          "hint": "Parlez librement, je fais le tri.",
+          "inputModes": [
+            "voice",
+            "text"
+          ]
+        }
+      ],
+      "await": {
+        "kind": "input",
+        "simulated": "J'ai repris la pâtisserie il y a huit mois. Ça tourne, on est douze, mais je ne sais jamais si je gagne vraiment de l'argent. Et le restaurant d'à côté me paie de plus en plus tard.",
+        "next": "first-notes"
+      }
+    },
+    "first-notes": {
+      "delayMs": 900,
+      "effects": [
+        {
+          "kind": "progress",
+          "dimensionId": "activity",
+          "to": 0.4,
+          "status": "active",
+          "summary": "Pâtisserie-boulangerie à Lyon, reprise il y a 8 mois, 12 salariés"
+        },
+        {
+          "kind": "progress",
+          "dimensionId": "priorities",
+          "to": 0.3,
+          "summary": "2 sujets identifiés"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "fn-noted-1",
+          "type": "noted",
+          "target": {
+            "kind": "dimension",
+            "id": "activity",
+            "label": "Mon activité"
+          },
+          "text": "Pâtisserie-boulangerie, reprise il y a 8 mois, 12 salariés",
+          "editable": true
+        },
+        {
+          "id": "fn-noted-2",
+          "type": "noted",
+          "target": {
+            "kind": "dimension",
+            "id": "priorities",
+            "label": "Mes priorités"
+          },
+          "text": "Savoir si vous gagnez de l'argent ; être payée à temps par le restaurant voisin",
+          "editable": true
+        },
+        {
+          "id": "fn-dims",
+          "type": "dimensions",
+          "title": "Approfondissons",
+          "subtitle": "Quelques précisions pour bien vous conseiller",
+          "dimensionIds": [
+            "activity",
+            "finances",
+            "profile",
+            "priorities"
+          ]
+        }
+      ],
+      "next": "connector"
+    },
+    "connector": {
+      "delayMs": 700,
+      "blocks": [
+        {
+          "id": "cn-lead",
+          "type": "lead",
+          "text": "Pour vos finances, inutile de tout me dicter."
+        },
+        {
+          "id": "cn-connector",
+          "type": "connector",
+          "title": "Je peux retrouver vos factures dans vos mails",
+          "why": "J'en tire vos charges et vos ventes sans vous poser de questions. Vous gagnez une dizaine de minutes.",
+          "providers": [
+            "gmail",
+            "outlook",
+            "drive"
+          ],
+          "willRead": [
+            "Les factures et relevés que vous recevez",
+            "Les pièces jointes en PDF de vos fournisseurs et clients"
+          ],
+          "willNotRead": [
+            "Vos échanges personnels",
+            "Les messages sans facture ni relevé"
+          ],
+          "reassurance": [
+            "Lecture seule : je n'envoie et ne supprime rien",
+            "Données chiffrées, hébergées en France",
+            "Vous pouvez couper l'accès à tout moment"
+          ],
+          "skipLabel": "Je préfère déposer mes factures"
+        }
+      ],
+      "await": {
+        "kind": "connector",
+        "blockId": "cn-connector",
+        "onConnect": "account-for-connector",
+        "onSkip": "upload"
+      }
+    },
+    "account-for-connector": {
+      "delayMs": 300,
+      "blocks": [
+        {
+          "id": "acc-c-auth",
+          "type": "auth",
+          "eyebrow": "Avant de connecter Gmail",
+          "title": "Créons votre espace, Sophie.",
+          "text": "Pour me connecter à vos mails en toute sécurité, j'ai besoin d'un compte à votre nom.",
+          "keeps": [
+            "Ce que vous m'avez déjà dit",
+            "L'accès à vos factures, en lecture seule"
+          ]
+        }
+      ],
+      "await": {
+        "kind": "auth",
+        "next": "mail-search"
+      }
+    },
+    "mail-search": {
+      "effects": [
+        {
+          "kind": "source",
+          "source": {
+            "id": "gmail",
+            "provider": "gmail",
+            "label": "Gmail",
+            "status": "connected",
+            "detail": "sophie@maisonmartin.fr",
+            "lastSync": "2026-11-25T10:42:00"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "ms-analysis",
+          "type": "analysis",
+          "title": "Je parcours vos mails",
+          "steps": [
+            {
+              "id": "ms-1",
+              "label": "Je repère les factures des trois derniers mois…",
+              "durationMs": 1400
+            },
+            {
+              "id": "ms-2",
+              "label": "Je lis les montants et les échéances…",
+              "durationMs": 1600
+            },
+            {
+              "id": "ms-3",
+              "label": "Je classe vos charges par nature…",
+              "durationMs": 1200
+            }
+          ]
+        }
+      ],
+      "next": "extraction"
+    },
+    "upload": {
+      "delayMs": 400,
+      "blocks": [
+        {
+          "id": "up-upload",
+          "type": "upload",
+          "title": "Déposez vos dernières factures",
+          "why": "Une photo ou un PDF suffit. Je lis les montants pour vous.",
+          "accept": [
+            "pdf",
+            "image"
+          ],
+          "examples": [
+            "Loyer",
+            "Électricité",
+            "Fournisseurs",
+            "Bulletins de paie"
+          ],
+          "skipLabel": "Je préfère répondre de tête"
+        }
+      ],
+      "await": {
+        "kind": "upload",
+        "blockId": "up-upload",
+        "onUpload": "upload-read",
+        "onSkip": "charges-question"
+      }
+    },
+    "upload-read": {
+      "effects": [
+        {
+          "kind": "source",
+          "source": {
+            "id": "uploads",
+            "provider": "upload",
+            "label": "Documents déposés",
+            "status": "connected",
+            "detail": "7 factures",
+            "lastSync": "2026-11-25T10:42:00"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "ur-analysis",
+          "type": "analysis",
+          "title": "Je lis vos factures",
+          "steps": [
+            {
+              "id": "ur-1",
+              "label": "Je reconnais chaque document…",
+              "durationMs": 1200
+            },
+            {
+              "id": "ur-2",
+              "label": "Je lis les montants et les échéances…",
+              "durationMs": 1500
+            }
+          ]
+        }
+      ],
+      "next": "extraction"
+    },
+    "extraction": {
+      "delayMs": 300,
+      "effects": [
+        {
+          "kind": "progress",
+          "dimensionId": "finances",
+          "to": 0.7,
+          "status": "active",
+          "summary": "Charges connues, ventes à préciser"
+        },
+        {
+          "kind": "finding",
+          "finding": {
+            "id": "f-charges",
+            "type": "fact",
+            "topicId": "finances",
+            "title": "Charges mensuelles : environ 58 000 €",
+            "summary": "Masse salariale 38 000 €, matières premières 11 000 €, loyer 3 200 €, énergie 2 600 €, assurances et divers 3 200 €.",
+            "createdAt": "2026-11-25T10:43:00",
+            "origin": "gmail",
+            "confidence": "estimated",
+            "scenarioId": "onboarding"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "ex-extraction",
+          "type": "extraction",
+          "title": "J'ai trouvé 7 factures et 3 relevés",
+          "items": [
+            {
+              "id": "ex-1",
+              "label": "Masse salariale",
+              "value": "38 000 € / mois",
+              "source": "Bulletins et charges sociales, oct. 2026",
+              "confidence": "confirmed"
+            },
+            {
+              "id": "ex-2",
+              "label": "Matières premières",
+              "value": "11 000 € / mois",
+              "source": "Factures Moulins Bourgeois et Sodiaal, 3 mois",
+              "confidence": "estimated"
+            },
+            {
+              "id": "ex-3",
+              "label": "Loyer",
+              "value": "3 200 € / mois",
+              "source": "Facture SCI Bellecour, nov. 2026",
+              "confidence": "confirmed"
+            },
+            {
+              "id": "ex-4",
+              "label": "Énergie",
+              "value": "2 600 € / mois",
+              "source": "Factures EDF Pro, moyenne 3 mois",
+              "confidence": "estimated"
+            },
+            {
+              "id": "ex-5",
+              "label": "Assurances et divers",
+              "value": "3 200 € / mois",
+              "source": "Relevés bancaires",
+              "confidence": "to-check"
+            }
+          ],
+          "total": {
+            "label": "Charges mensuelles",
+            "value": "environ 58 000 €"
+          }
+        },
+        {
+          "id": "ex-noted",
+          "type": "noted",
+          "target": {
+            "kind": "dimension",
+            "id": "finances",
+            "label": "Mes finances"
+          },
+          "text": "Charges : environ 58 000 € par mois",
+          "confidence": "estimated",
+          "editable": true
+        }
+      ],
+      "next": "restaurant-question"
+    },
+    "charges-question": {
+      "delayMs": 500,
+      "blocks": [
+        {
+          "id": "cq-lead",
+          "type": "lead",
+          "text": "Commençons par vos charges."
+        },
+        {
+          "id": "cq-q",
+          "type": "question",
+          "text": "Combien vous coûtent environ vos charges chaque mois : salaires, loyer, matières, énergie ?",
+          "hint": "Un ordre de grandeur suffit.",
+          "quickReplies": [
+            {
+              "id": "dont-know",
+              "label": "Je ne sais pas"
+            },
+            {
+              "id": "change",
+              "label": "Changer de sujet"
+            }
+          ],
+          "attachments": [
+            "document",
+            "photo"
+          ]
+        }
+      ],
+      "await": {
+        "kind": "input",
+        "simulated": "Les salaires avec les charges, autour de 38 000. Le loyer 3 200, les matières une dizaine de milliers, l'électricité 2 600… je dirais 58 000 en tout.",
+        "next": "charges-noted"
+      }
+    },
+    "charges-noted": {
+      "delayMs": 700,
+      "effects": [
+        {
+          "kind": "progress",
+          "dimensionId": "finances",
+          "to": 0.6,
+          "status": "active",
+          "summary": "Charges connues, ventes à préciser"
+        },
+        {
+          "kind": "finding",
+          "finding": {
+            "id": "f-charges",
+            "type": "fact",
+            "topicId": "finances",
+            "title": "Charges mensuelles : environ 58 000 €",
+            "summary": "Masse salariale 38 000 €, matières environ 10 000 €, loyer 3 200 €, énergie 2 600 €. Estimation de Sophie, à confirmer avec les factures.",
+            "createdAt": "2026-11-25T10:43:00",
+            "origin": "conversation",
+            "confidence": "estimated",
+            "scenarioId": "onboarding"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "chn-noted",
+          "type": "noted",
+          "target": {
+            "kind": "dimension",
+            "id": "finances",
+            "label": "Mes finances"
+          },
+          "text": "Charges : environ 58 000 € par mois",
+          "confidence": "estimated",
+          "editable": true
+        }
+      ],
+      "next": "restaurant-question"
+    },
+    "restaurant-question": {
+      "delayMs": 600,
+      "blocks": [
+        {
+          "id": "rq-q",
+          "type": "question",
+          "text": "Combien vous rapporte le restaurant voisin chaque mois, et où en sont ses paiements ?",
+          "hint": "Un ordre de grandeur suffit.",
+          "quickReplies": [
+            {
+              "id": "dont-know",
+              "label": "Je ne sais pas"
+            }
+          ]
+        }
+      ],
+      "await": {
+        "kind": "input",
+        "simulated": "À peu près 4 800 € par mois. Normalement il paie à 30 jours, mais il traîne de plus en plus : là, il me doit octobre et novembre.",
+        "next": "restaurant-noted"
+      }
+    },
+    "restaurant-noted": {
+      "delayMs": 700,
+      "effects": [
+        {
+          "kind": "progress",
+          "dimensionId": "finances",
+          "to": 1,
+          "status": "enough",
+          "summary": "Suffisant pour avancer"
+        },
+        {
+          "kind": "progress",
+          "dimensionId": "profile",
+          "to": 0.1,
+          "status": "active",
+          "summary": "Premières questions"
+        },
+        {
+          "kind": "finding",
+          "finding": {
+            "id": "f-comptoir",
+            "type": "fact",
+            "topicId": "clients",
+            "title": "Le Comptoir des Halles paie de plus en plus tard",
+            "summary": "Environ 4 800 € de livraisons par mois. Factures d'octobre et de novembre en attente, soit 9 600 €. Délai réel passé de 30 à 46 jours depuis l'été.",
+            "createdAt": "2026-11-25T10:46:00",
+            "origin": "conversation",
+            "confidence": "confirmed",
+            "scenarioId": "onboarding"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "rn-noted",
+          "type": "noted",
+          "target": {
+            "kind": "dimension",
+            "id": "finances",
+            "label": "Mes finances"
+          },
+          "text": "Restaurant voisin : 4 800 € par mois, 9 600 € en attente",
+          "editable": true
+        }
+      ],
+      "next": "profile-question"
+    },
+    "profile-question": {
+      "delayMs": 700,
+      "blocks": [
+        {
+          "id": "pq-lead",
+          "type": "lead",
+          "text": "Parlons maintenant de vous."
+        },
+        {
+          "id": "pq-q",
+          "type": "question",
+          "text": "Comment s'organisent vos journées entre la production, la vente et le reste ?",
+          "quickReplies": [
+            {
+              "id": "dont-know",
+              "label": "Je ne sais pas"
+            },
+            {
+              "id": "skip",
+              "label": "Passer"
+            }
+          ]
+        }
+      ],
+      "await": {
+        "kind": "input",
+        "simulated": "Je suis au laboratoire dès quatre heures, je donne un coup de main à la vente le midi, et je fais la gestion le soir quand j'ai encore de l'énergie.",
+        "next": "profile-noted"
+      }
+    },
+    "profile-noted": {
+      "delayMs": 600,
+      "effects": [
+        {
+          "kind": "progress",
+          "dimensionId": "profile",
+          "to": 0.5,
+          "status": "enough",
+          "summary": "Production le matin, gestion le soir"
+        },
+        {
+          "kind": "progress",
+          "dimensionId": "activity",
+          "to": 0.6,
+          "status": "enough"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "pn-noted",
+          "type": "noted",
+          "target": {
+            "kind": "dimension",
+            "id": "profile",
+            "label": "Mon profil"
+          },
+          "text": "Production dès 4 h, gestion le soir, peu de temps disponible",
+          "editable": true
+        }
+      ],
+      "next": "analysis"
+    },
+    "analysis": {
+      "delayMs": 400,
+      "blocks": [
+        {
+          "id": "an-analysis",
+          "type": "analysis",
+          "title": "J'analyse ce que vous m'avez dit",
+          "steps": [
+            {
+              "id": "an-1",
+              "label": "Je relie vos réponses et vos factures…",
+              "durationMs": 1300
+            },
+            {
+              "id": "an-2",
+              "label": "Je distingue ce qui est établi de ce qui reste à vérifier…",
+              "durationMs": 1500
+            },
+            {
+              "id": "an-3",
+              "label": "Je formule le problème à traiter en priorité…",
+              "durationMs": 1700
+            }
+          ]
+        }
+      ],
+      "next": "priorities"
+    },
+    "priorities": {
+      "effects": [
+        {
+          "kind": "progress",
+          "dimensionId": "priorities",
+          "to": 0.7,
+          "status": "active",
+          "summary": "2 priorités proposées"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "pr-choice",
+          "type": "choice",
+          "title": "J'ai repéré deux priorités",
+          "subtitle": "Laquelle voulez-vous traiter en premier ?",
+          "options": [
+            {
+              "id": "breakeven",
+              "title": "Savoir combien vendre chaque jour pour couvrir vos charges",
+              "body": "Vous vendez autour de 2 400 € par jour pour environ 58 000 € de charges par mois, sans savoir où se situe l'équilibre.",
+              "recommended": true
+            },
+            {
+              "id": "late-payment",
+              "title": "Être payée à temps par le restaurant voisin",
+              "body": "Il vous doit 9 600 € et paie de plus en plus tard. Cet argent manque en fin de mois."
+            }
+          ],
+          "confirmLabel": "Commencer par celle-ci",
+          "allowFreeInput": true
+        }
+      ],
+      "await": {
+        "kind": "choice",
+        "blockId": "pr-choice",
+        "routes": {
+          "breakeven": "plans-breakeven",
+          "late-payment": "plans-late-payment"
+        }
+      }
+    },
+    "plans-breakeven": {
+      "delayMs": 900,
+      "effects": [
+        {
+          "kind": "plan",
+          "plan": {
+            "id": "p-breakeven",
+            "title": "Connaître et suivre votre seuil de rentabilité",
+            "goal": "Savoir chaque matin combien vendre pour couvrir vos charges, et suivre l'écart chaque semaine.",
+            "status": "draft",
+            "topicId": "finances",
+            "steps": [
+              {
+                "id": "s1",
+                "title": "Vérifier vos charges du mois",
+                "detail": "Je vous montre les 5 postes trouvés ; vous corrigez ce qui ne va pas. 10 minutes.",
+                "due": "2026-11-27",
+                "status": "todo"
+              },
+              {
+                "id": "s2",
+                "title": "Séparer charges fixes et variables",
+                "detail": "Ensemble, on classe chaque poste. Je vous propose un premier classement.",
+                "due": "2026-12-01",
+                "status": "todo"
+              },
+              {
+                "id": "s3",
+                "title": "Fixer votre seuil journalier",
+                "detail": "Je calcule le montant de ventes qui couvre vos charges, jour par jour.",
+                "due": "2026-12-03",
+                "status": "todo"
+              },
+              {
+                "id": "s4",
+                "title": "Recevoir votre point du lundi",
+                "detail": "Chaque lundi, l'écart entre vos ventes et votre seuil, en une phrase.",
+                "due": "2026-12-08",
+                "status": "todo"
+              }
+            ]
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "pb-lead",
+          "type": "lead",
+          "text": "Voici trois façons d'y arriver."
+        },
+        {
+          "id": "pb-choice",
+          "type": "choice",
+          "title": "Choisissez votre plan",
+          "options": [
+            {
+              "id": "p-breakeven",
+              "title": "Connaître et suivre votre seuil de rentabilité",
+              "body": "On établit le montant de ventes qui couvre vos charges, puis je vous alerte chaque semaine.",
+              "meta": "4 étapes · 2 semaines",
+              "recommended": true
+            },
+            {
+              "id": "p-prices",
+              "title": "Revoir le prix de vos 5 produits phares",
+              "body": "On compare coût de revient et prix de vente sur ce que vous vendez le plus.",
+              "meta": "3 étapes · 10 jours"
+            },
+            {
+              "id": "p-costs",
+              "title": "Réduire vos charges variables",
+              "body": "Matières et énergie : on cherche les écarts et les marges de négociation.",
+              "meta": "3 étapes · 3 semaines"
+            }
+          ],
+          "confirmLabel": "Voir ce plan",
+          "allowFreeInput": true
+        }
+      ],
+      "await": {
+        "kind": "choice",
+        "blockId": "pb-choice",
+        "routes": {
+          "p-breakeven": "plan-preview",
+          "p-prices": "plan-preview",
+          "p-costs": "plan-preview"
+        }
+      }
+    },
+    "plans-late-payment": {
+      "delayMs": 900,
+      "blocks": [
+        {
+          "id": "pl-callout",
+          "type": "callout",
+          "tone": "info",
+          "title": "Bientôt disponible dans le prototype",
+          "text": "Ce chemin n'est pas encore écrit. Pour la démonstration, je vous propose de commencer par le seuil de rentabilité."
+        },
+        {
+          "id": "pl-choice",
+          "type": "choice",
+          "title": "On commence par le seuil ?",
+          "options": [
+            {
+              "id": "breakeven",
+              "title": "Savoir combien vendre chaque jour pour couvrir vos charges",
+              "recommended": true
+            }
+          ],
+          "confirmLabel": "D'accord"
+        }
+      ],
+      "await": {
+        "kind": "choice",
+        "blockId": "pl-choice",
+        "routes": {
+          "breakeven": "plans-breakeven"
+        }
+      }
+    },
+    "plan-preview": {
+      "delayMs": 500,
+      "blocks": [
+        {
+          "id": "pp-plan",
+          "type": "plan",
+          "planId": "p-breakeven",
+          "mode": "preview",
+          "startLabel": "Mettre en place ce plan"
+        }
+      ],
+      "await": {
+        "kind": "choice",
+        "blockId": "pp-plan",
+        "routes": {
+          "start": "account-or-plan"
+        }
+      }
+    },
+    "account-or-plan": {
+      "blocks": [
+        {
+          "id": "ap-auth",
+          "type": "auth",
+          "eyebrow": "Dernière étape",
+          "title": "Gardez votre plan, Sophie.",
+          "text": "Créez votre compte pour enregistrer votre synthèse et suivre votre plan.",
+          "recap": {
+            "label": "Votre plan",
+            "value": "Connaître et suivre votre seuil de rentabilité",
+            "highlight": "Vous commencez par : vérifier vos charges du mois"
+          },
+          "keeps": [
+            "Votre synthèse",
+            "Votre plan et ses quatre étapes",
+            "Ce que vous m'avez appris sur Maison Martin"
+          ]
+        }
+      ],
+      "await": {
+        "kind": "auth",
+        "next": "plan-edit"
+      }
+    },
+    "plan-edit": {
+      "delayMs": 500,
+      "blocks": [
+        {
+          "id": "pe-lead",
+          "type": "lead",
+          "text": "Ajustez les dates à votre rythme."
+        },
+        {
+          "id": "pe-plan",
+          "type": "plan",
+          "planId": "p-breakeven",
+          "mode": "editable",
+          "startLabel": "Démarrer le plan"
+        }
+      ],
+      "await": {
+        "kind": "choice",
+        "blockId": "pe-plan",
+        "routes": {
+          "start": "done"
+        }
+      }
+    },
+    "done": {
+      "delayMs": 600,
+      "effects": [
+        {
+          "kind": "update-plan",
+          "planId": "p-breakeven",
+          "patch": {
+            "status": "active"
+          }
+        },
+        {
+          "kind": "progress",
+          "dimensionId": "priorities",
+          "to": 0.9,
+          "status": "enough",
+          "summary": "1 plan en cours"
+        },
+        {
+          "kind": "finding",
+          "finding": {
+            "id": "f-decision-breakeven",
+            "type": "decision",
+            "topicId": "finances",
+            "title": "Priorité : connaître le seuil de rentabilité",
+            "summary": "Sophie choisit de traiter d'abord le seuil de rentabilité. Les retards du restaurant voisin restent la deuxième priorité.",
+            "createdAt": "2026-11-25T10:52:00",
+            "origin": "conversation",
+            "confidence": "confirmed",
+            "scenarioId": "onboarding"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "dn-callout",
+          "type": "callout",
+          "tone": "success",
+          "title": "C'est parti",
+          "text": "Je vous rappelle la première étape jeudi matin. Tout ce que vous m'avez dit est rangé dans Mon entreprise."
+        },
+        {
+          "id": "dn-suggestions",
+          "type": "suggestions",
+          "items": [
+            {
+              "id": "go-home",
+              "label": "Voir mon accueil",
+              "action": {
+                "kind": "route",
+                "target": "/"
+              }
+            },
+            {
+              "id": "go-company",
+              "label": "Voir ce que vous savez de moi",
+              "action": {
+                "kind": "route",
+                "target": "/entreprise"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

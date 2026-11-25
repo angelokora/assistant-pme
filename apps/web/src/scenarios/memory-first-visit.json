@@ -1,0 +1,86 @@
+{
+  "company": {
+    "name": "Maison Martin",
+    "sector": "Pâtisserie-boulangerie",
+    "city": "Lyon",
+    "employees": null,
+    "since": null
+  },
+  "owner": {
+    "firstName": "Sophie",
+    "lastName": "Martin"
+  },
+  "dimensions": [
+    {
+      "id": "activity",
+      "label": "Mon activité",
+      "icon": "briefcase",
+      "tone": "icy",
+      "progress": 0.05,
+      "status": "todo",
+      "summary": "À découvrir"
+    },
+    {
+      "id": "finances",
+      "label": "Mes finances",
+      "icon": "wallet",
+      "tone": "teal",
+      "progress": 0.05,
+      "status": "todo",
+      "summary": "À découvrir"
+    },
+    {
+      "id": "profile",
+      "label": "Mon profil",
+      "icon": "user",
+      "tone": "cherry",
+      "progress": 0.02,
+      "status": "todo",
+      "summary": "À découvrir"
+    },
+    {
+      "id": "priorities",
+      "label": "Mes priorités",
+      "icon": "target",
+      "tone": "bronze",
+      "progress": 0.02,
+      "status": "todo",
+      "summary": "À découvrir"
+    }
+  ],
+  "topics": [
+    {
+      "id": "finances",
+      "label": "Finances",
+      "icon": "wallet"
+    },
+    {
+      "id": "clients",
+      "label": "Clients",
+      "icon": "handshake"
+    },
+    {
+      "id": "team",
+      "label": "Équipe",
+      "icon": "users"
+    },
+    {
+      "id": "production",
+      "label": "Production et prix",
+      "icon": "croissant"
+    },
+    {
+      "id": "legal",
+      "label": "Juridique et administratif",
+      "icon": "scale"
+    }
+  ],
+  "findings": [],
+  "sources": [],
+  "plans": [],
+  "account": {
+    "created": false
+  },
+  "today": "2026-11-25",
+  "attention": []
+}

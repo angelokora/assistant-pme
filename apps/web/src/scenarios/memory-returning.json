@@ -1,0 +1,307 @@
+{
+  "note": "État de la mémoire trois semaines après l'onboarding (16 décembre 2026). Sert à l'accueil quotidien, à Mon entreprise et à la recherche.",
+  "today": "2026-12-16",
+  "company": {
+    "name": "Maison Martin",
+    "sector": "Pâtisserie-boulangerie",
+    "city": "Lyon",
+    "employees": 12,
+    "since": "2026-03"
+  },
+  "owner": {
+    "firstName": "Sophie",
+    "lastName": "Martin"
+  },
+  "dimensions": [
+    {
+      "id": "activity",
+      "label": "Mon activité",
+      "icon": "briefcase",
+      "tone": "icy",
+      "progress": 0.75,
+      "status": "enough",
+      "summary": "Pâtisserie-boulangerie, 12 salariés, 2 canaux de vente"
+    },
+    {
+      "id": "finances",
+      "label": "Mes finances",
+      "icon": "wallet",
+      "tone": "teal",
+      "progress": 0.9,
+      "status": "enough",
+      "summary": "Seuil connu : 2 170 € par jour"
+    },
+    {
+      "id": "profile",
+      "label": "Mon profil",
+      "icon": "user",
+      "tone": "cherry",
+      "progress": 0.55,
+      "status": "active",
+      "summary": "Production le matin, gestion le soir"
+    },
+    {
+      "id": "priorities",
+      "label": "Mes priorités",
+      "icon": "target",
+      "tone": "bronze",
+      "progress": 0.8,
+      "status": "enough",
+      "summary": "1 plan en cours, 1 en attente"
+    }
+  ],
+  "topics": [
+    {
+      "id": "finances",
+      "label": "Finances",
+      "icon": "wallet"
+    },
+    {
+      "id": "clients",
+      "label": "Clients",
+      "icon": "handshake"
+    },
+    {
+      "id": "team",
+      "label": "Équipe",
+      "icon": "users"
+    },
+    {
+      "id": "production",
+      "label": "Production et prix",
+      "icon": "croissant"
+    },
+    {
+      "id": "legal",
+      "label": "Juridique et administratif",
+      "icon": "scale"
+    }
+  ],
+  "findings": [
+    {
+      "id": "f-charges",
+      "type": "fact",
+      "topicId": "finances",
+      "title": "Charges mensuelles : 57 400 €",
+      "summary": "Masse salariale 38 000 €, matières 10 400 €, loyer 3 200 €, énergie 2 600 €, assurances et divers 3 200 €. Vérifié le 27 novembre.",
+      "createdAt": "2026-11-27T19:20:00",
+      "origin": "gmail",
+      "confidence": "confirmed",
+      "scenarioId": "onboarding"
+    },
+    {
+      "id": "f-breakeven",
+      "type": "fact",
+      "topicId": "finances",
+      "title": "Seuil de rentabilité : 2 170 € de ventes par jour",
+      "summary": "Charges fixes de 47 000 € par mois, matières à 17 % des ventes, 26 jours d'ouverture. En dessous de 2 170 €, la journée ne couvre pas ses charges.",
+      "createdAt": "2026-12-03T20:05:00",
+      "origin": "conversation",
+      "confidence": "confirmed",
+      "scenarioId": "onboarding"
+    },
+    {
+      "id": "f-week-50",
+      "type": "fact",
+      "topicId": "finances",
+      "title": "Semaine du 8 décembre : 2 480 € par jour en moyenne",
+      "summary": "310 € au-dessus du seuil. Mardi et mercredi sous le seuil, samedi à 4 100 €.",
+      "createdAt": "2026-12-15T07:00:00",
+      "origin": "conversation",
+      "confidence": "confirmed"
+    },
+    {
+      "id": "f-decision-breakeven",
+      "type": "decision",
+      "topicId": "finances",
+      "title": "Priorité : connaître le seuil de rentabilité",
+      "summary": "Sophie choisit de traiter d'abord le seuil de rentabilité. Les retards du restaurant voisin restent la deuxième priorité.",
+      "createdAt": "2026-11-25T10:52:00",
+      "origin": "conversation",
+      "confidence": "confirmed",
+      "scenarioId": "onboarding"
+    },
+    {
+      "id": "f-comptoir",
+      "type": "fact",
+      "topicId": "clients",
+      "title": "Le Comptoir des Halles paie de plus en plus tard",
+      "summary": "Environ 4 800 € de livraisons par mois. Factures d'octobre et de novembre en attente, soit 9 600 €. Délai réel passé de 30 à 46 jours depuis l'été.",
+      "createdAt": "2026-11-25T10:46:00",
+      "origin": "conversation",
+      "confidence": "confirmed",
+      "scenarioId": "onboarding"
+    },
+    {
+      "id": "f-team-planning",
+      "type": "fact",
+      "topicId": "team",
+      "title": "Équipe : 7 en production, 5 en vente",
+      "summary": "Deux apprentis en production. Une vendeuse à temps partiel en arrêt jusqu'au 5 janvier.",
+      "createdAt": "2026-12-02T21:10:00",
+      "origin": "conversation",
+      "confidence": "confirmed"
+    },
+    {
+      "id": "f-buche-price",
+      "type": "decision",
+      "topicId": "production",
+      "title": "Bûche 6 parts vendue 42 €",
+      "summary": "Prix fixé le 4 novembre après calcul du coût de revient. Objectif : 180 bûches pour les fêtes.",
+      "createdAt": "2026-11-04T20:30:00",
+      "origin": "conversation",
+      "confidence": "confirmed"
+    },
+    {
+      "id": "f-buche-cost",
+      "type": "fact",
+      "topicId": "production",
+      "title": "Coût de revient de la bûche : 15,10 €",
+      "summary": "Matières 11,40 €, emballage 1,20 €, main-d'œuvre 2,50 €. Marge de 64 % au prix de 42 €.",
+      "createdAt": "2026-11-04T20:25:00",
+      "origin": "conversation",
+      "confidence": "confirmed"
+    },
+    {
+      "id": "f-lease",
+      "type": "document",
+      "topicId": "legal",
+      "title": "Bail commercial : révision le 1er mars 2027",
+      "summary": "Loyer indexé sur l'ILC. Hausse attendue d'environ 3 %, soit près de 100 € par mois.",
+      "createdAt": "2026-11-28T08:40:00",
+      "origin": "drive",
+      "confidence": "estimated"
+    }
+  ],
+  "sources": [
+    {
+      "id": "gmail",
+      "provider": "gmail",
+      "label": "Gmail",
+      "status": "connected",
+      "detail": "sophie@maisonmartin.fr",
+      "lastSync": "2026-12-16T06:00:00"
+    },
+    {
+      "id": "drive",
+      "provider": "drive",
+      "label": "Google Drive",
+      "status": "connected",
+      "detail": "Dossier « Compta 2026 »",
+      "lastSync": "2026-12-16T06:00:00"
+    },
+    {
+      "id": "outlook",
+      "provider": "outlook",
+      "label": "Outlook",
+      "status": "available"
+    }
+  ],
+  "plans": [
+    {
+      "id": "p-breakeven",
+      "title": "Connaître et suivre votre seuil de rentabilité",
+      "goal": "Savoir chaque matin combien vendre pour couvrir vos charges, et suivre l'écart chaque semaine.",
+      "status": "active",
+      "topicId": "finances",
+      "steps": [
+        {
+          "id": "s1",
+          "title": "Vérifier vos charges du mois",
+          "detail": "Fait le 27 novembre : 57 400 €.",
+          "due": "2026-11-27",
+          "status": "done"
+        },
+        {
+          "id": "s2",
+          "title": "Séparer charges fixes et variables",
+          "detail": "Fait le 1er décembre.",
+          "due": "2026-12-01",
+          "status": "done"
+        },
+        {
+          "id": "s3",
+          "title": "Fixer votre seuil journalier",
+          "detail": "2 170 € par jour.",
+          "due": "2026-12-03",
+          "status": "done"
+        },
+        {
+          "id": "s4",
+          "title": "Recevoir votre point du lundi",
+          "detail": "Deuxième point reçu le 15 décembre.",
+          "due": "2026-12-08",
+          "status": "doing"
+        },
+        {
+          "id": "s5",
+          "title": "Choisir quoi faire les jours faibles",
+          "detail": "Mardi et mercredi passent sous le seuil : on regarde ensemble les options.",
+          "due": "2026-12-18",
+          "status": "todo"
+        }
+      ]
+    },
+    {
+      "id": "p-late-payment",
+      "title": "Être payée à temps par le Comptoir des Halles",
+      "goal": "Revenir à un paiement à 30 jours et récupérer les 9 600 € dus.",
+      "status": "waiting",
+      "topicId": "clients",
+      "steps": [
+        {
+          "id": "l1",
+          "title": "Préparer une relance courtoise",
+          "detail": "Je rédige, vous relisez.",
+          "due": "2026-12-17",
+          "status": "todo"
+        },
+        {
+          "id": "l2",
+          "title": "Proposer un échéancier",
+          "detail": "Deux versements avant le 15 janvier.",
+          "due": "2026-12-22",
+          "status": "todo"
+        },
+        {
+          "id": "l3",
+          "title": "Ajouter des pénalités de retard à vos conditions",
+          "detail": "Mention obligatoire sur vos factures.",
+          "due": "2027-01-05",
+          "status": "todo"
+        }
+      ]
+    }
+  ],
+  "attention": [
+    {
+      "id": "a1",
+      "kind": "plan-step",
+      "planId": "p-breakeven",
+      "stepId": "s5",
+      "title": "Mardi et mercredi passent sous le seuil",
+      "text": "On regarde ensemble quoi faire de ces deux journées ?",
+      "due": "2026-12-18"
+    },
+    {
+      "id": "a2",
+      "kind": "finding",
+      "findingId": "f-comptoir",
+      "title": "9 600 € attendus du Comptoir des Halles",
+      "text": "La facture d'octobre est échue depuis 16 jours.",
+      "due": "2026-12-16"
+    },
+    {
+      "id": "a3",
+      "kind": "finding",
+      "findingId": "f-lease",
+      "title": "Révision du loyer le 1er mars",
+      "text": "Environ 100 € de plus par mois : à intégrer dans votre seuil.",
+      "due": "2027-03-01"
+    }
+  ],
+  "account": {
+    "created": true,
+    "method": "google"
+  }
+}

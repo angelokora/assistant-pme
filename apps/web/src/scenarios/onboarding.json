@@ -528,7 +528,10 @@
       "await": {
         "kind": "input",
         "simulated": "À peu près 4 800 € par mois. Normalement il paie à 30 jours, mais il traîne de plus en plus : là, il me doit octobre et novembre.",
-        "next": "restaurant-noted"
+        "next": "restaurant-noted",
+        "quickRoutes": {
+          "dont-know": "restaurant-unknown"
+        }
       }
     },
     "restaurant-noted": {
@@ -578,6 +581,54 @@
       ],
       "next": "profile-question"
     },
+    "restaurant-unknown": {
+      "delayMs": 500,
+      "effects": [
+        {
+          "kind": "progress",
+          "dimensionId": "finances",
+          "to": 1,
+          "status": "enough",
+          "summary": "Suffisant pour avancer"
+        },
+        {
+          "kind": "progress",
+          "dimensionId": "profile",
+          "to": 0.1,
+          "status": "active",
+          "summary": "Premières questions"
+        },
+        {
+          "kind": "finding",
+          "finding": {
+            "id": "f-comptoir",
+            "type": "fact",
+            "topicId": "clients",
+            "title": "Restaurant voisin : à vérifier",
+            "summary": "Montant des livraisons et délais de paiement à confirmer avec Sophie.",
+            "createdAt": "2026-11-25T10:46:00",
+            "origin": "conversation",
+            "confidence": "to-check",
+            "scenarioId": "onboarding"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "ru-noted",
+          "type": "noted",
+          "target": {
+            "kind": "dimension",
+            "id": "finances",
+            "label": "Mes finances"
+          },
+          "text": "Restaurant voisin : à vérifier",
+          "confidence": "to-check",
+          "editable": true
+        }
+      ],
+      "next": "profile-question"
+    },
     "profile-question": {
       "delayMs": 700,
       "blocks": [
@@ -605,7 +656,11 @@
       "await": {
         "kind": "input",
         "simulated": "Je suis au laboratoire dès quatre heures, je donne un coup de main à la vente le midi, et je fais la gestion le soir quand j'ai encore de l'énergie.",
-        "next": "profile-noted"
+        "next": "profile-noted",
+        "quickRoutes": {
+          "dont-know": "profile-unknown",
+          "skip": "profile-skipped"
+        }
       }
     },
     "profile-noted": {
@@ -638,6 +693,73 @@
           "editable": true
         }
       ],
+      "next": "analysis"
+    },
+    "profile-unknown": {
+      "delayMs": 500,
+      "effects": [
+        {
+          "kind": "progress",
+          "dimensionId": "profile",
+          "to": 0.5,
+          "status": "enough",
+          "summary": "Organisation à préciser"
+        },
+        {
+          "kind": "progress",
+          "dimensionId": "activity",
+          "to": 0.6,
+          "status": "enough"
+        },
+        {
+          "kind": "finding",
+          "finding": {
+            "id": "f-profile-day",
+            "type": "fact",
+            "topicId": "profile",
+            "title": "Organisation des journées : à vérifier",
+            "summary": "Répartition production / vente / gestion à confirmer avec Sophie.",
+            "createdAt": "2026-11-25T10:48:00",
+            "origin": "conversation",
+            "confidence": "to-check",
+            "scenarioId": "onboarding"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "pu-noted",
+          "type": "noted",
+          "target": {
+            "kind": "dimension",
+            "id": "profile",
+            "label": "Mon profil"
+          },
+          "text": "Organisation des journées : à vérifier",
+          "confidence": "to-check",
+          "editable": true
+        }
+      ],
+      "next": "analysis"
+    },
+    "profile-skipped": {
+      "delayMs": 200,
+      "effects": [
+        {
+          "kind": "progress",
+          "dimensionId": "profile",
+          "to": 0.5,
+          "status": "enough",
+          "summary": "Question reportée"
+        },
+        {
+          "kind": "progress",
+          "dimensionId": "activity",
+          "to": 0.6,
+          "status": "enough"
+        }
+      ],
+      "blocks": [],
       "next": "analysis"
     },
     "analysis": {

@@ -17,6 +17,7 @@
 }
 .card:hover { box-shadow: inset 0 0 0 1px var(--color-border-strong), var(--shadow-2); }
 .active { box-shadow: inset 0 0 0 1px var(--color-memory), var(--shadow-2); }
+.enough { box-shadow: inset 0 0 0 1px var(--color-action), var(--shadow-2); }
 
 .compact { min-height: 0; padding: var(--space-2) var(--space-3) var(--space-3); gap: var(--space-2); }
 .compact .top { display: none; }

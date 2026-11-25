@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion, useAnimationControls } from "motion/react";
 import { Check, ChevronRight } from "lucide-react";
 import { Gauge } from "../Gauge/Gauge";
@@ -27,12 +27,25 @@ const STATUS_LABEL = { todo: "", active: "En cours", enough: "Suffisant" } as co
 export function DimensionCard({ id, label, icon, tone, summary, progress, status, pulseKey = 0, compact, onClick }: Props) {
   const controls = useAnimationControls();
   const [ripple, setRipple] = useState(0);
+  const prevStatus = useRef(status);
+
+  function beat() {
+    setRipple((r) => r + 1);
+    void controls.start({ scale: [1, 1.04, 1], transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } });
+  }
 
   useEffect(() => {
     if (!pulseKey) return;
-    setRipple((r) => r + 1);
-    controls.start({ scale: [1, 1.035, 1], transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } });
-  }, [pulseKey, controls]);
+    beat();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pulseKey]);
+
+  // Passage « En cours » → « Suffisant » : battement même sans vol de note.
+  useEffect(() => {
+    if (prevStatus.current === "active" && status === "enough") beat();
+    prevStatus.current = status;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   return (
     <motion.button
@@ -41,7 +54,9 @@ export function DimensionCard({ id, label, icon, tone, summary, progress, status
       whileTap={press}
       onClick={onClick}
       data-dimension-target={id}
-      className={[styles.card, compact && styles.compact, status === "active" && styles.active].filter(Boolean).join(" ")}
+      className={[styles.card, compact && styles.compact, status === "active" && styles.active, status === "enough" && styles.enough]
+        .filter(Boolean)
+        .join(" ")}
       aria-label={`${label} : ${summary}`}
     >
       <AnimatePresence>
@@ -71,12 +86,20 @@ export function DimensionCard({ id, label, icon, tone, summary, progress, status
             <motion.span
               key={status}
               className={[styles.status, styles[`status-${status}`]].join(" ")}
-              initial={{ opacity: 0, y: 6, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -6 }}
+              initial={
+                status === "enough"
+                  ? { opacity: 0, scale: 0.6, width: 0 }
+                  : { opacity: 0, y: 6, scale: 0.9 }
+              }
+              animate={{ opacity: 1, y: 0, scale: 1, width: "auto" }}
+              exit={{ opacity: 0, y: -6, scale: 0.85 }}
               transition={spring.snappy}
             >
-              {status === "enough" ? <Check size={14} strokeWidth={2.6} aria-label={STATUS_LABEL.enough} /> : STATUS_LABEL[status]}
+              {status === "enough" ? (
+                <Check size={14} strokeWidth={2.6} aria-label={STATUS_LABEL.enough} />
+              ) : (
+                STATUS_LABEL[status]
+              )}
             </motion.span>
           )}
         </AnimatePresence>

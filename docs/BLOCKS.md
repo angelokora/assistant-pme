@@ -40,6 +40,8 @@ type QuestionBlock = BaseBlock & {
 };
 ```
 
+Routage : l'`await` de type `input` accepte un `quickRoutes` optionnel (`Record<idRéponse, idÉtape>`). Sans entrée pour l'id, la réponse rapide suit `next` comme une saisie libre. Avec une entrée, le moteur va à l'étape indiquée (ex. noter « à vérifier » puis continuer). Voir `docs/ARCHITECTURE.md`.
+
 ### `noted` : « Noté dans… »
 Confirme ce qui vient d'être retenu, avec la dimension ou le sujet de destination. **Animation signature** : l'étiquette s'envole vers la carte de sa dimension (`layoutId`), dont la jauge progresse. Bouton « Modifier » qui ouvre une correction en ligne.
 ```ts
@@ -270,7 +272,7 @@ type Plan = {
 
 | Bloc | Événement | Valeur | Écho dans le fil |
 | --- | --- | --- | --- |
-| `question` | réponse rapide | id de la réponse rapide | Oui (libellé de la puce) |
+| `question` | réponse rapide | id de la réponse rapide (routé via `await.input.next` ou `await.input.quickRoutes[id]`) | Oui (libellé de la puce) |
 | `choice` | confirmation | id de l'option choisie | Oui (titre de l'option, pas un libellé de bouton) |
 | `plan` | bouton de démarrage | `"start"` | Non : état « fait » compact sur le bloc |
 | `connector` | connexion ou refus | `"connect:{provider}"` (`gmail` \| `outlook` \| `drive`) ou `"skip"` | Non : état « fait » (ex. « Outlook connecté ») |

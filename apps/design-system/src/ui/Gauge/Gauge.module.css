@@ -12,6 +12,7 @@
   border-radius: inherit;
   background: var(--color-action);
   overflow: hidden;
+  transition: background var(--dur-base) var(--ease-out);
 }
 .todo .fill { background: var(--ink-300); }
 .enough .fill { background: linear-gradient(90deg, var(--teal-500), #0a9aa8); }

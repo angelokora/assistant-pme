@@ -153,6 +153,7 @@ export const usePlayer = create<PlayerState>((set, get) => {
       let resolution: { blockId: string; summary: string } | null = null;
 
       if (awaiting.kind === "input") {
+        if (reply.kind !== "text" && reply.kind !== "quick") return;
         if (reply.kind === "quick" && awaiting.quickRoutes?.[reply.id]) {
           next = awaiting.quickRoutes[reply.id];
         } else {

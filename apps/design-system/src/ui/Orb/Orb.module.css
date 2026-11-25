@@ -1,0 +1,117 @@
+.orb {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  isolation: isolate;
+}
+
+.halo {
+  position: absolute;
+  inset: -22%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(163 11 55 / 0.32), rgb(221 167 123 / 0.18) 55%, transparent 75%);
+  filter: blur(6px);
+  opacity: 0.55;
+  transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out);
+  z-index: -1;
+}
+
+.body {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--gradient-presence);
+  border-radius: 48% 52% 55% 45% / 50% 46% 54% 50%;
+  box-shadow: var(--shadow-presence), inset 0 -6px 14px rgb(107 7 36 / 0.35);
+  animation: morph 9s var(--ease-in-out) infinite alternate, breathe var(--dur-breath) var(--ease-in-out) infinite;
+}
+
+.orb[data-size="s"] .body {
+  box-shadow: 0 2px 6px -1px rgb(163 11 55 / 0.45);
+}
+
+.orb[data-size="s"] .halo {
+  display: none;
+}
+
+/* Voile de dégradé qui tourne : donne la sensation de matière vivante. */
+.swirl {
+  position: absolute;
+  inset: -30%;
+  background: conic-gradient(from 0deg, transparent 0 18%, rgb(231 180 140 / 0.55) 30%, transparent 46% 62%, rgb(107 7 36 / 0.45) 78%, transparent 92%);
+  filter: blur(8px);
+  animation: spin 14s linear infinite;
+  mix-blend-mode: soft-light;
+}
+
+.sheen {
+  position: absolute;
+  top: 12%;
+  left: 16%;
+  width: 42%;
+  height: 30%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(255 255 255 / 0.55), transparent);
+  filter: blur(2px);
+}
+
+/* --- États --- */
+.listening .body {
+  animation: morph 2.4s var(--ease-in-out) infinite alternate;
+}
+
+.listening .halo {
+  opacity: calc(0.6 + var(--level) * 0.4);
+  transform: scale(calc(1 + var(--level) * 0.25));
+}
+
+.listening .swirl {
+  animation-duration: 4s;
+}
+
+.thinking .body {
+  animation: morph 3.2s var(--ease-in-out) infinite alternate;
+}
+
+.thinking .swirl {
+  animation-duration: 2.2s;
+}
+
+.thinking .halo {
+  animation: pulse 1.6s var(--ease-in-out) infinite;
+}
+
+.speaking .body {
+  animation: morph 5s var(--ease-in-out) infinite alternate, talk 0.9s var(--ease-in-out) infinite;
+}
+
+.done .halo {
+  opacity: 0.9;
+}
+
+@keyframes morph {
+  0% { border-radius: 48% 52% 55% 45% / 50% 46% 54% 50%; }
+  33% { border-radius: 55% 45% 48% 52% / 44% 55% 45% 56%; }
+  66% { border-radius: 44% 56% 52% 48% / 55% 48% 52% 45%; }
+  100% { border-radius: 52% 48% 45% 55% / 48% 52% 50% 50%; }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+
+@keyframes talk {
+  0%, 100% { transform: scale(1); }
+  30% { transform: scale(1.05); }
+  60% { transform: scale(0.98); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; transform: scale(0.96); }
+  50% { opacity: 0.85; transform: scale(1.12); }
+}

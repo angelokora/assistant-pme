@@ -121,7 +121,8 @@
   color: var(--color-action);
 }
 
-.composerSlot {
+.composerSlot,
+.composerDock {
   width: 100%;
   margin-top: var(--space-2);
 }
@@ -184,6 +185,23 @@
 
 @media (min-width: 640px) {
   .page {
+    min-height: 100dvh;
     padding-inline: var(--space-8);
+    padding-bottom: var(--space-4);
+  }
+
+  .composerDock {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    margin-top: auto;
+    padding: var(--space-3) 0 var(--space-4);
+    background: linear-gradient(to top, var(--color-bg) 70%, transparent);
+  }
+
+  .presence .composerDock {
+    position: static;
+    background: transparent;
+    padding: 0;
   }
 }

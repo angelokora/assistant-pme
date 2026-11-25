@@ -40,5 +40,9 @@
 }
 
 .mobile:not(.inNeed) .main {
-  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: var(--nav-offset, calc(72px + max(env(safe-area-inset-bottom, 0px), var(--safe-bottom, 0px))));
+}
+
+.mobile.menuB:not(.inNeed) .main {
+  padding-bottom: var(--nav-offset, calc(88px + max(env(safe-area-inset-bottom, 0px), var(--safe-bottom, 0px))));
 }

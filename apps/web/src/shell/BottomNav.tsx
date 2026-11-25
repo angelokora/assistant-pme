@@ -1,33 +1,41 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { Mic } from "lucide-react";
-import { spring } from "@elea/ds";
+import { Orb, spring } from "@elea/ds";
 import { DESTINATIONS, type DestinationId } from "./destinations";
 import styles from "./BottomNav.module.css";
 
 type Props = {
   active: DestinationId | null;
+  /** Accueil C : un seul point d'entrée voix (orbe du contenu). */
+  hideComposer?: boolean;
 };
 
 /** Barre basse mobile (variante A) : 4 destinations + composer au centre. */
-export function BottomNav({ active }: Props) {
+export function BottomNav({ active, hideComposer }: Props) {
   const navigate = useNavigate();
   const left = DESTINATIONS.slice(0, 2);
   const right = DESTINATIONS.slice(2);
 
   return (
-    <nav className={styles.bar} aria-label="Navigation principale">
+    <nav
+      className={[styles.bar, hideComposer && styles.barNoComposer].filter(Boolean).join(" ")}
+      aria-label="Navigation principale"
+    >
       {left.map((d) => (
         <NavItem key={d.id} to={d.path} label={d.label} icon={d.icon} active={active === d.id} />
       ))}
-      <button
-        type="button"
-        className={styles.composer}
-        aria-label="Demander à Éléa"
-        onClick={() => navigate("/", { state: { openComposer: true } })}
-      >
-        <Mic size={22} strokeWidth={1.75} />
-      </button>
+      {!hideComposer && (
+        <button
+          type="button"
+          className={styles.composer}
+          aria-label="Demander à Éléa"
+          onClick={() => navigate("/", { state: { openComposer: true } })}
+        >
+          <Orb size={56} state="idle" decorative className={styles.composerOrb} />
+          <Mic size={20} strokeWidth={1.75} className={styles.composerMic} aria-hidden />
+        </button>
+      )}
       {right.map((d) => (
         <NavItem key={d.id} to={d.path} label={d.label} icon={d.icon} active={active === d.id} />
       ))}

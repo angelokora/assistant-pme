@@ -182,6 +182,14 @@ Un **besoin en cours** s'ouvre par-dessus la navigation (feuille plein écran su
 | 640 à 1023 px (tablette) | Rail de navigation à gauche, contenu sur une colonne large, panneau de détail en feuille latérale |
 | ≥ 1024 px (ordinateur) | Trois colonnes : navigation et sujets, besoin ou écran principal, panneau de détail (finding, plan, document) |
 
+**Panneau de détail (colonne droite, ≥ 1024 px).** Quand un finding, un plan ou un élément d'attention est ouvert, la colonne affiche ce détail (fermable). Quand rien n'est ouvert, elle n'est pas un vide : elle montre un **contexte utile** lu dans la mémoire (plan actif et ses étapes, sources connectées). Si la mémoire n'a ni plan ni source (premier lancement), la colonne se replie et la colonne centrale s'élargit. Sur tablette, le détail reste une feuille latérale (ouverte seulement sur demande).
+
+**Porte d'entrée (composer).** Sur mobile, la barre basse (ou l'orbe du menu B) ouvre le composer. Sur tablette et ordinateur, le composer reste visible dans la colonne centrale (ancré en bas de l'accueil). Un seul point d'entrée voix à la fois : sur l'accueil variante C, le bouton micro de la barre basse est masqué.
+
+**Hauteur réservée à la navigation basse.** `--nav-offset` (hauteur de la barre ou de l'orbe + zone de sécurité) est appliqué en `padding-bottom` du contenu mobile hors besoin, pour qu'aucun texte ne passe sous le menu B.
+
+**Pastille de variantes (≥ 1024 px).** Sur les écrans qui en ont (accueil, retrouver), une pastille discrète en bas à droite permet de changer de variante sans ouvrir le panneau démo. Un réglage du panneau démo la masque pour les démonstrations.
+
 **Barre d'actions (`ActionDock`).** Sur mobile, quand l'`await` attend un événement de bloc (`choice`, `connector`, `upload`, `auth`, `form`, `plan`) et non une saisie libre, le composer cède la place à une barre collante qui affiche les actions du bloc actif (portail React depuis le bloc, sans duplication). Sur tablette et ordinateur, les actions restent dans le fil. Voir `DESIGN.md`, composant `ActionDock`.
 
 **Variables d'étape.** Une réponse peut enrichir le contexte du moteur (`provider`, `providerLabel`, `fileCount`, `fileCountLabel`…). Les jetons `{{nom}}` sont remplacés à la fois dans les **effets** et dans les **blocs** de l'étape suivante (titre, texte, consentement…). Ainsi un écran d'auth peut nommer le fournisseur choisi, et une extraction peut annoncer le bon nombre de documents déposés, sans texte codé en dur.

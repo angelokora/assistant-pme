@@ -1,7 +1,9 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
+import { ChevronUp } from "lucide-react";
 import { Orb, spring } from "@elea/ds";
+import { useDemo } from "../demo/demo";
 import { DESTINATIONS, type DestinationId } from "./destinations";
 import styles from "./RadialMenu.module.css";
 
@@ -15,11 +17,27 @@ const ANGLES = [-50, -18, 18, 50]; // degrés autour du bas
 export function RadialMenu({ active }: Props) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const hintSeen = useDemo((s) => s.radialHintSeen);
+  const setHintSeen = useDemo((s) => s.setRadialHintSeen);
+  const [showHint, setShowHint] = useState(!hintSeen);
   const holdTimer = useRef<number | null>(null);
   const startY = useRef(0);
 
+  useEffect(() => {
+    if (hintSeen) return;
+    const t = window.setTimeout(() => {
+      setShowHint(false);
+      setHintSeen(true);
+    }, 5200);
+    return () => window.clearTimeout(t);
+  }, [hintSeen, setHintSeen]);
+
   function openMenu() {
     setOpen(true);
+    if (!hintSeen) {
+      setShowHint(false);
+      setHintSeen(true);
+    }
   }
 
   function closeMenu() {
@@ -69,6 +87,21 @@ export function RadialMenu({ active }: Props) {
               </motion.button>
             );
           })}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showHint && !open && (
+          <motion.p
+            className={styles.hint}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 4 }}
+            transition={spring.gentle}
+          >
+            <ChevronUp size={14} strokeWidth={1.75} aria-hidden />
+            Glisser ou appuyer longuement
+          </motion.p>
+        )}
       </AnimatePresence>
 
       <button

@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { IconButton, Sheet } from "@elea/ds";
+import { IconButton, Sheet, formatDate } from "@elea/ds";
 import { useMediaQuery } from "../composer/useMediaQuery";
 import { useMemory } from "../memory/store";
 import { useDetail } from "./detailStore";
@@ -12,14 +12,20 @@ export function DetailPanel() {
   const finding = useMemory((s) => s.findings.find((f) => f.id === id));
   const plan = useMemory((s) => s.plans.find((p) => p.id === id));
   const attention = useMemory((s) => s.attention.find((a) => a.id === id));
+  const plans = useMemory((s) => s.plans);
+  const sources = useMemory((s) => s.sources);
   const open = kind !== null && id !== null;
+
+  const activePlan = plans.find((p) => p.status === "active") ?? plans.find((p) => p.status === "waiting");
+  const connected = sources.filter((s) => s.status === "connected");
+  const hasIdleContext = !!activePlan || connected.length > 0;
 
   const title =
     kind === "finding"
-      ? finding?.title ?? "Finding"
+      ? (finding?.title ?? "Finding")
       : kind === "plan"
-        ? plan?.title ?? "Plan"
-        : attention?.title ?? "Détail";
+        ? (plan?.title ?? "Plan")
+        : (attention?.title ?? "Détail");
 
   const body =
     kind === "finding" ? (
@@ -41,7 +47,46 @@ export function DetailPanel() {
     );
 
   if (desktop) {
-    if (!open) return <aside className={styles.empty} aria-hidden />;
+    if (!open && !hasIdleContext) {
+      return <aside className={styles.empty} aria-hidden />;
+    }
+    if (!open) {
+      return (
+        <aside className={styles.panel} aria-label="Contexte">
+          {activePlan && (
+            <section className={styles.stack}>
+              <p className={styles.eyebrow}>Plan en cours</p>
+              <h2 className={styles.title}>{activePlan.title}</h2>
+              <p className={styles.text}>{activePlan.goal}</p>
+              <ol className={styles.steps}>
+                {activePlan.steps.map((s) => (
+                  <li key={s.id} data-status={s.status}>
+                    <strong>{s.title}</strong>
+                    <span>
+                      {s.detail}
+                      {s.due ? ` · ${formatDate(s.due, "short")}` : ""}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
+          {connected.length > 0 && (
+            <section className={styles.stack}>
+              <p className={styles.eyebrow}>Sources</p>
+              <ul className={styles.sources}>
+                {connected.map((s) => (
+                  <li key={s.id}>
+                    <strong>{s.label}</strong>
+                    {s.detail && <span>{s.detail}</span>}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </aside>
+      );
+    }
     return (
       <aside className={styles.panel} aria-label="Détail">
         <header className={styles.head}>

@@ -24,6 +24,8 @@ export function DemoPanel() {
     setFindVariant,
     mailInterrupted,
     setMailInterrupted,
+    showVariantPill,
+    setShowVariantPill,
   } = useDemo();
   const reset = useMemory((s) => s.reset);
   const stop = usePlayer((s) => s.stop);
@@ -217,6 +219,14 @@ export function DemoPanel() {
               onChange={(e) => setMailInterrupted(e.target.checked)}
             />
             Connexion interrompue (simulée)
+          </label>
+          <label className={styles.toggle}>
+            <input
+              type="checkbox"
+              checked={showVariantPill}
+              onChange={(e) => setShowVariantPill(e.target.checked)}
+            />
+            Pastille de variantes
           </label>
         </motion.aside>
       )}

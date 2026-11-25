@@ -13,6 +13,10 @@ type DemoState = {
   findVariant: FindVariant;
   /** Simule une connexion mail interrompue (connecteur). */
   mailInterrupted: boolean;
+  /** Pastille de variantes (≥ 1024 px). Masquable pour les démos. */
+  showVariantPill: boolean;
+  /** Indice de découverte du menu radial déjà vu. */
+  radialHintSeen: boolean;
   toggle: () => void;
   setOpen: (v: boolean) => void;
   setAnimations: (v: boolean) => void;
@@ -20,6 +24,8 @@ type DemoState = {
   setMenuVariant: (v: MenuVariant) => void;
   setFindVariant: (v: FindVariant) => void;
   setMailInterrupted: (v: boolean) => void;
+  setShowVariantPill: (v: boolean) => void;
+  setRadialHintSeen: (v: boolean) => void;
 };
 
 export const useDemo = create<DemoState>()(
@@ -31,6 +37,8 @@ export const useDemo = create<DemoState>()(
       menuVariant: "a",
       findVariant: "a",
       mailInterrupted: false,
+      showVariantPill: true,
+      radialHintSeen: false,
       toggle: () => set((s) => ({ open: !s.open })),
       setOpen: (v) => set({ open: v }),
       setAnimations: (v) => set({ animations: v }),
@@ -38,6 +46,8 @@ export const useDemo = create<DemoState>()(
       setMenuVariant: (v) => set({ menuVariant: v }),
       setFindVariant: (v) => set({ findVariant: v }),
       setMailInterrupted: (v) => set({ mailInterrupted: v }),
+      setShowVariantPill: (v) => set({ showVariantPill: v }),
+      setRadialHintSeen: (v) => set({ radialHintSeen: v }),
     }),
     {
       name: "elea-demo",
@@ -47,6 +57,8 @@ export const useDemo = create<DemoState>()(
         menuVariant: s.menuVariant,
         findVariant: s.findVariant,
         mailInterrupted: s.mailInterrupted,
+        showVariantPill: s.showVariantPill,
+        radialHintSeen: s.radialHintSeen,
       }),
     },
   ),

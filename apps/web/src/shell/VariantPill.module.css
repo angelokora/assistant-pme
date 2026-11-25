@@ -1,0 +1,54 @@
+.pill {
+  position: fixed;
+  z-index: calc(var(--z-sticky) - 1);
+  right: var(--space-4);
+  bottom: var(--space-4);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: 6px 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-2), inset 0 0 0 1px var(--color-border);
+  font-size: var(--text-xs);
+}
+
+.segment {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.label {
+  padding-inline: 6px;
+  color: var(--color-text-muted);
+  font-weight: var(--weight-medium);
+}
+
+.opt {
+  min-width: 28px;
+  height: 28px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+}
+
+.opt:hover {
+  background: var(--color-bg-sunken);
+  color: var(--color-text);
+}
+
+.opt:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.optActive {
+  background: var(--color-action-soft);
+  color: var(--color-action-text);
+}

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "motion/react";
 import { ArrowRight, ChevronUp } from "lucide-react";
@@ -61,6 +61,7 @@ export function Home() {
   const clearComposerState = useCallback(() => setComposerHandled(true), []);
   const openComposer =
     !composerHandled && !!(location.state as { openComposer?: boolean } | null)?.openComposer;
+  const swipeStartY = useRef<number | null>(null);
 
   const empty = !account.created && findings.length === 0;
   const activePlan = useMemo(() => plans.find((p) => p.status === "active") ?? plans[0], [plans]);
@@ -124,7 +125,21 @@ export function Home() {
   if (variant === "c") {
     return (
       <motion.main className={styles.presence} variants={blockList} initial="hidden" animate="shown">
-        <motion.div variants={blockItem} className={styles.orb}>
+        <motion.div
+          variants={blockItem}
+          className={styles.orb}
+          style={{ touchAction: "none" }}
+          onPointerDown={(e) => {
+            swipeStartY.current = e.clientY;
+          }}
+          onPointerUp={(e) => {
+            if (swipeStartY.current !== null && swipeStartY.current - e.clientY > 48) setSheetOpen(true);
+            swipeStartY.current = null;
+          }}
+          onPointerCancel={() => {
+            swipeStartY.current = null;
+          }}
+        >
           <Orb size={96} state="idle" />
         </motion.div>
         <motion.p variants={blockItem} className="eyebrow">
@@ -134,7 +149,7 @@ export function Home() {
           <AnimatedMoneyText text={home?.summary ?? ""} />
         </motion.p>
         <motion.div variants={blockItem}>{suggestionChips}</motion.div>
-        <motion.div variants={blockItem} className={styles.composerSlot}>
+        <motion.div variants={blockItem} className={styles.composerDock}>
           {composer}
         </motion.div>
         <motion.button
@@ -209,7 +224,7 @@ export function Home() {
           })}
         </motion.section>
         <motion.div variants={blockItem}>{suggestionChips}</motion.div>
-        <motion.div variants={blockItem} className={styles.composerSlot}>
+        <motion.div variants={blockItem} className={styles.composerDock}>
           {composer}
         </motion.div>
       </motion.main>
@@ -257,7 +272,7 @@ export function Home() {
       </motion.section>
 
       <motion.div variants={blockItem}>{suggestionChips}</motion.div>
-      <motion.div variants={blockItem} className={styles.composerSlot}>
+      <motion.div variants={blockItem} className={styles.composerDock}>
         {composer}
       </motion.div>
     </motion.main>

@@ -38,10 +38,25 @@
   color: var(--color-text-muted);
   font-weight: var(--weight-medium);
   font-size: var(--text-sm);
+  text-decoration: none;
+}
+
+.item:hover {
+  color: var(--color-text);
+  background: var(--color-bg-sunken);
+}
+
+.item:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .itemActive {
   color: var(--color-action-text);
+}
+
+.itemActive:hover {
+  background: transparent;
 }
 
 .pip {
@@ -83,10 +98,16 @@
   border-radius: var(--radius-sm);
   font-size: var(--text-sm);
   color: var(--color-text);
+  text-decoration: none;
 }
 
 .topic:hover {
   background: var(--color-bg-sunken);
+}
+
+.topic:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .count {

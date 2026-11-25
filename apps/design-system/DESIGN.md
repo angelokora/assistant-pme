@@ -132,6 +132,8 @@ Chaque composant vit dans `src/ui/{Nom}/` avec `Nom.tsx`, `Nom.module.css` et un
 | `FindingCard` | Carte d'un finding (type, titre, sujet, date) | default, compact, expanded |
 | `ProviderLogo` | Gmail, Outlook, Drive, Google, Apple | |
 | `ActionDock` | Barre d'actions collante (mobile) | ouverte, fermée |
+| `DropZone` | Zone de dépôt de fichiers | idle, survol, disabled |
+| `FileTile` | Fichier déposé (miniature, progression) | en cours, fait, erreur |
 | `Skeleton` | Chargement | ligne, bloc |
 | `Toast` | Confirmation discrète | |
 

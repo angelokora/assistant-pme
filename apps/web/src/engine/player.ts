@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { OrbState } from "@elea/ds";
 import type { Await, Block, BlockResolution, Reply, Scenario, StepVars } from "./types";
+import { useUploadInbox } from "../blocks/uploadInbox";
 import { SCENARIOS } from "./scenarios";
 import { useGauges, useMemory } from "../memory/store";
 
@@ -129,6 +130,7 @@ export const usePlayer = create<PlayerState>((set, get) => {
       if (!scenario) return console.warn(`[engine] scénario inconnu : ${scenarioId}`);
       const token = ++runToken;
       useGauges.setState({ shown: {}, pulses: {} });
+      useUploadInbox.getState().clear();
       const utterance = opts?.withUtterance ?? scenario.userUtterance;
       set({
         scenario,
@@ -211,6 +213,7 @@ export const usePlayer = create<PlayerState>((set, get) => {
 
     stop: () => {
       runToken++;
+      useUploadInbox.getState().clear();
       set({ scenario: null, turns: [], awaiting: null, orb: "idle", done: false, currentStep: null, vars: {}, resolutions: {} });
     },
   };

@@ -253,6 +253,66 @@
   }
 }
 
+/* ---------- upload ---------- */
+.upload {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.uploadHeader {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.uploadHeader h2 {
+  font-size: var(--text-2xl);
+  text-wrap: balance;
+}
+
+.uploadWhy {
+  color: var(--color-text-muted);
+  max-width: 36em;
+}
+
+.uploadExamples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.uploadExamples li {
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-sunken);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-muted);
+}
+
+.uploadReject {
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+}
+
+.uploadActions {
+  display: grid;
+  gap: var(--space-2);
+}
+
+@media (min-width: 640px) {
+  .uploadActions {
+    padding-top: var(--space-1);
+    border-top: 1px solid var(--color-border);
+  }
+}
+
+@media (min-width: 768px) {
+  .uploadHeader h2 {
+    font-size: 2rem;
+  }
+}
+
 /* ---------- analysis ---------- */
 .analysis {
   display: grid;

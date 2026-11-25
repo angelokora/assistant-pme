@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Camera, FileText, Keyboard, Mic, SendHorizontal, X } from "lucide-react";
 import { ActionDock, Button, IconButton, Orb, TranscriptText, Waveform, spring } from "@elea/ds";
+import { pickFiles } from "../blocks/pickFiles";
+import { useUploadInbox } from "../blocks/uploadInbox";
 import { ACTION_AWAIT_KINDS, usePlayer } from "../engine/player";
 import type { QuestionBlock } from "../engine/types";
 import { useActionDockHost } from "./actionDockHost";
@@ -137,7 +139,7 @@ export function Composer() {
             <button className={styles.switch} onClick={() => setMode("text")}>
               Écrire plutôt
             </button>
-            {attachments.length > 0 && <Attachments />}
+            {attachments.length > 0 && <Attachments kinds={attachments} />}
           </motion.div>
         ) : mode === "listening" ? (
           <motion.div
@@ -160,7 +162,7 @@ export function Composer() {
               <X size={16} />
             </IconButton>
             <TranscriptText text={simulated} visibleWords={speech.visible} className={styles.transcript} />
-            {attachments.length > 0 && <Attachments />}
+            {attachments.length > 0 && <Attachments kinds={attachments} />}
           </motion.div>
         ) : (
           <motion.div key="text" layoutId="composer-shell" className={styles.textPanel} transition={spring.gentle}>
@@ -195,6 +197,7 @@ export function Composer() {
                 Envoyer
               </Button>
             </div>
+            {attachments.length > 0 && <Attachments kinds={attachments} />}
           </motion.div>
         )}
       </AnimatePresence>
@@ -202,15 +205,33 @@ export function Composer() {
   );
 }
 
-function Attachments() {
+function Attachments({ kinds }: { kinds: ("document" | "photo")[] }) {
+  const push = useUploadInbox((s) => s.push);
+  const awaiting = usePlayer((s) => s.awaiting);
+
+  async function pick(kind: "document" | "photo") {
+    const files = await pickFiles({
+      accept: kind === "photo" ? ["image"] : ["pdf", "image"],
+      multiple: true,
+      capture: kind === "photo",
+    });
+    if (!files.length) return;
+    // Même mécanisme que le bloc upload : boîte aux lettres lue par UploadBlock.
+    if (awaiting?.kind === "upload") push(files);
+  }
+
   return (
     <div className={styles.attachments}>
-      <button className={styles.attach}>
-        <FileText size={16} /> Ajouter un document
-      </button>
-      <button className={styles.attach}>
-        <Camera size={16} /> Prendre une photo
-      </button>
+      {kinds.includes("document") && (
+        <button type="button" className={styles.attach} onClick={() => void pick("document")}>
+          <FileText size={16} /> Ajouter un document
+        </button>
+      )}
+      {kinds.includes("photo") && (
+        <button type="button" className={styles.attach} onClick={() => void pick("photo")}>
+          <Camera size={16} /> Prendre une photo
+        </button>
+      )}
     </div>
   );
 }

@@ -12,6 +12,7 @@ import { ConnectorBlockView } from "./ConnectorBlock";
 import { AuthBlockView } from "./AuthBlock";
 import { AnalysisBlockView } from "./AnalysisBlock";
 import { ExtractionBlockView } from "./ExtractionBlock";
+import { UploadBlockView } from "./UploadBlock";
 import styles from "./blocks.module.css";
 
 /** Props communes à tous les rendus de bloc. `active` = le bloc appartient au tour en attente de réponse. */
@@ -29,6 +30,7 @@ const RENDERERS: Partial<Record<Block["type"], ComponentType<BlockProps<never>>>
   auth: AuthBlockView,
   analysis: AnalysisBlockView,
   extraction: ExtractionBlockView,
+  upload: UploadBlockView,
 };
 
 export function BlockRenderer({ block, active }: BlockProps) {

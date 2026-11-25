@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Briefcase, Mic, Target, User, Wallet } from "lucide-react";
 import {
-  ActionDock, Button, Callout, Chip, ConfidenceBadge, DimensionCard, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, StepList, TranscriptText, Waveform,
+  ActionDock, Button, Callout, Chip, ConfidenceBadge, DimensionCard, DropZone, FileTile, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, StepList, TranscriptText, Waveform,
   type OrbState, type ProviderId, type StepItem, type StepStatus,
 } from "../index";
 import styles from "./Showcase.module.css";
@@ -38,6 +38,8 @@ export function Showcase() {
   const [chip, setChip] = useState("a");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [stepDemo, setStepDemo] = useState(0);
+  const [dropFiles, setDropFiles] = useState<{ name: string; progress: number }[]>([]);
+  const [dropReject, setDropReject] = useState<string | null>(null);
 
   useEffect(() => {
     if (orb !== "listening") return;
@@ -193,6 +195,38 @@ export function Showcase() {
             J'ai compris
           </Button>
         </Sheet>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.h2}>Dépôt de fichiers</h2>
+        <div style={{ maxWidth: 420, display: "grid", gap: 12 }}>
+          <DropZone
+            label="Déposer des fichiers"
+            hint="PDF ou image. Glisser-déposer sur ordinateur."
+            accept={["pdf", "image"]}
+            onFiles={(files) => {
+              setDropReject(null);
+              setDropFiles((prev) => [
+                ...prev,
+                ...files.map((f) => ({ name: f.name, progress: 0 })),
+              ]);
+              files.forEach((_, i) => {
+                const idx = dropFiles.length + i;
+                let p = 0;
+                const id = window.setInterval(() => {
+                  p = Math.min(1, p + 0.2);
+                  setDropFiles((prev) => prev.map((f, j) => (j === idx ? { ...f, progress: p } : f)));
+                  if (p >= 1) window.clearInterval(id);
+                }, 120);
+              });
+            }}
+            onReject={(names) => setDropReject(`Format non accepté : ${names.join(", ")}`)}
+          />
+          {dropReject && <p style={{ color: "var(--color-danger)", fontSize: "var(--text-sm)" }}>{dropReject}</p>}
+          {dropFiles.map((f) => (
+            <FileTile key={f.name + f.progress} name={f.name} progress={f.progress} kind={f.name.endsWith(".pdf") ? "pdf" : "image"} />
+          ))}
+        </div>
       </section>
 
       <section className={styles.section}>

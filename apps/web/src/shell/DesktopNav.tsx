@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { motion } from "motion/react";
 import { spring } from "@elea/ds";
+import { EleaLogo } from "../demo/EleaLogo";
 import { useMemory } from "../memory/store";
 import { DESTINATIONS, type DestinationId } from "./destinations";
 import styles from "./DesktopNav.module.css";
@@ -16,7 +17,7 @@ export function DesktopNav({ active }: Props) {
 
   return (
     <aside className={styles.aside} aria-label="Navigation et sujets">
-      <p className={styles.brand}>Éléa</p>
+      <EleaLogo className={styles.brand} />
       <nav aria-label="Navigation principale">
         <ul className={styles.nav}>
           {DESTINATIONS.map((d) => {

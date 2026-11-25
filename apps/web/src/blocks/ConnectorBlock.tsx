@@ -1,6 +1,8 @@
-import { Button, Card, ProviderLogo, type ProviderId } from "@elea/ds";
+import { useState } from "react";
+import { Button, Callout, Card, ProviderLogo, type ProviderId } from "@elea/ds";
 import { Check, EyeOff, ShieldCheck } from "lucide-react";
 import type { ConnectorBlock } from "../engine/types";
+import { useDemo } from "../demo/demo";
 import { usePlayer } from "../engine/player";
 import { ActionSlot } from "./ActionSlot";
 import { BlockDone } from "./BlockDone";
@@ -18,10 +20,20 @@ export function ConnectorBlockView({ block, active }: BlockProps<ConnectorBlock>
   const reply = usePlayer((s) => s.reply);
   const awaiting = usePlayer((s) => s.awaiting);
   const resolution = usePlayer((s) => s.resolutions[block.id]);
+  const mailInterrupted = useDemo((s) => s.mailInterrupted);
+  const [interrupted, setInterrupted] = useState(false);
+  const [pendingProvider, setPendingProvider] = useState<"gmail" | "outlook" | "drive" | null>(null);
   const canAct = active && awaiting?.kind === "connector" && awaiting.blockId === block.id;
 
-  function connect(provider: "gmail" | "outlook" | "drive") {
+  function connect(provider: "gmail" | "outlook" | "drive", { force = false }: { force?: boolean } = {}) {
     if (!canAct) return;
+    if (mailInterrupted && !force) {
+      setPendingProvider(provider);
+      setInterrupted(true);
+      return;
+    }
+    setInterrupted(false);
+    setPendingProvider(null);
     const label = PROVIDER_LABEL[provider];
     reply({
       kind: "event",
@@ -85,26 +97,50 @@ export function ConnectorBlockView({ block, active }: BlockProps<ConnectorBlock>
         ))}
       </ul>
 
+      {interrupted && (
+        <Callout tone="warning" title="Connexion interrompue">
+          La connexion a été interrompue (simulation démo). Vous pouvez réessayer ou passer au dépôt de documents.
+        </Callout>
+      )}
+
       <ActionSlot active={canAct}>
         <div className={styles.connectorActions}>
-          <div className={styles.providers} role="group" aria-label="Choisir un compte">
-            {block.providers.map((provider) => (
+          {interrupted ? (
+            <>
               <Button
-                key={provider}
-                variant="secondary"
-                size="sm"
-                disabled={!canAct}
-                className={styles.providerBtn}
-                icon={<ProviderLogo provider={provider as ProviderId} size={18} labelled={false} />}
-                onClick={() => connect(provider)}
+                variant="primary"
+                full
+                disabled={!canAct || !pendingProvider}
+                onClick={() => pendingProvider && connect(pendingProvider, { force: true })}
               >
-                {PROVIDER_LABEL[provider]}
+                Réessayer
               </Button>
-            ))}
-          </div>
-          <Button variant="secondary" full disabled={!canAct} onClick={skip}>
-            {block.skipLabel}
-          </Button>
+              <Button variant="secondary" full disabled={!canAct} onClick={skip}>
+                Passer au dépôt
+              </Button>
+            </>
+          ) : (
+            <>
+              <div className={styles.providers} role="group" aria-label="Choisir un compte">
+                {block.providers.map((provider) => (
+                  <Button
+                    key={provider}
+                    variant="secondary"
+                    size="sm"
+                    disabled={!canAct}
+                    className={styles.providerBtn}
+                    icon={<ProviderLogo provider={provider as ProviderId} size={18} labelled={false} />}
+                    onClick={() => connect(provider)}
+                  >
+                    {PROVIDER_LABEL[provider]}
+                  </Button>
+                ))}
+              </div>
+              <Button variant="secondary" full disabled={!canAct} onClick={skip}>
+                {block.skipLabel}
+              </Button>
+            </>
+          )}
         </div>
       </ActionSlot>
     </section>

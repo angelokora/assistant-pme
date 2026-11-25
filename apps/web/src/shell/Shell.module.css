@@ -22,6 +22,14 @@
   min-height: 100dvh;
 }
 
+.mobileBrand {
+  padding: var(--space-3) var(--space-5) 0;
+  font-family: var(--font-voice);
+  font-variation-settings: var(--voice-variation);
+  font-weight: 600;
+  font-size: var(--text-xl);
+}
+
 /* Besoin en feuille plein écran sur mobile. */
 .needSheet {
   position: fixed;

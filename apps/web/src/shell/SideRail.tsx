@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { motion } from "motion/react";
 import { spring } from "@elea/ds";
+import { EleaLogo } from "../demo/EleaLogo";
 import { DESTINATIONS, type DestinationId } from "./destinations";
 import styles from "./SideRail.module.css";
 
@@ -12,7 +13,7 @@ type Props = {
 export function SideRail({ active }: Props) {
   return (
     <nav className={styles.rail} aria-label="Navigation principale">
-      <p className={styles.brand}>Éléa</p>
+      <EleaLogo className={styles.brand} />
       <ul className={styles.list}>
         {DESTINATIONS.map((d) => {
           const Icon = d.icon;

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { OrbState } from "@elea/ds";
-import type { Await, Block, BlockResolution, Reply, Scenario, StepVars } from "./types";
+import type { Await, Block, BlockResolution, Reply, Scenario, Step, StepVars } from "./types";
 import { choiceDoneSummary } from "../blocks/doneSummary";
 import { useUploadInbox } from "../blocks/uploadInbox";
 import { SCENARIOS } from "./scenarios";
@@ -32,6 +32,8 @@ type PlayerState = {
   vars: StepVars;
   resolutions: Record<string, BlockResolution>;
   start: (scenarioId: string, opts?: { withUtterance?: string }) => void;
+  /** Rejoue les effets du chemin principal jusqu'à `stepId`, puis affiche cette étape. */
+  jumpTo: (scenarioId: string, stepId: string) => void;
   reply: (reply: Reply) => void;
   stop: () => void;
 };
@@ -84,6 +86,58 @@ export function varsFromPlan(planId: string): StepVars {
 function enrichPlanVars(vars: StepVars): StepVars {
   if (!vars.planId) return vars;
   return { ...vars, ...varsFromPlan(vars.planId) };
+}
+
+/** Suit la route « principale » d'une étape (recommandée / première) pour le saut démo. */
+function mainPathNext(step: Step, vars: StepVars): { next?: string; vars: StepVars } {
+  const a = step.await;
+  if (!a) return { next: step.next, vars };
+  switch (a.kind) {
+    case "input":
+    case "form":
+    case "plan":
+      return { next: a.next, vars };
+    case "auth":
+      useMemory.getState().apply([{ kind: "account", method: "google" }]);
+      return { next: a.next, vars };
+    case "connector":
+      return {
+        next: a.onConnect,
+        vars: { ...vars, ...varsFromConnector("connect:gmail"), connectorBlockId: a.blockId },
+      };
+    case "upload":
+      return {
+        next: a.onUpload,
+        vars: { ...vars, provider: "document", providerLabel: "Documents" },
+      };
+    case "choice": {
+      const choice = step.blocks.find((b) => b.type === "choice" && b.id === a.blockId);
+      const preferred =
+        (choice && choice.type === "choice" && choice.options.find((o) => o.recommended)?.id) ||
+        Object.keys(a.routes)[0];
+      let nextVars = vars;
+      if (choice && choice.type === "choice" && choice.sideDetail === "plan") {
+        nextVars = enrichPlanVars({ ...vars, planId: preferred });
+      }
+      return { next: a.routes[preferred], vars: nextVars };
+    }
+  }
+}
+
+/** Applique les effets d'une étape sans l'afficher (saut démo). */
+function applyStepEffects(step: Step, vars: StepVars) {
+  if (!step.effects?.length) return;
+  const effects = interpolateVars(step.effects, enrichPlanVars(vars));
+  const gauges = useGauges.getState();
+  const dims = useMemory.getState().dimensions;
+  for (const e of effects) {
+    if (e.kind === "progress" && gauges.shown[e.dimensionId] === undefined) {
+      gauges.shown[e.dimensionId] = dims.find((d) => d.id === e.dimensionId)?.progress ?? 0;
+    }
+  }
+  useGauges.setState({ shown: { ...gauges.shown } });
+  useMemory.getState().apply(effects);
+  for (const e of effects) if (e.kind === "progress") useGauges.getState().sync(e.dimensionId);
 }
 
 export const usePlayer = create<PlayerState>((set, get) => {
@@ -166,6 +220,50 @@ export const usePlayer = create<PlayerState>((set, get) => {
         turns: utterance ? [{ id: "utterance", from: "user", text: utterance, mode: "text" }] : [],
       });
       void goTo(scenario.start, token);
+    },
+
+    jumpTo: (scenarioId, stepId) => {
+      const scenario = SCENARIOS[scenarioId];
+      if (!scenario) return console.warn(`[engine] scénario inconnu : ${scenarioId}`);
+      if (!scenario.steps[stepId]) return console.warn(`[engine] étape inconnue : ${stepId}`);
+
+      const token = ++runToken;
+      useGauges.setState({ shown: {}, pulses: {} });
+      useUploadInbox.getState().clear();
+
+      let cursor: string | undefined = scenario.start;
+      let vars: StepVars = {};
+      const seen = new Set<string>();
+      while (cursor && cursor !== stepId) {
+        if (seen.has(cursor)) {
+          console.warn(`[engine] boucle sur le chemin principal avant ${stepId}`);
+          break;
+        }
+        seen.add(cursor);
+        const step: Step | undefined = scenario.steps[cursor];
+        if (!step) break;
+        // Auth déjà satisfaite : même règle que goTo.
+        if (step.await?.kind === "auth" && useMemory.getState().account.created) {
+          cursor = step.await.next;
+          continue;
+        }
+        applyStepEffects(step, vars);
+        const progressed = mainPathNext(step, vars);
+        vars = progressed.vars;
+        cursor = progressed.next;
+      }
+
+      const utterance = scenario.userUtterance;
+      set({
+        scenario,
+        done: false,
+        awaiting: null,
+        vars,
+        resolutions: {},
+        turns: utterance ? [{ id: "utterance", from: "user", text: utterance, mode: "text" }] : [],
+        currentStep: stepId,
+      });
+      void goTo(stepId, token);
     },
 
     reply: (reply) => {

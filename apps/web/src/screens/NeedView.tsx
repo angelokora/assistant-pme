@@ -10,6 +10,7 @@ import { BlockRenderer } from "../blocks/BlockRenderer";
 import { DimensionGrid } from "../blocks/DimensionsBlock";
 import { useStrip } from "../blocks/strip";
 import { Composer } from "../composer/Composer";
+import { EleaLogo } from "../demo/EleaLogo";
 import styles from "./NeedView.module.css";
 
 /** Un besoin en cours : le fil des tours d'Éléa et des réponses, et le composer. Aucun contenu en dur. */
@@ -148,7 +149,7 @@ export function NeedView() {
   return (
     <div className={styles.page}>
       <header ref={headerRef} className={styles.top}>
-        <span className={styles.brand}>Éléa</span>
+        <EleaLogo className={styles.brand} />
         <span className={styles.title}>{scenario?.title ?? SCENARIOS[scenarioId]?.title}</span>
         <IconButton label="Fermer ce besoin" variant="soft" size="sm" onClick={() => (stop(), navigate("/"))}>
           <X size={18} />

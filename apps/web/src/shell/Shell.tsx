@@ -1,5 +1,6 @@
 import { Outlet, useLocation, useSearchParams } from "react-router-dom";
 import { useMediaQuery } from "../composer/useMediaQuery";
+import { EleaLogo } from "../demo/EleaLogo";
 import { useDemo } from "../demo/demo";
 import { BottomNav } from "./BottomNav";
 import { DesktopNav } from "./DesktopNav";
@@ -39,6 +40,11 @@ export function Shell() {
       {desktop && <DesktopNav active={active} />}
 
       <div className={[styles.main, inNeed && mobile && styles.needSheet].filter(Boolean).join(" ")}>
+        {mobile && !inNeed && (
+          <header className={styles.mobileBrand}>
+            <EleaLogo />
+          </header>
+        )}
         <Outlet />
       </div>
 

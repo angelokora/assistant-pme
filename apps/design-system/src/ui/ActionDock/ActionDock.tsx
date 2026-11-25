@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 import { motion, type HTMLMotionProps } from "motion/react";
 import { spring } from "../../motion/springs";
 import styles from "./ActionDock.module.css";
@@ -11,9 +11,13 @@ type Props = Omit<HTMLMotionProps<"div">, "children"> & {
  * Barre d'actions collante (mobile) : surface et entrée animée, sans logique métier.
  * Voir DESIGN.md, composant ActionDock.
  */
-export function ActionDock({ children, className, ...rest }: Props) {
+export const ActionDock = forwardRef<HTMLDivElement, Props>(function ActionDock(
+  { children, className, ...rest },
+  ref,
+) {
   return (
     <motion.div
+      ref={ref}
       className={[styles.dock, className].filter(Boolean).join(" ")}
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
@@ -24,4 +28,4 @@ export function ActionDock({ children, className, ...rest }: Props) {
       {children}
     </motion.div>
   );
-}
+});

@@ -27,7 +27,7 @@ export function ConnectorBlockView({ block, active }: BlockProps<ConnectorBlock>
       kind: "event",
       blockId: block.id,
       value: `connect:${provider}`,
-      doneLabel: `${label} connecté`,
+      doneLabel: `${label} choisi`,
     });
   }
 

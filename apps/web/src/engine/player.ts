@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { OrbState } from "@elea/ds";
-import type { Await, Block, BlockResolution, Effect, Reply, Scenario, StepVars } from "./types";
+import type { Await, Block, BlockResolution, Reply, Scenario, StepVars } from "./types";
 import { SCENARIOS } from "./scenarios";
 import { useGauges, useMemory } from "../memory/store";
 
@@ -47,10 +47,10 @@ function readingTime(blocks: Block[]) {
   return 900 + blocks.length * 350 + (hasNoted ? 1600 : 0);
 }
 
-/** Remplace les jetons `{{nom}}` dans les chaînes d'un effet. */
-export function interpolateEffects(effects: Effect[], vars: StepVars): Effect[] {
-  if (!Object.keys(vars).length) return effects;
-  return effects.map((e) => JSON.parse(interpolateString(JSON.stringify(e), vars)) as Effect);
+/** Remplace les jetons `{{nom}}` dans n'importe quelle structure JSON (effets, blocs…). */
+export function interpolateVars<T>(value: T, vars: StepVars): T {
+  if (!Object.keys(vars).length) return value;
+  return JSON.parse(interpolateString(JSON.stringify(value), vars)) as T;
 }
 
 function interpolateString(input: string, vars: StepVars) {
@@ -77,8 +77,9 @@ export const usePlayer = create<PlayerState>((set, get) => {
     await sleep(step.delayMs ?? DEFAULT_DELAY);
     if (token !== runToken) return;
 
+    const vars = get().vars;
     if (step.effects?.length) {
-      const effects = interpolateEffects(step.effects, get().vars);
+      const effects = interpolateVars(step.effects, vars);
       const gauges = useGauges.getState();
       const dims = useMemory.getState().dimensions;
       for (const e of effects) {
@@ -91,7 +92,8 @@ export const usePlayer = create<PlayerState>((set, get) => {
       for (const e of effects) if (e.kind === "progress") setTimeout(() => useGauges.getState().sync(e.dimensionId), 2600);
     }
 
-    set((s) => ({ orb: "speaking", turns: [...s.turns, { id: `${stepId}-${s.turns.length}`, from: "elea", stepId, blocks: step.blocks }] }));
+    const blocks = interpolateVars(step.blocks, vars);
+    set((s) => ({ orb: "speaking", turns: [...s.turns, { id: `${stepId}-${s.turns.length}`, from: "elea", stepId, blocks }] }));
     await sleep(step.blocks.length * STAGGER + 450);
     if (token !== runToken) return;
 
@@ -161,7 +163,9 @@ export const usePlayer = create<PlayerState>((set, get) => {
             break;
           case "connector":
             next = value === "skip" ? awaiting.onSkip : awaiting.onConnect;
-            if (value.startsWith("connect:")) nextVars = { ...nextVars, ...varsFromConnector(value) };
+            if (value.startsWith("connect:")) {
+              nextVars = { ...nextVars, ...varsFromConnector(value), connectorBlockId: reply.kind === "event" ? reply.blockId : awaiting.blockId };
+            }
             break;
           case "upload":
             next = value === "skip" ? awaiting.onSkip : awaiting.onUpload;
@@ -185,11 +189,22 @@ export const usePlayer = create<PlayerState>((set, get) => {
         }
       }
       if (!next) return console.warn("[engine] aucune route pour cette réponse", reply, awaiting);
+
+      // Après auth : le connecteur passe de « choisi » à « connecté ».
+      let resolutions = get().resolutions;
+      if (resolution) resolutions = { ...resolutions, [resolution.blockId]: { summary: resolution.summary } };
+      if (awaiting.kind === "auth" && nextVars.connectorBlockId && nextVars.providerLabel) {
+        resolutions = {
+          ...resolutions,
+          [nextVars.connectorBlockId]: { summary: `${nextVars.providerLabel} connecté` },
+        };
+      }
+
       set((s) => ({
         awaiting: null,
         vars: nextVars,
         turns: echo ? [...s.turns, echo] : s.turns,
-        resolutions: resolution ? { ...s.resolutions, [resolution.blockId]: { summary: resolution.summary } } : s.resolutions,
+        resolutions,
       }));
       void goTo(next, token);
     },

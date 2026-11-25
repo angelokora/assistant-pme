@@ -176,7 +176,7 @@ Un **besoin en cours** s'ouvre par-dessus la navigation (feuille plein écran su
 
 **Barre d'actions (`ActionDock`).** Sur mobile, quand l'`await` attend un événement de bloc (`choice`, `connector`, `upload`, `auth`, `form`, `plan`) et non une saisie libre, le composer cède la place à une barre collante qui affiche les actions du bloc actif (portail React depuis le bloc, sans duplication). Sur tablette et ordinateur, les actions restent dans le fil. Voir `DESIGN.md`, composant `ActionDock`.
 
-**Variables d'étape.** Une réponse peut enrichir le contexte du moteur (`provider`, `providerLabel`…). Les effets de l'étape suivante peuvent utiliser des jetons `{{nom}}` dans leurs chaînes ; le moteur les remplace avant d'appliquer l'effet.
+**Variables d'étape.** Une réponse peut enrichir le contexte du moteur (`provider`, `providerLabel`…). Les jetons `{{nom}}` sont remplacés à la fois dans les **effets** et dans les **blocs** de l'étape suivante (titre, texte, consentement…). Ainsi un écran d'auth peut nommer le fournisseur choisi sans texte codé en dur.
 
 Routes (`react-router`) : `/`, `/entreprise`, `/entreprise/:topicId`, `/plans`, `/plans/:planId`, `/recherche`, `/besoin/:scenarioId`, `/finding/:findingId`. Le paramètre `?v=a|b|c` choisit la variante des écrans qui en ont.
 

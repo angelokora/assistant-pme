@@ -131,16 +131,16 @@
         {
           "id": "acc-c-auth",
           "type": "auth",
-          "eyebrow": "Avant de connecter vos mails",
+          "eyebrow": "Avant de connecter {{providerLabel}}",
           "title": "Créons votre espace, Sophie.",
-          "text": "Pour me connecter à vos mails en toute sécurité, j'ai besoin d'un compte à votre nom.",
+          "text": "Pour me connecter à {{providerLabel}} en toute sécurité, j'ai besoin d'un compte à votre nom.",
           "keeps": [
             "Ce que vous m'avez déjà dit",
             "L'accès à vos factures, en lecture seule"
           ],
           "consent": {
             "title": "Autoriser la lecture",
-            "text": "Éléa demande l'accès en lecture seule à votre boîte mail pour retrouver vos factures.",
+            "text": "Éléa demande l'accès en lecture seule à {{providerLabel}} pour retrouver vos factures.",
             "items": [
               "Lecture des messages contenant une facture ou un relevé",
               "Aucune modification, aucun envoi",

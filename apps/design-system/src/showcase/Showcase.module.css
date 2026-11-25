@@ -11,3 +11,13 @@
 .ratio { font-size: var(--text-xs); font-weight: 600; }
 .orbs { display: flex; align-items: center; gap: var(--space-8); padding: var(--space-6) 0; }
 .dims { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-3); max-width: 760px; }
+.provider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 72px;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  text-transform: capitalize;
+}

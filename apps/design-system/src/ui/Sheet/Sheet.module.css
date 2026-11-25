@@ -1,0 +1,87 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-sheet);
+  pointer-events: none;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: rgb(1 22 39 / 0.36);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.panel {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-3);
+  pointer-events: auto;
+  outline: none;
+  max-height: min(92vh, 900px);
+}
+
+/* Mobile / tablette : feuille du bas */
+.root[data-mode="bottom"] .panel {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+/* Ordinateur : panneau latéral */
+.root[data-mode="side"] .panel {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(var(--sheet-w, 400px), 100vw);
+  max-height: none;
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+}
+
+.handleZone {
+  display: grid;
+  place-items: center;
+  padding: var(--space-3) 0 var(--space-1);
+  cursor: grab;
+  touch-action: none;
+}
+
+.handleZone:active {
+  cursor: grabbing;
+}
+
+.handle {
+  width: 40px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-border-strong);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-5) var(--space-3);
+  min-height: var(--tap-min);
+}
+
+.title {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-tight);
+}
+
+.body {
+  padding: 0 var(--space-5) var(--space-6);
+  overflow: auto;
+  flex: 1;
+  overscroll-behavior: contain;
+}

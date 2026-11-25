@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Briefcase, Mic, Target, User, Wallet } from "lucide-react";
 import {
-  Button, Callout, Chip, ConfidenceBadge, DimensionCard, Gauge, IconButton, NotedTag, Orb, TranscriptText, Waveform,
-  type OrbState,
+  Button, Callout, Chip, ConfidenceBadge, DimensionCard, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, StepList, TranscriptText, Waveform,
+  type OrbState, type ProviderId, type StepItem, type StepStatus,
 } from "../index";
 import styles from "./Showcase.module.css";
 
@@ -36,6 +36,8 @@ export function Showcase() {
   const [pulse, setPulse] = useState(0);
   const [words, setWords] = useState(0);
   const [chip, setChip] = useState("a");
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [stepDemo, setStepDemo] = useState(0);
 
   useEffect(() => {
     if (orb !== "listening") return;
@@ -152,6 +154,60 @@ export function Showcase() {
         <h2 className={styles.h2}>Transcription</h2>
         <div style={{ maxWidth: 520 }}><TranscriptText text={SAMPLE} visibleWords={words} /></div>
       </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.h2}>Étapes (StepList)</h2>
+        <div className={styles.row}>
+          <Button variant="secondary" size="sm" onClick={() => setStepDemo((n) => (n + 1) % 4)}>
+            Avancer ({stepDemo}/3)
+          </Button>
+        </div>
+        <div style={{ maxWidth: 420 }}>
+          <StepList title="J'analyse ce que vous m'avez dit" steps={demoSteps(stepDemo)} />
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.h2}>Logos fournisseurs</h2>
+        <div className={styles.row}>
+          {(["gmail", "outlook", "drive", "google", "apple"] as ProviderId[]).map((p) => (
+            <div key={p} className={styles.provider}>
+              <ProviderLogo provider={p} size={32} />
+              <span>{p}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.h2}>Feuille (Sheet)</h2>
+        <div className={styles.row}>
+          <Button onClick={() => setSheetOpen(true)}>Ouvrir la feuille</Button>
+          <span className="muted">Bas sur mobile, panneau latéral à partir de 1024 px. Glisser pour fermer.</span>
+        </div>
+        <Sheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="Connexion sécurisée">
+          <p style={{ marginBottom: 16 }}>
+            Lecture seule : Éléa n'envoie et ne supprime rien. Vous pouvez couper l'accès à tout moment.
+          </p>
+          <Button full onClick={() => setSheetOpen(false)}>
+            J'ai compris
+          </Button>
+        </Sheet>
+      </section>
     </div>
   );
+}
+
+function demoSteps(activeIndex: number): StepItem[] {
+  const labels = [
+    "Je repère les factures des trois derniers mois…",
+    "Je lis les montants et les échéances…",
+    "Je classe vos charges par nature…",
+  ];
+  return labels.map((label, i) => {
+    let status: StepStatus = "pending";
+    if (i < activeIndex) status = "done";
+    else if (i === activeIndex) status = "active";
+    return { id: `s-${i}`, label, status };
+  });
 }

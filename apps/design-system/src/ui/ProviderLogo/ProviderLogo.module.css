@@ -1,0 +1,31 @@
+.logo {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  border-radius: var(--radius-sm);
+}
+
+.logo svg {
+  display: block;
+}
+
+/* Couleurs tirées de la palette Éléa : la forme fait la reconnaissance, pas la marque. */
+.gmail {
+  color: var(--color-presence);
+}
+
+.outlook {
+  color: var(--color-action);
+}
+
+.drive {
+  color: var(--color-action-text);
+}
+
+.google {
+  color: var(--color-action);
+}
+
+.apple {
+  color: var(--color-text);
+}

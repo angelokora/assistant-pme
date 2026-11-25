@@ -9,5 +9,8 @@ export { ConfidenceBadge, type Confidence } from "./ui/ConfidenceBadge/Confidenc
 export { TranscriptText } from "./ui/TranscriptText/TranscriptText";
 export { Waveform } from "./ui/Waveform/Waveform";
 export { Callout } from "./ui/Callout/Callout";
+export { StepList, type StepItem, type StepStatus } from "./ui/StepList/StepList";
+export { ProviderLogo, type ProviderId } from "./ui/ProviderLogo/ProviderLogo";
+export { Sheet } from "./ui/Sheet/Sheet";
 export { spring, blockList, blockItem, press } from "./motion/springs";
 export { formatEuro, formatDate } from "./format";

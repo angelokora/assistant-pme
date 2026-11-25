@@ -807,6 +807,7 @@
           "title": "J'ai repéré deux priorités",
           "subtitle": "Laquelle voulez-vous traiter en premier ?",
           "eyebrow": "Analyse terminée",
+          "doneLabel": "Priorité retenue",
           "options": [
             {
               "id": "breakeven",
@@ -955,6 +956,7 @@
           "id": "pb-choice",
           "type": "choice",
           "title": "Choisissez votre plan",
+          "doneLabel": "Plan retenu",
           "options": [
             {
               "id": "p-breakeven",
@@ -1033,7 +1035,8 @@
           "type": "plan",
           "planId": "{{planId}}",
           "mode": "preview",
-          "startLabel": "Mettre en place ce plan"
+          "startLabel": "Mettre en place ce plan",
+          "doneLabel": "Plan mis en place"
         }
       ],
       "await": {
@@ -1081,7 +1084,8 @@
           "type": "plan",
           "planId": "{{planId}}",
           "mode": "editable",
-          "startLabel": "Démarrer le plan"
+          "startLabel": "Démarrer le plan",
+          "doneLabel": "Plan démarré"
         }
       ],
       "await": {

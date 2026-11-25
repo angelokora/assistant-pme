@@ -104,7 +104,7 @@ Règles du moteur :
 - **Préférence de saisie du composer** : à chaque nouvelle question d'un besoin, le composer revient en mode voix, sauf si l'utilisateur a choisi le texte dans ce besoin (il reste alors en texte jusqu'à ce qu'il repasse en voix ou que le besoin se termine).
 - **Choix avec `allowFreeInput`** : le composer reste disponible (hint + voix/texte) ; le bouton de confirmation reste dans le bloc (pas d'ActionDock) pour ne pas masquer la saisie libre.
 - **Analyse → résultat** : l'orbe 96 px passe en état `done` (coche) ; le bloc suivant peut reprendre la présence via `layoutId: "elea-presence"` et un `eyebrow`.
-- **Échos dans le fil** : une saisie libre et une réponse rapide s'affichent comme une parole de l'utilisateur. Un événement de bloc (`connector`, `auth`, `upload`, `plan`) ne crée pas d'écho « Vous : … » ; le bloc passe en état « fait » compact. Un `choice` peut garder un écho, sous la forme de l'option retenue.
+- **Échos dans le fil** : une saisie libre et une réponse rapide s'affichent comme une parole de l'utilisateur. Un événement de bloc (`choice`, `connector`, `auth`, `upload`, `plan`) ne crée pas d'écho « Vous : … » pour la décision : le bloc se réduit en résumé compact (docs/BLOCKS.md §7). Une saisie libre sous un `choice` peut garder un écho des mots de l'utilisateur, en plus du résumé.
 - **Délais** : chaque étape d'Éléa attend `delayMs` (défaut 600 ms) avec l'orbe en état « réfléchit », puis les blocs entrent en cascade.
 - **Effets idempotents** : rejouer une étape ne duplique rien (identifiants stables).
 - **Reset** : le panneau démo remet la mémoire à son état initial et relance le scénario.

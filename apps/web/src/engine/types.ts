@@ -36,8 +36,16 @@ export type ChoiceBlock = Base<"choice"> & {
   freeInputHint?: string;
   freeSimulated?: string;
   sideDetail?: "plan";
+  /** Préfixe du résumé une fois terminé (ex. « Priorité retenue », « Plan retenu »). */
+  doneLabel?: string;
 };
-export type PlanBlock = Base<"plan"> & { planId: string; mode: "preview" | "editable" | "live"; startLabel?: string };
+export type PlanBlock = Base<"plan"> & {
+  planId: string;
+  mode: "preview" | "editable" | "live";
+  startLabel?: string;
+  /** Préfixe ou libellé du résumé une fois terminé (ex. « Plan démarré », « Plan mis en place »). */
+  doneLabel?: string;
+};
 export type FormBlock = Base<"form"> & {
   title?: string;
   fields: {

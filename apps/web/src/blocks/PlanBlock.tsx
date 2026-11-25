@@ -2,22 +2,24 @@ import { useState } from "react";
 import { AnimatePresence, Reorder, motion, useDragControls } from "motion/react";
 import { Check, GripVertical } from "lucide-react";
 import { Button, DateField, StepList, formatDate, spring } from "@elea/ds";
-import type { PlanBlock, PlanStep } from "../engine/types";
+import type { PlanBlock as PlanBlockType, PlanStep } from "../engine/types";
 import { usePlayer } from "../engine/player";
 import { useMemory } from "../memory/store";
 import { ActionSlot } from "./ActionSlot";
 import { BlockDone } from "./BlockDone";
+import { planDoneSummary } from "./doneSummary";
 import type { BlockProps } from "./BlockRenderer";
 import styles from "./blocks.module.css";
 
 /** Plan d'action : aperçu (#17), édition (#18), suivi (#27). */
-export function PlanBlockView({ block, active }: BlockProps<PlanBlock>) {
+export function PlanBlockView({ block, active }: BlockProps<PlanBlockType>) {
   const reply = usePlayer((s) => s.reply);
   const awaiting = usePlayer((s) => s.awaiting);
   const resolution = usePlayer((s) => s.resolutions[block.id]);
   const plan = useMemory((s) => s.plans.find((p) => p.id === block.planId));
   const patchPlanSteps = useMemory((s) => s.patchPlanSteps);
   const [celebrating, setCelebrating] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
   const canAct =
     active &&
     !celebrating &&
@@ -26,6 +28,7 @@ export function PlanBlockView({ block, active }: BlockProps<PlanBlock>) {
 
   function start() {
     if (!canAct) return;
+    const summary = planDoneSummary(block, plan);
     if (block.mode === "editable") {
       setCelebrating(true);
       window.setTimeout(() => {
@@ -33,7 +36,7 @@ export function PlanBlockView({ block, active }: BlockProps<PlanBlock>) {
           kind: "event",
           blockId: block.id,
           value: "start",
-          doneLabel: block.startLabel ?? "Plan démarré",
+          doneLabel: summary,
         });
       }, 900);
       return;
@@ -42,15 +45,51 @@ export function PlanBlockView({ block, active }: BlockProps<PlanBlock>) {
       kind: "event",
       blockId: block.id,
       value: "start",
-      doneLabel: block.startLabel ?? "Plan mis en place",
+      doneLabel: summary,
     });
   }
 
   if (resolution) {
+    const showLink = block.mode === "editable" && !!plan;
     return (
-      <section className={styles.plan}>
-        <BlockDone summary={resolution.summary} />
-      </section>
+      <motion.section className={styles.plan} layout transition={spring.gentle}>
+        <BlockDone
+          summary={resolution.summary}
+          action={
+            showLink
+              ? {
+                  label: detailOpen ? "Masquer le plan" : "Voir le plan",
+                  onClick: () => setDetailOpen((o) => !o),
+                }
+              : undefined
+          }
+        />
+        <AnimatePresence>
+          {detailOpen && plan && (
+            <motion.div
+              key="plan-detail"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={spring.gentle}
+            >
+              <header className={styles.planHeader}>
+                <h2 className="voice">{plan.title}</h2>
+                <p className={styles.planGoal}>{plan.goal}</p>
+              </header>
+              <StepList
+                steps={plan.steps.map((s) => ({
+                  id: s.id,
+                  label: s.title,
+                  detail: s.detail,
+                  due: formatDate(s.due, "weekday"),
+                  status: "pending" as const,
+                }))}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.section>
     );
   }
 
@@ -74,7 +113,7 @@ export function PlanBlockView({ block, active }: BlockProps<PlanBlock>) {
 
   if (block.mode === "editable") {
     return (
-      <section className={styles.plan}>
+      <motion.section className={styles.plan} layout transition={spring.gentle}>
         <AnimatePresence>
           {celebrating && (
             <motion.div
@@ -138,13 +177,12 @@ export function PlanBlockView({ block, active }: BlockProps<PlanBlock>) {
             </Button>
           </div>
         </ActionSlot>
-      </section>
+      </motion.section>
     );
   }
 
-  // preview
   return (
-    <section className={styles.plan}>
+    <motion.section className={styles.plan} layout transition={spring.gentle}>
       <header className={styles.planHeader}>
         <p className={styles.planEyebrow}>Votre plan</p>
         <h2 className="voice">{plan.title}</h2>
@@ -166,7 +204,7 @@ export function PlanBlockView({ block, active }: BlockProps<PlanBlock>) {
           </Button>
         </div>
       </ActionSlot>
-    </section>
+    </motion.section>
   );
 }
 
@@ -185,13 +223,7 @@ function EditableStep({
 }) {
   const controls = useDragControls();
   return (
-    <Reorder.Item
-      value={step}
-      dragListener={false}
-      dragControls={controls}
-      className={styles.planStep}
-      as="li"
-    >
+    <Reorder.Item value={step} dragListener={false} dragControls={controls} className={styles.planStep} as="li">
       <button
         type="button"
         className={styles.planHandle}

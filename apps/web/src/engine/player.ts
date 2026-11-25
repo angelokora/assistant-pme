@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { OrbState } from "@elea/ds";
 import type { Await, Block, BlockResolution, Reply, Scenario, StepVars } from "./types";
+import { choiceDoneSummary } from "../blocks/doneSummary";
 import { useUploadInbox } from "../blocks/uploadInbox";
 import { SCENARIOS } from "./scenarios";
 import { useGauges, useMemory } from "../memory/store";
@@ -19,7 +20,7 @@ export type Turn =
 export const ACTION_AWAIT_KINDS = new Set<Await["kind"]>(["choice", "connector", "upload", "auth", "form", "plan"]);
 
 /** Événements de bloc : pas d'écho « Vous : … », état fait sur le bloc. */
-const SILENT_EVENT_KINDS = new Set<Await["kind"]>(["connector", "auth", "upload", "plan"]);
+const SILENT_EVENT_KINDS = new Set<Await["kind"]>(["choice", "connector", "auth", "upload", "plan"]);
 
 type PlayerState = {
   scenario: Scenario | null;
@@ -194,8 +195,15 @@ export const usePlayer = create<PlayerState>((set, get) => {
           (choiceBlock && choiceBlock.type === "choice" && choiceBlock.options.find((o) => o.recommended)?.id) ||
           Object.keys(awaiting.routes)[0];
         next = awaiting.routes[preferred];
-        if (choiceBlock && choiceBlock.type === "choice" && choiceBlock.sideDetail === "plan") {
-          nextVars = enrichPlanVars({ ...nextVars, planId: preferred });
+        if (choiceBlock && choiceBlock.type === "choice") {
+          if (choiceBlock.sideDetail === "plan") {
+            nextVars = enrichPlanVars({ ...nextVars, planId: preferred });
+          }
+          // Résumé compact sur le bloc ; l'écho garde les mots libres de l'utilisateur (pas le titre d'option).
+          resolution = {
+            blockId: awaiting.blockId,
+            summary: choiceDoneSummary(choiceBlock, preferred, useMemory.getState().plans),
+          };
         }
         echo = { id: `u-${Date.now()}`, from: "user", text: reply.text, mode: reply.mode };
       } else if (reply.kind === "event" || reply.kind === "quick") {

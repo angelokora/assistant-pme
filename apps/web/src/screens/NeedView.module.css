@@ -20,12 +20,22 @@
 .flow {
   max-width: var(--content-max);
   margin: 0 auto;
-  padding: var(--space-6) var(--space-5) calc(var(--composer-offset, 120px) + var(--space-6));
+  /*
+   * Padding bas : assez grand pour amener le début d'un tour sous l'en-tête
+   * (même si le tour est court et que l'ActionDock mange le bas),
+   * tout en dégageant le composer / dock.
+   */
+  padding: var(--space-6) var(--space-5)
+    max(
+      calc(var(--composer-offset, 120px) + var(--space-6)),
+      var(--need-scroll-pad, 80vh)
+    );
   display: grid;
   gap: var(--space-8);
 }
 .turn, .user {
-  scroll-margin-top: 88px;
+  /* --need-header-offset : hauteur réelle en-tête + bandeau (NeedView). */
+  scroll-margin-top: var(--need-header-offset, 88px);
   scroll-margin-bottom: calc(var(--composer-offset, 120px) + var(--space-4));
 }
 .turn { display: grid; gap: var(--space-4); transition: opacity var(--dur-slow) var(--ease-out); }

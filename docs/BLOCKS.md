@@ -93,7 +93,7 @@ type AnalysisBlock = BaseBlock & {
 ## 3. Décision et action
 
 ### `choice` : choisir parmi des options
-Options en cartes (`ChoiceCard`), une seule sélectionnable, une recommandée (badge). L'option recommandée est présélectionnée. Bouton de confirmation (ActionDock sur mobile, sauf si `allowFreeInput` : le bouton reste dans le bloc pour laisser le composer accessible). L'écho dans le fil reprend le **titre de l'option**, pas le libellé du bouton.
+Options en cartes (`ChoiceCard`), une seule sélectionnable, une recommandée (badge). L'option recommandée est présélectionnée. Bouton de confirmation (ActionDock sur mobile, sauf si `allowFreeInput` : le bouton reste dans le bloc pour laisser le composer accessible). Une fois terminé, le bloc se réduit en un **résumé de décision** (voir section 7) : pas d'écho « Vous : … » pour la même option.
 ```ts
 type ChoiceBlock = BaseBlock & {
   type: "choice";
@@ -120,6 +120,8 @@ type ChoiceBlock = BaseBlock & {
    * Mobile / tablette : enchaînement normal (confirmation puis étape suivante).
    */
   sideDetail?: "plan";
+  /** Préfixe du résumé terminé. Défaut : « Priorité retenue » ou « Plan retenu » si `sideDetail: "plan"`. */
+  doneLabel?: string;
 };
 ```
 
@@ -134,6 +136,8 @@ type PlanBlock = BaseBlock & {
   planId: string;                  // le plan vit dans la mémoire (souvent « {{planId}} »)
   mode: "preview" | "editable" | "live";
   startLabel?: string;             // « Mettre en place ce plan » / « Démarrer le plan »
+  /** Libellé ou préfixe du résumé terminé. Défaut : « Plan mis en place » (preview) ou « Plan démarré » (editable). */
+  doneLabel?: string;
 };
 ```
 
@@ -259,7 +263,38 @@ type AuthBlock = BaseBlock & {
 };
 ```
 
-## 7. Effets sur la mémoire
+## 7. Blocs interactifs terminés
+
+Un bloc interactif validé se **replié** en un résumé compact de la décision (animation `layout`), pas en libellé de bouton. Le `lead` qui le précède reste ; le résumé le suit toujours (le lead ne reste jamais seul).
+
+Règles :
+- Le résumé est calculé à partir des **données du bloc** et de la **mémoire** (titre d'option, plan, dates…). Pas de texte de scénario dans le code des composants.
+- Un champ facultatif `doneLabel` sur le bloc fournit le préfixe générique (« Priorité retenue », « Plan démarré »…). Sinon, une valeur par défaut neutre s'applique.
+- Pas de double affichage : si le résumé dit déjà ce qui a été choisi, pas d'écho « Vous : … » pour la même option. Une saisie libre sous un choix peut garder un écho (les mots de l'utilisateur) **en plus** du résumé (qui porte l'option retenue / recommandée).
+
+Exemples de résumés :
+
+| Bloc | Résumé |
+| --- | --- |
+| `choice` (priorités) | `Priorité retenue : {titre de l'option}` |
+| `choice` (`sideDetail: "plan"`) | `Plan retenu : {titre} · {n} étapes` |
+| `plan` preview | `Plan mis en place` |
+| `plan` editable | `Plan démarré : {titre} · {n} étapes · première échéance {date}` (+ lien « Voir le plan », route `/plans/:id` au #27 ; en attendant, détail en place) |
+| `connector` / `auth` / `upload` | États compacts actuels (« Gmail connecté », « Compte créé avec Google », « 2 documents déposés ») |
+
+Événements émis par les blocs interactifs (lus par le `await` de l'étape) :
+
+| Bloc | Événement | Valeur | Fil |
+| --- | --- | --- | --- |
+| `question` | réponse rapide | id (via `next` ou `quickRoutes`) | Écho (libellé de la puce) |
+| `choice` | confirmation | id de l'option | Résumé compact sur le bloc (pas d'écho de l'option) |
+| `plan` | démarrage | `"start"` | Résumé compact sur le bloc |
+| `connector` | connexion ou refus | `"connect:{provider}"` ou `"skip"` | État compact (ex. « Outlook connecté ») |
+| `upload` | dépôt ou refus | `"upload"` ou `"skip"` | État compact |
+| `form` | envoi | valeurs | Selon le cas |
+| `auth` | compte créé | `"google"` \| `"apple"` \| `"email"` | État compact (ex. « Compte créé avec Google ») |
+
+## 8. Effets sur la mémoire
 
 Les étapes d'un scénario déclarent des effets, appliqués par le moteur :
 
@@ -284,21 +319,9 @@ type Plan = {
 };
 ```
 
-Événements émis par les blocs interactifs (lus par le `await` de l'étape) :
-
-| Bloc | Événement | Valeur | Écho dans le fil |
-| --- | --- | --- | --- |
-| `question` | réponse rapide | id de la réponse rapide (routé via `await.input.next` ou `await.input.quickRoutes[id]`) | Oui (libellé de la puce) |
-| `choice` | confirmation | id de l'option choisie | Oui (titre de l'option, pas un libellé de bouton) |
-| `plan` | bouton de démarrage | `"start"` | Non : état « fait » compact sur le bloc |
-| `connector` | connexion ou refus | `"connect:{provider}"` (`gmail` \| `outlook` \| `drive`) ou `"skip"` | Non : état « fait » (ex. « Outlook connecté ») |
-| `upload` | dépôt ou refus | `"upload"` (avec les fichiers) ou `"skip"` | Non : état « fait » compact |
-| `form` | envoi | valeurs du formulaire | Selon le cas |
-| `auth` | compte créé | `"google"` \| `"apple"` \| `"email"` ; le moteur applique l'effet `account` | Non : état « fait » (ex. « Compte créé avec Google ») |
-
 Le fournisseur choisi par `connector` est disponible pour les effets suivants via les jetons `{{provider}}` et `{{providerLabel}}` (voir `docs/ARCHITECTURE.md`).
 
-## 8. Ajouter un bloc
+## 9. Ajouter un bloc
 
 1. Décrire le bloc ici (rôle, schéma, comportement, animation).
 2. Créer ou réutiliser les composants dans `apps/design-system`.

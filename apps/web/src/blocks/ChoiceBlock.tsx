@@ -6,6 +6,7 @@ import { usePlayer } from "../engine/player";
 import { useMemory } from "../memory/store";
 import { ActionSlot } from "./ActionSlot";
 import { BlockDone } from "./BlockDone";
+import { choiceDoneSummary } from "./doneSummary";
 import type { BlockProps } from "./BlockRenderer";
 import styles from "./blocks.module.css";
 
@@ -28,32 +29,32 @@ export function ChoiceBlockView({ block, active }: BlockProps<ChoiceBlock>) {
 
   function confirm() {
     if (!canAct || !selected) return;
-    const option = block.options.find((o) => o.id === selected);
     reply({
       kind: "event",
       blockId: block.id,
       value: selected,
-      label: option?.title ?? selected,
+      doneLabel: choiceDoneSummary(block, selected, plans),
       vars: block.sideDetail === "plan" ? { planId: selected } : undefined,
     });
   }
 
   if (resolution) {
     return (
-      <section className={styles.choice}>
+      <motion.section className={styles.choice} layout transition={spring.gentle}>
         <BlockDone summary={resolution.summary} />
-      </section>
+      </motion.section>
     );
   }
-
-  // Tour passé : l'écho porte le titre de l'option ; on ne garde pas les cartes.
-  if (!active) return null;
 
   const selectedPlan = block.sideDetail === "plan" ? plans.find((p) => p.id === selected) : undefined;
   const showSide = block.sideDetail === "plan";
 
   return (
-    <section className={[styles.choice, showSide && styles.choiceWithSide].filter(Boolean).join(" ")}>
+    <motion.section
+      className={[styles.choice, showSide && styles.choiceWithSide].filter(Boolean).join(" ")}
+      layout
+      transition={spring.gentle}
+    >
       <div className={styles.choiceMain}>
         {(block.eyebrow || block.title) && (
           <header className={styles.choiceHeader}>
@@ -100,7 +101,6 @@ export function ChoiceBlockView({ block, active }: BlockProps<ChoiceBlock>) {
           </div>
         </ActionSlot>
 
-        {/* allowFreeInput : bouton dans le bloc pour laisser le composer accessible. */}
         {block.allowFreeInput && canAct && (
           <div className={styles.choiceActions}>
             <Button full onClick={confirm} disabled={!selected}>
@@ -139,6 +139,6 @@ export function ChoiceBlockView({ block, active }: BlockProps<ChoiceBlock>) {
           )}
         </aside>
       )}
-    </section>
+    </motion.section>
   );
 }

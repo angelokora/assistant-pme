@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { Camera, FileText, Keyboard, Mic, SendHorizontal, X } from "lucide-react";
 import { ActionDock, Button, IconButton, Orb, TranscriptText, Waveform, spring } from "@elea/ds";
 import { pickFiles } from "../blocks/pickFiles";
 import { useUploadInbox } from "../blocks/uploadInbox";
+import { useDemo } from "../demo/demo";
 import { ACTION_AWAIT_KINDS, usePlayer } from "../engine/player";
 import type { ChoiceBlock, QuestionBlock } from "../engine/types";
+import { useRadialMic } from "../shell/useRadialMic";
 import { useActionDockHost } from "./actionDockHost";
 import { useMediaQuery } from "./useMediaQuery";
 import { useSimulatedSpeech } from "./useSimulatedSpeech";
@@ -36,6 +39,9 @@ export function Composer() {
     awaiting?.kind === "input" ? awaiting.simulated : choiceFree ? (activeChoice?.freeSimulated ?? "") : "";
   const speech = useSimulatedSpeech(simulated);
   const mobile = useMediaQuery("(max-width: 639px)");
+  const [params] = useSearchParams();
+  const menuFromDemo = useDemo((s) => s.menuVariant);
+  const menuB = mobile && (params.get("menu") === "b" || (params.get("menu") !== "a" && menuFromDemo === "b"));
   const setDockHost = useActionDockHost((s) => s.setHost);
   const scenarioId = usePlayer((s) => s.scenario?.id);
   const [mode, setMode] = useState<Mode>("voice");
@@ -138,6 +144,11 @@ export function Composer() {
     setCompactOpen(true);
     speech.start();
   }
+
+  const radial = useRadialMic({
+    enabled: menuB && mode === "voice" && !choiceFree && !!inputOpen,
+    onShortPress: listen,
+  });
   function submitVoice() {
     speech.stop();
     if (!inputOpen) {
@@ -214,30 +225,44 @@ export function Composer() {
         <AnimatePresence mode="popLayout" initial={false}>
           {mode === "voice" && !choiceFree ? (
             <motion.div key="voice" className={styles.voice} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 16 }} transition={spring.gentle}>
-              <motion.button
-                layoutId="composer-shell"
-                className={styles.mic}
-                aria-label="Toucher pour parler, maintenir pour parler en continu"
-                whileTap={{ scale: 0.94 }}
-                transition={spring.gentle}
-                onPointerDown={() => {
-                  holding.current = false;
-                  holdTimer.current = window.setTimeout(() => {
-                    holding.current = true;
-                    listen();
-                  }, 380);
-                }}
-                onPointerUp={() => {
-                  window.clearTimeout(holdTimer.current);
-                  if (holding.current) submitVoice();
-                  else listen();
-                }}
-                onPointerLeave={() => window.clearTimeout(holdTimer.current)}
-              >
-                <Orb size={72} state="idle" decorative className={styles.micOrb} />
-                <Mic className={styles.micIcon} size={26} strokeWidth={2} />
-              </motion.button>
-              <p className={styles.hint}>Toucher pour parler</p>
+              {menuB ? (
+                <motion.button
+                  layoutId="composer-shell"
+                  className={styles.mic}
+                  aria-label="Toucher pour parler, glisser ou appui long pour le menu"
+                  whileTap={{ scale: 0.94 }}
+                  transition={spring.gentle}
+                  {...radial}
+                >
+                  <Orb size={72} state="idle" decorative className={styles.micOrb} />
+                  <Mic className={styles.micIcon} size={26} strokeWidth={2} />
+                </motion.button>
+              ) : (
+                <motion.button
+                  layoutId="composer-shell"
+                  className={styles.mic}
+                  aria-label="Toucher pour parler, maintenir pour parler en continu"
+                  whileTap={{ scale: 0.94 }}
+                  transition={spring.gentle}
+                  onPointerDown={() => {
+                    holding.current = false;
+                    holdTimer.current = window.setTimeout(() => {
+                      holding.current = true;
+                      listen();
+                    }, 380);
+                  }}
+                  onPointerUp={() => {
+                    window.clearTimeout(holdTimer.current);
+                    if (holding.current) submitVoice();
+                    else listen();
+                  }}
+                  onPointerLeave={() => window.clearTimeout(holdTimer.current)}
+                >
+                  <Orb size={72} state="idle" decorative className={styles.micOrb} />
+                  <Mic className={styles.micIcon} size={26} strokeWidth={2} />
+                </motion.button>
+              )}
+              <p className={styles.hint}>{menuB ? "Toucher pour parler · glisser pour le menu" : "Toucher pour parler"}</p>
               <button
                 className={styles.switch}
                 onClick={() => {

@@ -184,9 +184,11 @@ Un **besoin en cours** s'ouvre par-dessus la navigation (feuille plein écran su
 
 **Panneau de détail (colonne droite, ≥ 1024 px).** Quand un finding, un plan ou un élément d'attention est ouvert, la colonne affiche ce détail (fermable). Quand rien n'est ouvert, elle n'est pas un vide : elle montre un **contexte utile** lu dans la mémoire (plan actif et ses étapes, sources connectées). Si la mémoire n'a ni plan ni source (premier lancement), la colonne se replie et la colonne centrale s'élargit. Sur tablette, le détail reste une feuille latérale (ouverte seulement sur demande).
 
-**Porte d'entrée (composer).** Sur mobile, la barre basse (ou l'orbe du menu B) ouvre le composer. Sur tablette et ordinateur, le composer reste visible dans la colonne centrale (ancré en bas de l'accueil). Un seul point d'entrée voix à la fois : sur l'accueil variante C, le bouton micro de la barre basse est masqué.
+**Porte d'entrée (composer).** Sur mobile, la barre basse (menu A) ou l'orbe micro (menu B) ouvre le composer. Sur tablette et ordinateur, le composer reste visible dans la colonne centrale (ancré en bas de l'accueil). Un seul point d'entrée voix à la fois : sur l'accueil variante C, le bouton micro de la barre basse est masqué ; en menu B, l'orbe de présence porte aussi la voix et le menu.
 
-**Hauteur réservée à la navigation basse.** `--nav-offset` (hauteur de la barre ou de l'orbe + zone de sécurité) est appliqué en `padding-bottom` du contenu mobile hors besoin, pour qu'aucun texte ne passe sous le menu B.
+**Menu B.** Une seule orbe : celle du micro (composer, présence C, ou orbe de secours hors accueil/besoin). Appui court = parler ; glisser vers le haut ou appui long = ouvrir l'arc de navigation. Pas d'orbe flottante séparée quand un micro est déjà à l'écran.
+
+**Hauteur réservée à la navigation basse.** `--nav-offset` (hauteur de la barre, ou de l'orbe de secours + zone de sécurité) est appliqué en `padding-bottom` du contenu mobile hors besoin.
 
 **Pastille de variantes (≥ 1024 px).** Sur les écrans qui en ont (accueil, retrouver), une pastille discrète en bas à droite permet de changer de variante sans ouvrir le panneau démo. Un réglage du panneau démo la masque pour les démonstrations.
 
@@ -232,11 +234,11 @@ Sur ordinateur (≥ 1024 px), le panneau peut afficher le prototype dans un cadr
 
 **Iframe de même origine.** La page hôte (`device !== desktop`) n'affiche que le fond, le `DeviceFrame` et le panneau démo. Le prototype tourne dans une iframe `/?frame=1` (avec `safeTop` / `safeBottom`). Dans l'iframe : panneau démo et pastille de variantes masqués. C'est la seule façon d'avoir la mise en page mobile réelle (barre basse, ActionDock, feuilles).
 
-**Mode cadre persistant.** L'iframe ne s'appuie pas sur l'URL courante après la première charge : `frame=1` (ou `window.self !== window.top`) est mémorisé en `sessionStorage` pour toute la vie de l'iframe, y compris après navigation interne ou rechargement HMR.
+**Mode cadre.** `isFrameMode()` = `window.self !== window.top` uniquement. Pas de clé `sessionStorage` : le stockage de session est partagé entre l'hôte et une iframe de même origine, ce qui faisait basculer l'hôte en « cadré ».
 
-**Pilotage.** Les stores vivent dans l'iframe. L'hôte envoie des commandes ciblées via `postMessage` à `iframe.contentWindow` (origine exacte ; protocole typé dans `demo/bridge.ts`) : `reset`, `start`, `jumpTo`, `navigate`, `set*`, `sync`. L'iframe n'accepte que les messages de `window.parent` de la même origine. Au démarrage (et après chaque rechargement), l'iframe envoie `ready` ; l'hôte répond par `sync` avec l'état courant du panneau (source de vérité). Le choix d'appareil et l'orientation sont persistés dans le store démo (hôte uniquement).
+**Pilotage.** Les stores vivent dans l'iframe. L'hôte envoie des commandes ciblées via `postMessage` à `iframe.contentWindow` (origine exacte ; protocole typé dans `demo/bridge.ts`) : `reset`, `start`, `jumpTo`, `navigate`, `set*`, `sync`. L'iframe n'accepte que les messages de `window.parent` de la même origine. Au démarrage (et après chaque rechargement), l'iframe envoie `ready` ; l'hôte répond par `sync` avec l'état courant du panneau (source de vérité). Dans l'iframe, le store démo ne persiste pas dans `localStorage` (partagé avec l'hôte) : le panneau pilote via `sync`. Le choix d'appareil et l'orientation sont persistés côté hôte uniquement.
 
-**Zones de sécurité.** `env(safe-area-inset-*)` vaut 0 dans une iframe. L'iframe pose `--safe-top` et `--safe-bottom` (valeurs selon l'appareil, renvoyées aussi dans `sync`). Les composants utilisent `max(env(safe-area-inset-bottom, 0px), var(--safe-bottom, 0px))` (idem pour le haut).
+**Zones de sécurité.** `env(safe-area-inset-*)` vaut 0 dans une iframe. L'iframe pose `--safe-top` et `--safe-bottom` en mémoire (URL initiale, puis `sync`) : pas de `sessionStorage`. Les composants utilisent `max(env(safe-area-inset-bottom, 0px), var(--safe-bottom, 0px))` (idem pour le haut).
 
 **Échelle.** Si la fenêtre est trop basse, la tablette (et éventuellement le téléphone) est mise à l'échelle (affichée dans le panneau). En dessous de 60 %, un message invite à agrandir la fenêtre.
 

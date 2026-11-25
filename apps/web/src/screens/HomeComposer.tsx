@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Keyboard, Mic, SendHorizontal } from "lucide-react";
 import { Callout, IconButton, Orb, spring } from "@elea/ds";
 import { motion } from "motion/react";
@@ -7,23 +7,37 @@ import { routeUtterance } from "../engine/router";
 import { SCENARIOS } from "../engine/scenarios";
 import { usePlayer } from "../engine/player";
 import { useMemory } from "../memory/store";
+import { useDemo } from "../demo/demo";
 import { useSimulatedSpeech } from "../composer/useSimulatedSpeech";
+import { useRadialMic } from "../shell/useRadialMic";
 import styles from "./HomeComposer.module.css";
 
 const FALLBACK_SIMULATED = "Je veux embaucher une vendeuse pour les week-ends. Je fais un CDD ou un CDI ?";
+
+export type HomeComposerHandle = {
+  listen: () => void;
+};
 
 type Props = {
   /** Ouvre le mode texte dès le montage (bouton composer de la barre). */
   forceOpen?: boolean;
   onHandled?: () => void;
+  /** Accueil C + menu B : l'orbe de présence porte la voix ; pas de second micro. */
+  hideVoiceOrb?: boolean;
 };
 
 /**
  * Composer de l'accueil : aiguillage via `routeUtterance`, sinon callout des besoins disponibles.
  */
-export function HomeComposer({ forceOpen, onHandled }: Props) {
+export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeComposer(
+  { forceOpen, onHandled, hideVoiceOrb },
+  ref,
+) {
   const navigate = useNavigate();
   const location = useLocation();
+  const [params] = useSearchParams();
+  const menuFromDemo = useDemo((s) => s.menuVariant);
+  const menuB = (params.get("menu") === "b" ? true : params.get("menu") === "a" ? false : menuFromDemo === "b");
   const stop = usePlayer((s) => s.stop);
   const start = usePlayer((s) => s.start);
   const suggestions = useMemory((s) => s.home?.suggestions ?? []);
@@ -32,6 +46,18 @@ export function HomeComposer({ forceOpen, onHandled }: Props) {
   const [unknown, setUnknown] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const speech = useSimulatedSpeech(FALLBACK_SIMULATED);
+
+  function listen() {
+    setMode("listening");
+    speech.start();
+  }
+
+  useImperativeHandle(ref, () => ({ listen }), [speech]);
+
+  const radial = useRadialMic({
+    enabled: menuB && !hideVoiceOrb && mode === "voice",
+    onShortPress: listen,
+  });
 
   useEffect(() => {
     if (forceOpen || (location.state as { openComposer?: boolean } | null)?.openComposer) {
@@ -60,11 +86,6 @@ export function HomeComposer({ forceOpen, onHandled }: Props) {
     setUnknown(true);
   }
 
-  function listen() {
-    setMode("listening");
-    speech.start();
-  }
-
   function submitVoice() {
     speech.stop();
     submit(FALLBACK_SIMULATED);
@@ -76,6 +97,8 @@ export function HomeComposer({ forceOpen, onHandled }: Props) {
     : Object.keys(SCENARIOS)
         .filter((id) => id !== "onboarding")
         .map((id) => ({ id, label: SCENARIOS[id].title, scenarioId: id }));
+
+  const showVoiceOrb = mode === "voice" && !hideVoiceOrb;
 
   return (
     <div className={styles.wrap}>
@@ -94,9 +117,14 @@ export function HomeComposer({ forceOpen, onHandled }: Props) {
         </div>
       )}
 
-      {mode === "voice" && (
+      {showVoiceOrb && (
         <motion.div className={styles.voice} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={spring.gentle}>
-          <button type="button" className={styles.mic} aria-label="Toucher pour parler" onClick={listen}>
+          <button
+            type="button"
+            className={styles.mic}
+            aria-label={menuB ? "Toucher pour parler, glisser ou appui long pour le menu" : "Toucher pour parler"}
+            {...radial}
+          >
             <Orb size={56} state="idle" decorative />
             <Mic size={22} strokeWidth={1.75} className={styles.micIcon} />
           </button>
@@ -104,6 +132,12 @@ export function HomeComposer({ forceOpen, onHandled }: Props) {
             <Keyboard size={14} strokeWidth={1.75} /> Écrire plutôt
           </button>
         </motion.div>
+      )}
+
+      {mode === "voice" && hideVoiceOrb && (
+        <button type="button" className={styles.switch} onClick={() => setMode("text")}>
+          <Keyboard size={14} strokeWidth={1.75} /> Écrire plutôt
+        </button>
       )}
 
       {mode === "listening" && (
@@ -152,4 +186,4 @@ export function HomeComposer({ forceOpen, onHandled }: Props) {
       )}
     </div>
   );
-}
+});

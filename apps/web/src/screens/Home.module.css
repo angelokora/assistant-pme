@@ -30,6 +30,26 @@
   margin-bottom: var(--space-2);
 }
 
+.presenceMic {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 112px;
+  height: 112px;
+  margin: 0 auto;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  cursor: pointer;
+}
+
+.presenceMicIcon {
+  position: absolute;
+  color: #fff;
+  filter: drop-shadow(0 1px 2px rgb(107 7 36 / 0.5));
+  pointer-events: none;
+}
+
 .header {
   display: flex;
   flex-direction: column;

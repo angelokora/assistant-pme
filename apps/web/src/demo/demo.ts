@@ -1,5 +1,14 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
+
+function inIframe() {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.self !== window.top;
+  } catch {
+    return true;
+  }
+}
 
 export type HomeVariant = "a" | "b" | "c";
 export type MenuVariant = "a" | "b";
@@ -34,33 +43,70 @@ type DemoState = {
   setOrientation: (v: DeviceOrientation) => void;
 };
 
+const initial = {
+  open: false,
+  animations: true,
+  homeVariant: "a" as HomeVariant,
+  menuVariant: "a" as MenuVariant,
+  findVariant: "a" as FindVariant,
+  mailInterrupted: false,
+  showVariantPill: true,
+  radialHintSeen: false,
+  device: "desktop" as DeviceMode,
+  orientation: "portrait" as DeviceOrientation,
+};
+
+function createActions(
+  set: (
+    partial: Partial<DemoState> | ((s: DemoState) => Partial<DemoState>),
+  ) => void,
+): Omit<
+  DemoState,
+  | "open"
+  | "animations"
+  | "homeVariant"
+  | "menuVariant"
+  | "findVariant"
+  | "mailInterrupted"
+  | "showVariantPill"
+  | "radialHintSeen"
+  | "device"
+  | "orientation"
+> {
+  return {
+    toggle: () => set((s) => ({ open: !s.open })),
+    setOpen: (v) => set({ open: v }),
+    setAnimations: (v) => set({ animations: v }),
+    setHomeVariant: (v) => set({ homeVariant: v }),
+    setMenuVariant: (v) => set({ menuVariant: v }),
+    setFindVariant: (v) => set({ findVariant: v }),
+    setMailInterrupted: (v) => set({ mailInterrupted: v }),
+    setShowVariantPill: (v) => set({ showVariantPill: v }),
+    setRadialHintSeen: (v) => set({ radialHintSeen: v }),
+    setDevice: (v) => set({ device: v }),
+    setOrientation: (v) => set({ orientation: v }),
+  };
+}
+
+const noopStorage = {
+  getItem: () => null,
+  setItem: () => {},
+  removeItem: () => {},
+};
+
+/**
+ * Store démo. Dans l'iframe, pas de persistance localStorage (partagé avec l'hôte) :
+ * le panneau est la source de vérité via postMessage.
+ */
 export const useDemo = create<DemoState>()(
   persist(
     (set) => ({
-      open: false,
-      animations: true,
-      homeVariant: "a",
-      menuVariant: "a",
-      findVariant: "a",
-      mailInterrupted: false,
-      showVariantPill: true,
-      radialHintSeen: false,
-      device: "desktop",
-      orientation: "portrait",
-      toggle: () => set((s) => ({ open: !s.open })),
-      setOpen: (v) => set({ open: v }),
-      setAnimations: (v) => set({ animations: v }),
-      setHomeVariant: (v) => set({ homeVariant: v }),
-      setMenuVariant: (v) => set({ menuVariant: v }),
-      setFindVariant: (v) => set({ findVariant: v }),
-      setMailInterrupted: (v) => set({ mailInterrupted: v }),
-      setShowVariantPill: (v) => set({ showVariantPill: v }),
-      setRadialHintSeen: (v) => set({ radialHintSeen: v }),
-      setDevice: (v) => set({ device: v }),
-      setOrientation: (v) => set({ orientation: v }),
+      ...initial,
+      ...createActions(set),
     }),
     {
       name: "elea-demo",
+      storage: createJSONStorage(() => (inIframe() ? noopStorage : localStorage)),
       partialize: (s) => ({
         animations: s.animations,
         homeVariant: s.homeVariant,

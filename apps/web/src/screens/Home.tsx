@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "motion/react";
-import { ArrowRight, ChevronUp } from "lucide-react";
+import { ArrowRight, ChevronUp, Mic } from "lucide-react";
 import {
   Button,
   Card,
@@ -19,9 +19,10 @@ import {
 import { Icon } from "../blocks/icons";
 import { useDemo, type HomeVariant } from "../demo/demo";
 import { useDetail } from "../shell/detailStore";
+import { useRadialMic } from "../shell/useRadialMic";
 import { useMemory } from "../memory/store";
 import { AnimatedMoneyText } from "./AnimatedEuro";
-import { HomeComposer } from "./HomeComposer";
+import { HomeComposer, type HomeComposerHandle } from "./HomeComposer";
 import styles from "./Home.module.css";
 
 function greeting(firstName: string) {
@@ -41,9 +42,11 @@ export function Home() {
   const location = useLocation();
   const [params] = useSearchParams();
   const demoVariant = useDemo((s) => s.homeVariant);
+  const menuFromDemo = useDemo((s) => s.menuVariant);
   const paramV = params.get("v");
   const variant: HomeVariant =
     paramV === "a" || paramV === "b" || paramV === "c" ? paramV : demoVariant;
+  const menuB = params.get("menu") === "b" || (params.get("menu") !== "a" && menuFromDemo === "b");
 
   const owner = useMemory((s) => s.owner);
   const account = useMemory((s) => s.account);
@@ -62,6 +65,11 @@ export function Home() {
   const openComposer =
     !composerHandled && !!(location.state as { openComposer?: boolean } | null)?.openComposer;
   const swipeStartY = useRef<number | null>(null);
+  const composerRef = useRef<HomeComposerHandle>(null);
+  const presenceRadial = useRadialMic({
+    enabled: menuB && variant === "c",
+    onShortPress: () => composerRef.current?.listen(),
+  });
 
   const empty = !account.created && findings.length === 0;
   const activePlan = useMemo(() => plans.find((p) => p.status === "active") ?? plans[0], [plans]);
@@ -104,7 +112,14 @@ export function Home() {
   const hello = greeting(owner.firstName || "Sophie");
   const dateLabel = formatDate(today, "weekday");
 
-  const composer = <HomeComposer forceOpen={openComposer} onHandled={clearComposerState} />;
+  const composer = (
+    <HomeComposer
+      ref={composerRef}
+      forceOpen={openComposer}
+      onHandled={clearComposerState}
+      hideVoiceOrb={menuB && variant === "c"}
+    />
+  );
 
   const suggestionChips = (
     <div className={styles.suggestions} role="list">
@@ -125,23 +140,37 @@ export function Home() {
   if (variant === "c") {
     return (
       <motion.main className={styles.presence} variants={blockList} initial="hidden" animate="shown">
-        <motion.div
-          variants={blockItem}
-          className={styles.orb}
-          style={{ touchAction: "none" }}
-          onPointerDown={(e) => {
-            swipeStartY.current = e.clientY;
-          }}
-          onPointerUp={(e) => {
-            if (swipeStartY.current !== null && swipeStartY.current - e.clientY > 48) setSheetOpen(true);
-            swipeStartY.current = null;
-          }}
-          onPointerCancel={() => {
-            swipeStartY.current = null;
-          }}
-        >
-          <Orb size={96} state="idle" />
-        </motion.div>
+        {menuB ? (
+          <motion.div variants={blockItem} className={styles.orb}>
+            <button
+              type="button"
+              className={styles.presenceMic}
+              aria-label="Toucher pour parler, glisser ou appui long pour le menu"
+              {...presenceRadial}
+            >
+              <Orb size={96} state="idle" decorative />
+              <Mic size={28} strokeWidth={1.75} className={styles.presenceMicIcon} aria-hidden />
+            </button>
+          </motion.div>
+        ) : (
+          <motion.div
+            variants={blockItem}
+            className={styles.orb}
+            style={{ touchAction: "none" }}
+            onPointerDown={(e) => {
+              swipeStartY.current = e.clientY;
+            }}
+            onPointerUp={(e) => {
+              if (swipeStartY.current !== null && swipeStartY.current - e.clientY > 48) setSheetOpen(true);
+              swipeStartY.current = null;
+            }}
+            onPointerCancel={() => {
+              swipeStartY.current = null;
+            }}
+          >
+            <Orb size={96} state="idle" />
+          </motion.div>
+        )}
         <motion.p variants={blockItem} className="eyebrow">
           {hello} · {dateLabel}
         </motion.p>

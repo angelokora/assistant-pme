@@ -7,11 +7,12 @@ import { NeedView } from "../screens/NeedView";
 import { DemoPanel } from "../demo/DemoPanel";
 import { DeviceStage } from "../demo/DeviceStage";
 import { useDemo } from "../demo/demo";
-import { detectAndPersistFrameMode, isFrameMode } from "../demo/bridge";
+import { clearLegacyFrameKeys, isFrameMode } from "../demo/bridge";
 import { useDemoBridge } from "../demo/useDemoBridge";
-
-detectAndPersistFrameMode();
 import { useMediaQuery } from "../composer/useMediaQuery";
+
+clearLegacyFrameKeys();
+
 import { FlightLayer } from "../blocks/flight/FlightLayer";
 import { Shell } from "../shell/Shell";
 import { PlaceholderScreen } from "../shell/PlaceholderScreen";

@@ -6,10 +6,9 @@ import { presetFor } from "../engine/scenarios";
 import { useDemo } from "./demo";
 import {
   applySafeInsets,
-  detectAndPersistFrameMode,
+  initSafeInsetsFromUrl,
   isFrameMode,
   postDemoReady,
-  readStoredSafeInsets,
   subscribeDemoCommands,
   type DemoCommand,
   type DemoSyncState,
@@ -50,11 +49,9 @@ export function useDemoBridge() {
   const setShowVariantPill = useDemo((s) => s.setShowVariantPill);
 
   useEffect(() => {
-    detectAndPersistFrameMode();
     if (!isFrameMode()) return;
 
-    const stored = readStoredSafeInsets();
-    applySafeInsets(stored.top, stored.bottom);
+    initSafeInsetsFromUrl();
     document.documentElement.dataset.frame = "1";
     postDemoReady();
 

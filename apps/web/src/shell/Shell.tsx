@@ -31,6 +31,7 @@ export function Shell() {
   const onHome = location.pathname === "/";
   const active = destinationForPath(location.pathname);
   const hideComposer = onHome && homeVariant === "c";
+  const menuB = menuVariant === "b";
 
   return (
     <div
@@ -40,12 +41,12 @@ export function Shell() {
         tablet && styles.tablet,
         desktop && styles.desktop,
         inNeed && styles.inNeed,
-        mobile && !inNeed && menuVariant === "b" && styles.menuB,
+        mobile && menuB && styles.menuB,
       ]
         .filter(Boolean)
         .join(" ")}
       style={
-        mobile && !inNeed && menuVariant !== "b"
+        mobile && !inNeed && !menuB
           ? ({
               ["--nav-offset" as string]:
                 "calc(72px + max(env(safe-area-inset-bottom, 0px), var(--safe-bottom, 0px)))",
@@ -68,9 +69,8 @@ export function Shell() {
       {desktop && <DetailPanel />}
       {tablet && <DetailPanel />}
 
-      {mobile &&
-        !inNeed &&
-        (menuVariant === "b" ? <RadialMenu active={active} /> : <BottomNav active={active} hideComposer={hideComposer} />)}
+      {mobile && !inNeed && !menuB && <BottomNav active={active} hideComposer={hideComposer} />}
+      {mobile && menuB && <RadialMenu active={active} needsFallbackOrb={!onHome && !inNeed} />}
 
       <VariantPill />
     </div>

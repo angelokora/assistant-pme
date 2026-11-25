@@ -10,7 +10,7 @@ import styles from "./DemoPanel.module.css";
 
 /** Panneau démo minimal (version complète : ticket #11). Raccourci : Maj + D. */
 export function DemoPanel() {
-  const { open, toggle, animations, setAnimations } = useDemo();
+  const { open, toggle, animations, setAnimations, homeVariant, setHomeVariant, menuVariant, setMenuVariant } = useDemo();
   const reset = useMemory((s) => s.reset);
   const stop = usePlayer((s) => s.stop);
   const start = usePlayer((s) => s.start);
@@ -29,6 +29,32 @@ export function DemoPanel() {
       {open && (
         <motion.aside className={styles.panel} initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={spring.sheet}>
           <p className={styles.title}>Démo</p>
+          <p className={styles.group}>Accueil</p>
+          {(["a", "b", "c"] as const).map((v) => (
+            <button
+              key={v}
+              className={[styles.item, homeVariant === v && styles.active].filter(Boolean).join(" ")}
+              onClick={() => {
+                setHomeVariant(v);
+                stop();
+                reset("returning");
+                navigate(`/?v=${v}`);
+              }}
+            >
+              Variante {v.toUpperCase()} {v === "a" ? "Fil du jour" : v === "b" ? "Carnet" : "Présence"}
+            </button>
+          ))}
+          <p className={styles.group}>Menu</p>
+          {(["a", "b"] as const).map((v) => (
+            <button
+              key={v}
+              className={[styles.item, menuVariant === v && styles.active].filter(Boolean).join(" ")}
+              onClick={() => setMenuVariant(v)}
+            >
+              Menu {v.toUpperCase()} {v === "a" ? "barre basse" : "radial"}
+            </button>
+          ))}
+          <hr />
           {SCENARIO_INDEX.map((s) => (
             <button
               key={s.id}

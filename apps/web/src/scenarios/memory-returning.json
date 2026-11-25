@@ -303,5 +303,25 @@
   "account": {
     "created": true,
     "method": "google"
+  },
+  "home": {
+    "summary": "Vous êtes 310 € au-dessus de votre seuil cette semaine. Deux sujets attendent.",
+    "suggestions": [
+      {
+        "id": "sg-contract",
+        "label": "CDD ou CDI pour une vendeuse ?",
+        "scenarioId": "ask-contract"
+      },
+      {
+        "id": "sg-payment",
+        "label": "Relancer le Comptoir des Halles",
+        "scenarioId": "inform-payment"
+      },
+      {
+        "id": "sg-buches",
+        "label": "Retrouver le prix des bûches",
+        "scenarioId": "find-buches"
+      }
+    ]
   }
 }

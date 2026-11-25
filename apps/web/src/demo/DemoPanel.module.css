@@ -14,8 +14,10 @@
   font-size: var(--text-sm);
 }
 .title { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: var(--tracking-eyebrow); opacity: 0.6; padding: 4px 8px; }
-.item { text-align: left; padding: 8px; border-radius: var(--radius-sm); display: flex; justify-content: space-between; gap: 8px; }
+.group { font-size: var(--text-xs); opacity: 0.5; padding: 8px 8px 2px; margin: 0; }
+.item { text-align: left; padding: 8px; border-radius: var(--radius-sm); display: flex; justify-content: space-between; gap: 8px; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; width: 100%; }
 .item span { opacity: 0.5; font-family: var(--font-mono); font-size: 11px; }
 .item:hover { background: rgb(255 255 255 / 0.08); }
+.active { background: rgb(255 255 255 / 0.12); }
 .panel hr { border: 0; border-top: 1px solid rgb(255 255 255 / 0.12); margin: 6px 0; }
 .toggle { display: flex; gap: 8px; align-items: center; padding: 8px; }

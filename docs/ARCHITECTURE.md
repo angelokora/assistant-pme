@@ -131,6 +131,10 @@ type Memory = {
   attention: Attention[];        // ce que l'accueil met en avant aujourd'hui
   today: string;                 // date fictive de la démo (ISO), jamais la date système
   account: { created: boolean; method?: "google" | "apple" | "email" };
+  home?: {                       // phrases d'Éléa pour l'accueil (preset returning)
+    summary: string;             // synthèse variante B / phrase variante C
+    suggestions: { id: string; label: string; scenarioId: string }[];
+  };
 };
 
 type Attention = {

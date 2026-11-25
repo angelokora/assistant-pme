@@ -161,6 +161,13 @@ export type Attention = {
   stepId?: string;
   findingId?: string;
 };
+
+/** Phrases d'Éléa pour l'accueil hors besoin (pas de texte de scénario dans le code). */
+export type HomeContent = {
+  summary: string;
+  suggestions: { id: string; label: string; scenarioId: string }[];
+};
+
 export type Memory = {
   today: string;
   company: { name: string; sector: string; city: string; employees: number | null; since: string | null };
@@ -172,6 +179,8 @@ export type Memory = {
   plans: Plan[];
   attention: Attention[];
   account: { created: boolean; method?: "google" | "apple" | "email" };
+  /** Accueil quotidien (preset returning). Absent au premier lancement. */
+  home?: HomeContent;
 };
 
 // ---------- Effets ----------

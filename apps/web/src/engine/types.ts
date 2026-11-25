@@ -82,6 +82,13 @@ export type AuthBlock = Base<"auth"> & {
   text: string;
   recap?: { label: string; value: string; highlight?: string };
   keeps: string[];
+  consent?: {
+    title: string;
+    text: string;
+    items: string[];
+    confirmLabel: string;
+    cancelLabel: string;
+  };
 };
 
 export type Block =
@@ -108,7 +115,7 @@ export type Finding = {
   title: string;
   summary: string;
   createdAt: string;
-  origin: "conversation" | "document" | "gmail" | "drive";
+  origin: "conversation" | "document" | "gmail" | "outlook" | "drive";
   confidence?: Confidence;
   scenarioId?: string;
   body?: Block[];
@@ -188,4 +195,10 @@ export type Scenario = {
 export type Reply =
   | { kind: "text"; text: string; mode: "voice" | "text" }
   | { kind: "quick"; id: string; label: string }
-  | { kind: "event"; blockId: string; value: string; label?: string };
+  | { kind: "event"; blockId: string; value: string; label?: string; doneLabel?: string };
+
+/** Variables d'étape (ex. fournisseur choisi), utilisées pour interpoler les effets `{{jeton}}`. */
+export type StepVars = Record<string, string>;
+
+/** Résolution d'un bloc interactif : état « fait » compact, sans écho « Vous : … ». */
+export type BlockResolution = { summary: string };

@@ -171,7 +171,7 @@ type UploadBlock = BaseBlock & {
 ```
 
 ### `extraction` : ce qui a été trouvé dans les documents
-Liste des valeurs extraites, avec la source de chacune et un niveau de confiance. Chaque ligne peut être corrigée. Animation : les lignes apparaissent comme si elles étaient lues.
+Une seule carte contenant une liste compacte : libellé, montant aligné à droite (chiffres tabulaires), source et badge de confiance en seconde ligne. Toucher une ligne ouvre sa correction en place. Total en pied de carte. Animation : les lignes apparaissent une à une comme si elles étaient lues.
 ```ts
 type ExtractionBlock = BaseBlock & {
   type: "extraction";
@@ -222,7 +222,7 @@ type SuggestionsBlock = BaseBlock & {
 ## 6. Compte
 
 ### `auth` : créer un compte au bon moment
-Rappel de ce que le compte permet de garder (récapitulatif du plan), puis Google, Apple ou e-mail. Simulé.
+Rappel de ce que le compte permet de garder (récapitulatif du plan), puis Google, Apple ou e-mail. Simulé. Si `consent` est présent, une feuille de confirmation s'ouvre après le choix de la méthode (quel que soit le fournisseur) ; sinon la méthode crée le compte immédiatement.
 ```ts
 type AuthBlock = BaseBlock & {
   type: "auth";
@@ -231,6 +231,13 @@ type AuthBlock = BaseBlock & {
   text: string;
   recap?: { label: string; value: string; highlight?: string };
   keeps: string[];                  // « Votre synthèse », « Votre plan et ses étapes »
+  consent?: {
+    title: string;                  // « Autoriser la lecture »
+    text: string;
+    items: string[];
+    confirmLabel: string;           // « Autoriser »
+    cancelLabel: string;            // « Annuler »
+  };
 };
 ```
 
@@ -261,15 +268,17 @@ type Plan = {
 
 Événements émis par les blocs interactifs (lus par le `await` de l'étape) :
 
-| Bloc | Événement | Valeur |
-| --- | --- | --- |
-| `question` | réponse rapide | id de la réponse rapide |
-| `choice` | confirmation | id de l'option choisie |
-| `plan` | bouton de démarrage | `"start"` |
-| `connector` | connexion ou refus | `"connect"` (avec le fournisseur) ou `"skip"` |
-| `upload` | dépôt ou refus | `"upload"` (avec les fichiers) ou `"skip"` |
-| `form` | envoi | valeurs du formulaire |
-| `auth` | compte créé | méthode ; le moteur applique l'effet `account` |
+| Bloc | Événement | Valeur | Écho dans le fil |
+| --- | --- | --- | --- |
+| `question` | réponse rapide | id de la réponse rapide | Oui (libellé de la puce) |
+| `choice` | confirmation | id de l'option choisie | Oui (titre de l'option, pas un libellé de bouton) |
+| `plan` | bouton de démarrage | `"start"` | Non : état « fait » compact sur le bloc |
+| `connector` | connexion ou refus | `"connect:{provider}"` (`gmail` \| `outlook` \| `drive`) ou `"skip"` | Non : état « fait » (ex. « Outlook connecté ») |
+| `upload` | dépôt ou refus | `"upload"` (avec les fichiers) ou `"skip"` | Non : état « fait » compact |
+| `form` | envoi | valeurs du formulaire | Selon le cas |
+| `auth` | compte créé | `"google"` \| `"apple"` \| `"email"` ; le moteur applique l'effet `account` | Non : état « fait » (ex. « Compte créé avec Google ») |
+
+Le fournisseur choisi par `connector` est disponible pour les effets suivants via les jetons `{{provider}}` et `{{providerLabel}}` (voir `docs/ARCHITECTURE.md`).
 
 ## 8. Ajouter un bloc
 

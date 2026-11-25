@@ -2,6 +2,8 @@ import { Button, Card, ProviderLogo, type ProviderId } from "@elea/ds";
 import { Check, EyeOff, ShieldCheck } from "lucide-react";
 import type { ConnectorBlock } from "../engine/types";
 import { usePlayer } from "../engine/player";
+import { ActionSlot } from "./ActionSlot";
+import { BlockDone } from "./BlockDone";
 import type { BlockProps } from "./BlockRenderer";
 import styles from "./blocks.module.css";
 
@@ -15,21 +17,31 @@ const PROVIDER_LABEL: Record<"gmail" | "outlook" | "drive", string> = {
 export function ConnectorBlockView({ block, active }: BlockProps<ConnectorBlock>) {
   const reply = usePlayer((s) => s.reply);
   const awaiting = usePlayer((s) => s.awaiting);
+  const resolution = usePlayer((s) => s.resolutions[block.id]);
   const canAct = active && awaiting?.kind === "connector" && awaiting.blockId === block.id;
 
   function connect(provider: "gmail" | "outlook" | "drive") {
     if (!canAct) return;
+    const label = PROVIDER_LABEL[provider];
     reply({
       kind: "event",
       blockId: block.id,
-      value: "connect",
-      label: PROVIDER_LABEL[provider],
+      value: `connect:${provider}`,
+      doneLabel: `${label} connecté`,
     });
   }
 
   function skip() {
     if (!canAct) return;
-    reply({ kind: "event", blockId: block.id, value: "skip", label: block.skipLabel });
+    reply({ kind: "event", blockId: block.id, value: "skip", doneLabel: block.skipLabel });
+  }
+
+  if (resolution) {
+    return (
+      <section className={styles.connector}>
+        <BlockDone summary={resolution.summary} />
+      </section>
+    );
   }
 
   return (
@@ -73,27 +85,28 @@ export function ConnectorBlockView({ block, active }: BlockProps<ConnectorBlock>
         ))}
       </ul>
 
-      <div className={styles.connectorActions}>
-        <div className={styles.providers} role="group" aria-label="Choisir un compte">
-          {block.providers.map((provider) => (
-            <Button
-              key={provider}
-              variant="secondary"
-              full
-              disabled={!canAct}
-              className={styles.providerBtn}
-              icon={<ProviderLogo provider={provider as ProviderId} size={22} labelled={false} />}
-              onClick={() => connect(provider)}
-            >
-              {PROVIDER_LABEL[provider]}
-            </Button>
-          ))}
+      <ActionSlot active={canAct}>
+        <div className={styles.connectorActions}>
+          <div className={styles.providers} role="group" aria-label="Choisir un compte">
+            {block.providers.map((provider) => (
+              <Button
+                key={provider}
+                variant="secondary"
+                size="sm"
+                disabled={!canAct}
+                className={styles.providerBtn}
+                icon={<ProviderLogo provider={provider as ProviderId} size={18} labelled={false} />}
+                onClick={() => connect(provider)}
+              >
+                {PROVIDER_LABEL[provider]}
+              </Button>
+            ))}
+          </div>
+          <Button variant="secondary" full disabled={!canAct} onClick={skip}>
+            {block.skipLabel}
+          </Button>
         </div>
-
-        <Button variant="secondary" full disabled={!canAct} onClick={skip}>
-          {block.skipLabel}
-        </Button>
-      </div>
+      </ActionSlot>
     </section>
   );
 }

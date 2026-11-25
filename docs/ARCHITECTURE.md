@@ -100,6 +100,7 @@ type Await =
 Règles du moteur :
 - **Saisie libre** : en mode voix, le moteur joue la transcription `simulated` mot à mot ; en mode texte, le champ est prérempli avec `simulated` en suggestion, mais l'utilisateur peut taper ce qu'il veut. Dans tous les cas, le scénario continue sur `next`.
 - **Réponses rapides** (« Je ne sais pas », « Changer de sujet ») : routées comme un choix.
+- **Échos dans le fil** : une saisie libre et une réponse rapide s'affichent comme une parole de l'utilisateur. Un événement de bloc (`connector`, `auth`, `upload`, `plan`) ne crée pas d'écho « Vous : … » ; le bloc passe en état « fait » compact. Un `choice` peut garder un écho, sous la forme de l'option retenue.
 - **Délais** : chaque étape d'Éléa attend `delayMs` (défaut 600 ms) avec l'orbe en état « réfléchit », puis les blocs entrent en cascade.
 - **Effets idempotents** : rejouer une étape ne duplique rien (identifiants stables).
 - **Reset** : le panneau démo remet la mémoire à son état initial et relance le scénario.
@@ -172,6 +173,10 @@ Un **besoin en cours** s'ouvre par-dessus la navigation (feuille plein écran su
 | < 640 px (mobile) | Une colonne, barre de navigation basse, composer flottant, besoin en feuille plein écran |
 | 640 à 1023 px (tablette) | Rail de navigation à gauche, contenu sur une colonne large, panneau de détail en feuille latérale |
 | ≥ 1024 px (ordinateur) | Trois colonnes : navigation et sujets, besoin ou écran principal, panneau de détail (finding, plan, document) |
+
+**Barre d'actions (`ActionDock`).** Sur mobile, quand l'`await` attend un événement de bloc (`choice`, `connector`, `upload`, `auth`, `form`, `plan`) et non une saisie libre, le composer cède la place à une barre collante qui affiche les actions du bloc actif (portail React depuis le bloc, sans duplication). Sur tablette et ordinateur, les actions restent dans le fil. Voir `DESIGN.md`, composant `ActionDock`.
+
+**Variables d'étape.** Une réponse peut enrichir le contexte du moteur (`provider`, `providerLabel`…). Les effets de l'étape suivante peuvent utiliser des jetons `{{nom}}` dans leurs chaînes ; le moteur les remplace avant d'appliquer l'effet.
 
 Routes (`react-router`) : `/`, `/entreprise`, `/entreprise/:topicId`, `/plans`, `/plans/:planId`, `/recherche`, `/besoin/:scenarioId`, `/finding/:findingId`. Le paramètre `?v=a|b|c` choisit la variante des écrans qui en ont.
 

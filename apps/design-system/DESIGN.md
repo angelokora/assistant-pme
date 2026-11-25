@@ -131,8 +131,17 @@ Chaque composant vit dans `src/ui/{Nom}/` avec `Nom.tsx`, `Nom.module.css` et un
 | `ConfidenceBadge` | Confirmé, estimé, à vérifier | 3 variantes |
 | `FindingCard` | Carte d'un finding (type, titre, sujet, date) | default, compact, expanded |
 | `ProviderLogo` | Gmail, Outlook, Drive, Google, Apple | |
+| `ActionDock` | Barre d'actions collante (mobile) | ouverte, fermée |
 | `Skeleton` | Chargement | ligne, bloc |
 | `Toast` | Confirmation discrète | |
+
+### ActionDock
+
+Quand le moteur attend un événement de bloc (`choice`, `connector`, `upload`, `auth`, `form`, ou `plan` avec démarrage), les actions principales ne doivent pas disparaître sous le pli sur mobile.
+
+- **Mobile (< 640 px)** : les actions du bloc actif sont rendues dans `ActionDock`, à la place du composer, au-dessus de la zone de sécurité iOS. Même entrée animée que le composer (`spring.gentle`). Le bloc garde son contenu dans le fil, sans dupliquer les boutons.
+- **Tablette et ordinateur (≥ 640 px)** : les actions restent dans le bloc.
+- Le composant design system est purement présentationnel (surface, espacement, accès clavier). Le portail et le branchement au moteur vivent dans `apps/web`.
 
 Les blocs (`docs/BLOCKS.md`) sont construits dans `apps/web` à partir de ces composants.
 

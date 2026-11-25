@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Camera, FileText, Keyboard, Mic, SendHorizontal, X } from "lucide-react";
-import { Button, IconButton, Orb, TranscriptText, Waveform, spring } from "@elea/ds";
-import { usePlayer } from "../engine/player";
+import { ActionDock, Button, IconButton, Orb, TranscriptText, Waveform, spring } from "@elea/ds";
+import { ACTION_AWAIT_KINDS, usePlayer } from "../engine/player";
 import type { QuestionBlock } from "../engine/types";
+import { useActionDockHost } from "./actionDockHost";
+import { useMediaQuery } from "./useMediaQuery";
 import { useSimulatedSpeech } from "./useSimulatedSpeech";
 import styles from "./Composer.module.css";
 
@@ -20,11 +22,22 @@ export function Composer() {
   const turns = usePlayer((s) => s.turns);
   const simulated = awaiting?.kind === "input" ? awaiting.simulated : "";
   const speech = useSimulatedSpeech(simulated);
+  const mobile = useMediaQuery("(max-width: 639px)");
+  const setDockHost = useActionDockHost((s) => s.setHost);
   const [mode, setMode] = useState<Mode>("voice");
   const [draft, setDraft] = useState("");
   const textRef = useRef<HTMLTextAreaElement>(null);
   const holdTimer = useRef<number>();
   const holding = useRef(false);
+  const showActionDock = mobile && !!awaiting && ACTION_AWAIT_KINDS.has(awaiting.kind);
+
+  // Ne pas vider le host dans le cleanup d'un effet qui se rejoue : le ref le remplit
+  // au commit, puis le cleanup précédent l'effacerait juste après.
+  useEffect(() => {
+    if (!showActionDock) setDockHost(null);
+  }, [showActionDock, setDockHost]);
+
+  useEffect(() => () => setDockHost(null), [setDockHost]);
 
   // Pièces jointes proposées par la dernière question.
   const lastQuestion = [...turns].reverse().flatMap((t) => (t.from === "elea" ? t.blocks : [])).find((b) => b.type === "question") as
@@ -76,7 +89,14 @@ export function Composer() {
   return (
     <div className={styles.dock}>
       <AnimatePresence mode="popLayout" initial={false}>
-        {!inputOpen ? (
+        {showActionDock ? (
+          <ActionDock key="actions" role="region" aria-label="Actions">
+            <div
+              ref={(el) => setDockHost(el)}
+              className={styles.actionHost}
+            />
+          </ActionDock>
+        ) : !inputOpen ? (
           <motion.div
             key="status"
             className={styles.status}

@@ -12,6 +12,12 @@
 }
 .dock > * { pointer-events: auto; width: 100%; max-width: var(--content-max); }
 
+.actionHost {
+  display: grid;
+  gap: var(--space-2);
+  width: 100%;
+}
+
 .status {
   display: flex;
   align-items: center;

@@ -12,5 +12,6 @@ export { Callout } from "./ui/Callout/Callout";
 export { StepList, type StepItem, type StepStatus } from "./ui/StepList/StepList";
 export { ProviderLogo, type ProviderId } from "./ui/ProviderLogo/ProviderLogo";
 export { Sheet } from "./ui/Sheet/Sheet";
+export { ActionDock } from "./ui/ActionDock/ActionDock";
 export { spring, blockList, blockItem, press } from "./motion/springs";
 export { formatEuro, formatDate } from "./format";

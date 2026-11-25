@@ -131,13 +131,24 @@
         {
           "id": "acc-c-auth",
           "type": "auth",
-          "eyebrow": "Avant de connecter Gmail",
+          "eyebrow": "Avant de connecter vos mails",
           "title": "Créons votre espace, Sophie.",
           "text": "Pour me connecter à vos mails en toute sécurité, j'ai besoin d'un compte à votre nom.",
           "keeps": [
             "Ce que vous m'avez déjà dit",
             "L'accès à vos factures, en lecture seule"
-          ]
+          ],
+          "consent": {
+            "title": "Autoriser la lecture",
+            "text": "Éléa demande l'accès en lecture seule à votre boîte mail pour retrouver vos factures.",
+            "items": [
+              "Lecture des messages contenant une facture ou un relevé",
+              "Aucune modification, aucun envoi",
+              "Accès révocable à tout moment depuis Mon entreprise"
+            ],
+            "confirmLabel": "Autoriser",
+            "cancelLabel": "Annuler"
+          }
         }
       ],
       "await": {
@@ -150,9 +161,9 @@
         {
           "kind": "source",
           "source": {
-            "id": "gmail",
-            "provider": "gmail",
-            "label": "Gmail",
+            "id": "{{provider}}",
+            "provider": "{{provider}}",
+            "label": "{{providerLabel}}",
             "status": "connected",
             "detail": "sophie@maisonmartin.fr",
             "lastSync": "2026-11-25T10:42:00"
@@ -267,7 +278,7 @@
             "title": "Charges mensuelles : environ 58 000 €",
             "summary": "Masse salariale 38 000 €, matières premières 11 000 €, loyer 3 200 €, énergie 2 600 €, assurances et divers 3 200 €.",
             "createdAt": "2026-11-25T10:43:00",
-            "origin": "gmail",
+            "origin": "{{provider}}",
             "confidence": "estimated",
             "scenarioId": "onboarding"
           }

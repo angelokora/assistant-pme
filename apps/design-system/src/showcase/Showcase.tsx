@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Briefcase, Mic, Target, User, Wallet } from "lucide-react";
 import {
-  Button, Callout, Chip, ConfidenceBadge, DimensionCard, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, StepList, TranscriptText, Waveform,
+  ActionDock, Button, Callout, Chip, ConfidenceBadge, DimensionCard, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, StepList, TranscriptText, Waveform,
   type OrbState, type ProviderId, type StepItem, type StepStatus,
 } from "../index";
 import styles from "./Showcase.module.css";
@@ -193,6 +193,21 @@ export function Showcase() {
             J'ai compris
           </Button>
         </Sheet>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.h2}>Barre d'actions (ActionDock)</h2>
+        <p className="muted">Sur mobile, remplace le composer quand un bloc attend un événement. Ici : état ouvert.</p>
+        <div style={{ maxWidth: 420 }}>
+          <ActionDock>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+              <Button variant="secondary" size="sm" icon={<ProviderLogo provider="gmail" size={16} labelled={false} />}>Gmail</Button>
+              <Button variant="secondary" size="sm" icon={<ProviderLogo provider="outlook" size={16} labelled={false} />}>Outlook</Button>
+              <Button variant="secondary" size="sm" icon={<ProviderLogo provider="drive" size={16} labelled={false} />}>Drive</Button>
+            </div>
+            <Button variant="secondary" full>Je préfère déposer mes factures</Button>
+          </ActionDock>
+        </div>
       </section>
     </div>
   );

@@ -13,9 +13,11 @@ import styles from "./Composer.module.css";
 
 type Mode = "voice" | "listening" | "text";
 
+const DEFAULT_FREE_HINT = "Ou dites-moi ce que vous aimeriez traiter";
+
 /**
  * Porte d'entrée unique (ticket #10) : voix, texte, dépôt.
- * Pendant un besoin, il répond à l'attente `input` du moteur ; sinon il affiche l'état d'Éléa.
+ * Mode compact quand l'attente n'est pas `input` mais qu'une saisie libre est permise (choix).
  */
 export function Composer() {
   const awaiting = usePlayer((s) => s.awaiting);
@@ -29,6 +31,7 @@ export function Composer() {
           | undefined)
       : undefined;
   const choiceFree = !!activeChoice?.allowFreeInput;
+  const freeHint = activeChoice?.freeInputHint ?? DEFAULT_FREE_HINT;
   const simulated =
     awaiting?.kind === "input" ? awaiting.simulated : choiceFree ? (activeChoice?.freeSimulated ?? "") : "";
   const speech = useSimulatedSpeech(simulated);
@@ -37,7 +40,11 @@ export function Composer() {
   const scenarioId = usePlayer((s) => s.scenario?.id);
   const [mode, setMode] = useState<Mode>("voice");
   const [draft, setDraft] = useState("");
+  /** Compact développé (focus ou micro) ; sinon barre une ligne. */
+  const [compactOpen, setCompactOpen] = useState(false);
   const textRef = useRef<HTMLTextAreaElement>(null);
+  const compactInputRef = useRef<HTMLInputElement>(null);
+  const dockRef = useRef<HTMLDivElement>(null);
   const holdTimer = useRef<number>();
   const holding = useRef(false);
   /** Préférence saisie dans ce besoin : voix par défaut ; texte seulement si l'utilisateur l'a choisi. */
@@ -48,6 +55,7 @@ export function Composer() {
   useEffect(() => {
     inputPreference.current = "voice";
     setMode("voice");
+    setCompactOpen(false);
   }, [scenarioId]);
 
   // Ne pas vider le host dans le cleanup d'un effet qui se rejoue : le ref le remplit
@@ -58,6 +66,24 @@ export function Composer() {
 
   useEffect(() => () => setDockHost(null), [setDockHost]);
 
+  // Hauteur réelle du dock → padding du fil (NeedView).
+  useEffect(() => {
+    const el = dockRef.current;
+    if (!el) return;
+    const root = document.documentElement;
+    const apply = () => {
+      const h = Math.ceil(el.getBoundingClientRect().height);
+      root.style.setProperty("--composer-offset", `${h}px`);
+    };
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      root.style.removeProperty("--composer-offset");
+    };
+  }, [showActionDock, choiceFree, mode, compactOpen, awaiting?.kind]);
+
   // Pièces jointes proposées par la dernière question.
   const lastQuestion = [...turns].reverse().flatMap((t) => (t.from === "elea" ? t.blocks : [])).find((b) => b.type === "question") as
     | QuestionBlock
@@ -67,14 +93,16 @@ export function Composer() {
   useEffect(() => {
     setDraft("");
     speech.stop();
-    // Nouvelle question / choix libre : voix par défaut, sauf si l'utilisateur a choisi le texte.
-    if (awaiting?.kind === "input" || choiceFree) {
+    setCompactOpen(false);
+    if (awaiting?.kind === "input") {
       setMode(inputPreference.current === "text" ? "text" : "voice");
+    } else if (choiceFree) {
+      // Sous un choix : on reste en mode texte compact (pas le gros micro).
+      setMode("text");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [simulated, choiceFree, awaiting?.kind]);
 
-  // Quitter l'écoute si l'attente n'accepte plus de saisie (évite un envoi hors route).
   useEffect(() => {
     if (awaiting?.kind === "input" || choiceFree) return;
     speech.stop();
@@ -83,15 +111,20 @@ export function Composer() {
   }, [awaiting?.kind, choiceFree]);
 
   const inputOpen = awaiting?.kind === "input" || choiceFree;
+  const useCompact = choiceFree && mode !== "listening";
 
   useEffect(() => {
-    if (inputOpen && mode === "text") textRef.current?.focus();
-  }, [mode, inputOpen]);
+    if (inputOpen && mode === "text" && !useCompact) textRef.current?.focus();
+  }, [mode, inputOpen, useCompact]);
 
-  // Barre d'espace maintenue = parler (hors champ texte).
+  useEffect(() => {
+    if (useCompact && compactOpen) compactInputRef.current?.focus();
+  }, [useCompact, compactOpen]);
+
+  // Barre d'espace maintenue = parler (hors champ texte) — saisie libre pleine uniquement.
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.code !== "Space" || e.repeat || !inputOpen || mode !== "voice") return;
+      if (e.code !== "Space" || e.repeat || awaiting?.kind !== "input" || mode !== "voice") return;
       if ((e.target as HTMLElement).closest("input, textarea, button")) return;
       e.preventDefault();
       listen();
@@ -102,27 +135,40 @@ export function Composer() {
 
   function listen() {
     setMode("listening");
+    setCompactOpen(true);
     speech.start();
   }
   function submitVoice() {
     speech.stop();
     if (!inputOpen) {
-      setMode(inputPreference.current === "text" ? "text" : "voice");
+      setMode(choiceFree ? "text" : inputPreference.current === "text" ? "text" : "voice");
+      setCompactOpen(false);
       return;
     }
     reply({ kind: "text", text: simulated || draft.trim(), mode: "voice" });
-    setMode(inputPreference.current === "text" ? "text" : "voice");
+    setMode(choiceFree ? "text" : inputPreference.current === "text" ? "text" : "voice");
+    setCompactOpen(false);
+    setDraft("");
   }
   function submitText() {
     if (!inputOpen) return;
     const text = draft.trim() || simulated;
+    if (!text) return;
     reply({ kind: "text", text, mode: "text" });
     setDraft("");
+    setCompactOpen(false);
+  }
+
+  function onCompactBlur() {
+    // Laisse le temps au clic micro / Envoyer de prendre le focus.
+    window.setTimeout(() => {
+      if (document.activeElement?.closest(`.${styles.dock}`)) return;
+      if (!draft.trim()) setCompactOpen(false);
+    }, 120);
   }
 
   return (
-    <div className={styles.dock}>
-      {/* Hors saisie : démontage immédiat (pas d'exit qui resterait cliquable au-dessus d'auth). */}
+    <div ref={dockRef} className={styles.dock}>
       {showActionDock ? (
         <ActionDock key="actions" role="region" aria-label="Actions">
           <div ref={(el) => setDockHost(el)} className={styles.actionHost} />
@@ -132,9 +178,41 @@ export function Composer() {
           <Orb size={20} state={orb} decorative />
           <span>{orb === "thinking" ? "Éléa réfléchit…" : orb === "speaking" ? "Éléa vous répond" : "Éléa est là"}</span>
         </div>
+      ) : useCompact && !compactOpen ? (
+        <div className={styles.compact}>
+          <input
+            ref={compactInputRef}
+            className={styles.compactInput}
+            value={draft}
+            placeholder={freeHint}
+            aria-label={freeHint}
+            onFocus={() => setCompactOpen(true)}
+            onChange={(e) => {
+              setDraft(e.target.value);
+              if (e.target.value) setCompactOpen(true);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                submitText();
+              }
+            }}
+          />
+          <button
+            type="button"
+            className={styles.compactMic}
+            aria-label="Parler"
+            onClick={() => {
+              inputPreference.current = "voice";
+              listen();
+            }}
+          >
+            <Mic size={18} strokeWidth={2} />
+          </button>
+        </div>
       ) : (
         <AnimatePresence mode="popLayout" initial={false}>
-          {mode === "voice" ? (
+          {mode === "voice" && !choiceFree ? (
             <motion.div key="voice" className={styles.voice} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 16 }} transition={spring.gentle}>
               <motion.button
                 layoutId="composer-shell"
@@ -159,7 +237,7 @@ export function Composer() {
                 <Orb size={72} state="idle" decorative className={styles.micOrb} />
                 <Mic className={styles.micIcon} size={26} strokeWidth={2} />
               </motion.button>
-              <p className={styles.hint}>{choiceFree ? activeChoice?.freeInputHint ?? "Toucher pour parler" : "Toucher pour parler"}</p>
+              <p className={styles.hint}>Toucher pour parler</p>
               <button
                 className={styles.switch}
                 onClick={() => {
@@ -183,11 +261,75 @@ export function Composer() {
                   J'ai terminé
                 </Button>
               </div>
-              <IconButton label="Annuler" variant="soft" size="sm" className={styles.cancel} onClick={() => (speech.stop(), setMode("voice"))}>
+              <IconButton
+                label="Annuler"
+                variant="soft"
+                size="sm"
+                className={styles.cancel}
+                onClick={() => {
+                  speech.stop();
+                  setMode(choiceFree ? "text" : "voice");
+                  setCompactOpen(false);
+                }}
+              >
                 <X size={16} />
               </IconButton>
               <TranscriptText text={simulated} visibleWords={speech.visible} className={styles.transcript} />
               {attachments.length > 0 && <Attachments kinds={attachments} />}
+            </motion.div>
+          ) : choiceFree ? (
+            <motion.div
+              key="compact-open"
+              className={styles.textPanel}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={spring.gentle}
+              onBlur={onCompactBlur}
+            >
+              <div className={styles.field}>
+                {!draft && <span className={styles.ghost} aria-hidden>{simulated || freeHint}</span>}
+                <textarea
+                  ref={textRef}
+                  rows={2}
+                  value={draft}
+                  aria-label={freeHint}
+                  onChange={(e) => setDraft(e.target.value)}
+                  onBlur={onCompactBlur}
+                  onKeyDown={(e) => {
+                    if ((e.key === "Tab" || e.key === "ArrowRight") && !draft && simulated) {
+                      e.preventDefault();
+                      setDraft(simulated);
+                    }
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      submitText();
+                    }
+                    if (e.key === "Escape") {
+                      e.preventDefault();
+                      if (!draft.trim()) setCompactOpen(false);
+                    }
+                  }}
+                />
+              </div>
+              <div className={styles.textActions}>
+                <IconButton
+                  label="Parler"
+                  variant="soft"
+                  onClick={() => {
+                    inputPreference.current = "voice";
+                    listen();
+                  }}
+                >
+                  <Mic size={18} />
+                </IconButton>
+                <span className={styles.tip}>
+                  <Keyboard size={14} /> {freeHint}
+                </span>
+                <Button size="sm" icon={<SendHorizontal size={16} />} onClick={submitText} disabled={!draft.trim() && !simulated}>
+                  Envoyer
+                </Button>
+              </div>
             </motion.div>
           ) : (
             <motion.div key="text" layoutId="composer-shell" className={styles.textPanel} transition={spring.gentle}>
@@ -249,7 +391,6 @@ function Attachments({ kinds }: { kinds: ("document" | "photo")[] }) {
       capture: kind === "photo",
     });
     if (!files.length) return;
-    // Même mécanisme que le bloc upload : boîte aux lettres lue par UploadBlock.
     if (awaiting?.kind === "upload") push(files);
   }
 

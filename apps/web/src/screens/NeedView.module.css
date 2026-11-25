@@ -20,11 +20,14 @@
 .flow {
   max-width: var(--content-max);
   margin: 0 auto;
-  padding: var(--space-6) var(--space-5) 300px;
+  padding: var(--space-6) var(--space-5) calc(var(--composer-offset, 120px) + var(--space-6));
   display: grid;
   gap: var(--space-8);
 }
-.turn, .user { scroll-margin-top: 88px; }
+.turn, .user {
+  scroll-margin-top: 88px;
+  scroll-margin-bottom: calc(var(--composer-offset, 120px) + var(--space-4));
+}
 .turn { display: grid; gap: var(--space-4); transition: opacity var(--dur-slow) var(--ease-out); }
 .past > [data-block="question"],
 .past > [data-block="lead"] { opacity: 0.5; transition: opacity var(--dur-slow) var(--ease-out); }
@@ -40,7 +43,10 @@
   color: var(--ink-700);
   line-height: var(--leading-normal);
 }
-.end { height: 1px; scroll-margin-bottom: 260px; }
+.end {
+  height: 1px;
+  scroll-margin-bottom: calc(var(--composer-offset, 120px) + var(--space-4));
+}
 
 @media (min-width: 1024px) {
   .top { padding: var(--space-4) var(--space-10); }

@@ -1,0 +1,12 @@
+.text { font-size: var(--text-md); line-height: var(--leading-normal); color: var(--color-text); }
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  margin-left: 1px;
+  vertical-align: -0.2em;
+  border-radius: 1px;
+  background: var(--color-presence);
+  animation: blink 1s steps(2) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }

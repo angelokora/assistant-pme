@@ -1,0 +1,10 @@
+.wave { display: flex; align-items: center; gap: 3px; height: 28px; }
+.bar {
+  width: 3px;
+  height: 100%;
+  border-radius: 2px;
+  transform: scaleY(0.12);
+  transform-origin: center;
+  background: color-mix(in oklab, var(--cherry-500) calc((1 - var(--i)) * 100%), var(--bronze-400));
+  transition: transform 80ms linear;
+}

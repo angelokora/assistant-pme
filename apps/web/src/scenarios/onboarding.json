@@ -42,7 +42,8 @@
           "kind": "progress",
           "dimensionId": "priorities",
           "to": 0.3,
-          "summary": "2 sujets identifiés"
+          "summary": "2 sujets identifiés",
+          "status": "active"
         }
       ],
       "blocks": [

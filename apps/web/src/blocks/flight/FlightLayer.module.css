@@ -1,0 +1,15 @@
+.puck {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: var(--z-toast);
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-memory);
+  color: var(--ink-900);
+  box-shadow: 0 8px 20px -6px rgb(138 90 43 / 0.55), 0 0 0 4px rgb(221 167 123 / 0.25);
+  pointer-events: none;
+}

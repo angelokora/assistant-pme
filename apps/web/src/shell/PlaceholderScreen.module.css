@@ -1,7 +1,7 @@
 .page {
   max-width: var(--content-max);
   margin: 0 auto;
-  padding: var(--space-8) var(--space-5) calc(120px + env(safe-area-inset-bottom, 0px));
+  padding: var(--space-8) var(--space-5) calc(120px + max(env(safe-area-inset-bottom, 0px), var(--safe-bottom, 0px)));
   display: grid;
   gap: var(--space-4);
   align-content: start;

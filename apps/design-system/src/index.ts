@@ -20,5 +20,11 @@ export { FileTile } from "./ui/FileTile/FileTile";
 export { FindingCard, type FindingType, type FindingOrigin } from "./ui/FindingCard/FindingCard";
 export { Skeleton } from "./ui/Skeleton/Skeleton";
 export { ToastProvider, useToast } from "./ui/Toast/Toast";
+export {
+  DeviceFrame,
+  DEVICE_SCREEN,
+  type DeviceKind,
+  type DeviceOrientation,
+} from "./ui/DeviceFrame/DeviceFrame";
 export { spring, blockList, blockItem, press } from "./motion/springs";
 export { formatEuro, formatDate, formatRelativeDate } from "./format";

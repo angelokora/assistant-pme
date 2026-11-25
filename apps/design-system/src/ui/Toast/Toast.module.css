@@ -2,7 +2,7 @@
   position: fixed;
   z-index: var(--z-toast, 80);
   left: 50%;
-  bottom: calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+  bottom: calc(var(--space-6) + max(env(safe-area-inset-bottom, 0px), var(--safe-bottom, 0px)));
   transform: translateX(-50%);
   display: grid;
   gap: var(--space-2);

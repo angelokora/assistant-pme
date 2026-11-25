@@ -4,6 +4,8 @@ import { persist } from "zustand/middleware";
 export type HomeVariant = "a" | "b" | "c";
 export type MenuVariant = "a" | "b";
 export type FindVariant = "a" | "b";
+export type DeviceMode = "desktop" | "phone" | "tablet";
+export type DeviceOrientation = "portrait" | "landscape";
 
 type DemoState = {
   open: boolean;
@@ -17,6 +19,8 @@ type DemoState = {
   showVariantPill: boolean;
   /** Indice de découverte du menu radial déjà vu. */
   radialHintSeen: boolean;
+  device: DeviceMode;
+  orientation: DeviceOrientation;
   toggle: () => void;
   setOpen: (v: boolean) => void;
   setAnimations: (v: boolean) => void;
@@ -26,6 +30,8 @@ type DemoState = {
   setMailInterrupted: (v: boolean) => void;
   setShowVariantPill: (v: boolean) => void;
   setRadialHintSeen: (v: boolean) => void;
+  setDevice: (v: DeviceMode) => void;
+  setOrientation: (v: DeviceOrientation) => void;
 };
 
 export const useDemo = create<DemoState>()(
@@ -39,6 +45,8 @@ export const useDemo = create<DemoState>()(
       mailInterrupted: false,
       showVariantPill: true,
       radialHintSeen: false,
+      device: "desktop",
+      orientation: "portrait",
       toggle: () => set((s) => ({ open: !s.open })),
       setOpen: (v) => set({ open: v }),
       setAnimations: (v) => set({ animations: v }),
@@ -48,6 +56,8 @@ export const useDemo = create<DemoState>()(
       setMailInterrupted: (v) => set({ mailInterrupted: v }),
       setShowVariantPill: (v) => set({ showVariantPill: v }),
       setRadialHintSeen: (v) => set({ radialHintSeen: v }),
+      setDevice: (v) => set({ device: v }),
+      setOrientation: (v) => set({ orientation: v }),
     }),
     {
       name: "elea-demo",
@@ -59,6 +69,8 @@ export const useDemo = create<DemoState>()(
         mailInterrupted: s.mailInterrupted,
         showVariantPill: s.showVariantPill,
         radialHintSeen: s.radialHintSeen,
+        device: s.device,
+        orientation: s.orientation,
       }),
     },
   ),

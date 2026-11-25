@@ -1,11 +1,12 @@
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useMediaQuery } from "../composer/useMediaQuery";
+import { isFrameMode } from "../demo/bridge";
 import { useDemo, type FindVariant, type HomeVariant, type MenuVariant } from "../demo/demo";
 import styles from "./VariantPill.module.css";
 
 /**
  * Pastille discrète (≥ 1024 px) pour changer de variante sans le panneau démo.
- * Masquable via `showVariantPill` dans le store démo.
+ * Masquable via `showVariantPill` dans le store démo. Absente dans l'iframe appareil.
  */
 export function VariantPill() {
   const desktop = useMediaQuery("(min-width: 1024px)");
@@ -20,7 +21,7 @@ export function VariantPill() {
   const findVariant = useDemo((s) => s.findVariant);
   const setFindVariant = useDemo((s) => s.setFindVariant);
 
-  if (!desktop || !show) return null;
+  if (isFrameMode() || !desktop || !show) return null;
 
   const onHome = location.pathname === "/";
   const onSearch = location.pathname.startsWith("/recherche");

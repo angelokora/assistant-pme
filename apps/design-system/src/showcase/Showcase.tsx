@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Briefcase, Mic, Target, User, Wallet } from "lucide-react";
 import {
-  ActionDock, Button, Callout, Chip, ChoiceCard, ChoiceGroup, ConfidenceBadge, DateField, DimensionCard, DropZone, FileTile, FindingCard, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, Skeleton, StepList, ToastProvider, TranscriptText, Waveform, useToast,
+  ActionDock, Button, Callout, Chip, ChoiceCard, ChoiceGroup, ConfidenceBadge, DateField, DeviceFrame, DimensionCard, DropZone, FileTile, FindingCard, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, Skeleton, StepList, ToastProvider, TranscriptText, Waveform, useToast,
   type OrbState, type ProviderId, type StepItem, type StepStatus,
 } from "../index";
 import styles from "./Showcase.module.css";
@@ -333,6 +333,23 @@ function ShowcaseInner() {
       <section className={styles.section}>
         <h2 className={styles.h2}>Toast</h2>
         <Button onClick={() => toast.show("C'est noté dans Mes finances.")}>Afficher un toast</Button>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.h2}>DeviceFrame</h2>
+        <p className="muted">Cadre générique pour l'émulateur du panneau démo (échelle réduite ici).</p>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 24, alignItems: "end" }}>
+          <DeviceFrame kind="phone" scale={0.42}>
+            <div style={{ height: "100%", display: "grid", placeItems: "center", background: "var(--color-bg)" }}>
+              <span className="muted">390 × 844</span>
+            </div>
+          </DeviceFrame>
+          <DeviceFrame kind="tablet" scale={0.28}>
+            <div style={{ height: "100%", display: "grid", placeItems: "center", background: "var(--color-bg)" }}>
+              <span className="muted">820 × 1180</span>
+            </div>
+          </DeviceFrame>
+        </div>
       </section>
 
       <section className={styles.section}>

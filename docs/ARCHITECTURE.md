@@ -222,7 +222,21 @@ Caché derrière un raccourci (`Shift + D`) ou un appui long sur le logo :
 - relancer un scénario depuis le début, réinitialiser la mémoire ;
 - passer d'une variante à l'autre (accueil, menu, retrouver) ;
 - couper les animations ;
-- sauter à une étape (pour les démos).
+- sauter à une étape (pour les démos) ;
+- masquer la pastille de variantes ;
+- choisir un appareil (ordinateur, téléphone, tablette) sur écran ≥ 1024 px.
+
+### Émulateur d'appareil
+
+Sur ordinateur (≥ 1024 px), le panneau peut afficher le prototype dans un cadre téléphone (390 × 844) ou tablette (820 × 1180), pour de vraies media queries mobiles.
+
+**Iframe de même origine.** La page hôte (`device !== desktop`) n'affiche que le fond, le `DeviceFrame` et le panneau démo. Le prototype tourne dans une iframe `/?frame=1` (éventuellement avec `safeTop` / `safeBottom`). Dans l'iframe : panneau démo et pastille de variantes masqués. C'est la seule façon d'avoir la mise en page mobile réelle (barre basse, ActionDock, feuilles).
+
+**Pilotage.** Les stores vivent dans l'iframe. L'hôte envoie des commandes via `BroadcastChannel("elea-demo")` (protocole typé dans `demo/bridge.ts`) : `reset`, `start`, `jumpTo`, `navigate`, `setHomeVariant`, `setMenuVariant`, `setFindVariant`, `setAnimations`, `setMailInterrupted`, `setShowVariantPill`. L'iframe exécute et navigue. Le choix d'appareil et l'orientation sont persistés dans le store démo (hôte).
+
+**Zones de sécurité.** `env(safe-area-inset-*)` vaut 0 dans une iframe. L'iframe pose `--safe-top` et `--safe-bottom` (valeurs selon l'appareil). Les composants utilisent `max(env(safe-area-inset-bottom, 0px), var(--safe-bottom, 0px))` (idem pour le haut).
+
+**Échelle.** Si la fenêtre est trop basse, la tablette (et éventuellement le téléphone) est mise à l'échelle (affichée dans le panneau). En dessous de 60 %, un message invite à agrandir la fenêtre.
 
 ## 8. Évolutions prévues (hors prototype)
 

@@ -137,6 +137,11 @@ Chaque composant vit dans `src/ui/{Nom}/` avec `Nom.tsx`, `Nom.module.css` et un
 | `FileTile` | Fichier déposé (miniature, progression) | en cours, fait, erreur |
 | `Skeleton` | Chargement | ligne, bloc |
 | `Toast` | Confirmation discrète | |
+| `DeviceFrame` | Cadre d'appareil pour l'émulateur démo | téléphone, tablette ; portrait, paysage |
+
+### DeviceFrame
+
+Cadre générique (CSS / SVG, pas de logo de marque) pour prévisualiser le prototype à taille réelle dans le panneau démo. L'écran (slot `children`) a les dimensions logiques de l'appareil ; le parent peut appliquer une échelle. Variantes : téléphone (encoche / îlot, boutons latéraux discrets), tablette (bords plus larges). Ombre portée légère. Documenté dans la vitrine.
 
 ### ActionDock
 

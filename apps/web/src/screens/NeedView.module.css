@@ -8,7 +8,7 @@
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3) var(--space-5);
+  padding: calc(var(--space-3) + max(env(safe-area-inset-top, 0px), var(--safe-top, 0px))) var(--space-5) var(--space-3);
   background: rgb(251 248 243 / 0.86);
   backdrop-filter: saturate(1.4) blur(14px);
   -webkit-backdrop-filter: saturate(1.4) blur(14px);

@@ -3,17 +3,16 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Keyboard, Mic, SendHorizontal } from "lucide-react";
 import { Callout, IconButton, Orb, spring } from "@elea/ds";
 import { motion } from "motion/react";
-import { routeUtterance } from "../engine/router";
-import { SCENARIOS } from "../engine/scenarios";
+import { ROUTES, routeUtterance } from "../engine/router";
 import { usePlayer } from "../engine/player";
-import { useMemory } from "../memory/store";
 import { useDemo } from "../demo/demo";
 import { useSimulatedSpeech } from "../composer/useSimulatedSpeech";
 import { useRadialMic } from "../shell/useRadialMic";
 import { useComposerContext } from "../shell/composerContext";
 import styles from "./HomeComposer.module.css";
 
-const FALLBACK_SIMULATED = "Je veux embaucher une vendeuse pour les week-ends. Je fais un CDD ou un CDI ?";
+const FALLBACK_SIMULATED = ROUTES.unknown.examples[0]?.utterance
+  ?? "Je veux embaucher une vendeuse pour les week-ends. Je fais un CDD ou un CDI ?";
 
 export type HomeComposerHandle = {
   listen: () => void;
@@ -41,7 +40,6 @@ export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeC
   const menuB = (params.get("menu") === "b" ? true : params.get("menu") === "a" ? false : menuFromDemo === "b");
   const stop = usePlayer((s) => s.stop);
   const start = usePlayer((s) => s.start);
-  const suggestions = useMemory((s) => s.home?.suggestions ?? []);
   const aboutTitle = useComposerContext((s) => s.aboutTitle);
   const clearAbout = useComposerContext((s) => s.clear);
   const [mode, setMode] = useState<"voice" | "listening" | "text">(forceOpen ? "text" : "voice");
@@ -71,9 +69,9 @@ export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeC
     }
   }, [forceOpen, location.state, onHandled]);
 
-  function launch(scenarioId: string) {
+  function launch(scenarioId: string, utterance?: string) {
     stop();
-    start(scenarioId);
+    start(scenarioId, utterance ? { withUtterance: utterance } : undefined);
     navigate(`/besoin/${scenarioId}`);
     setUnknown(false);
     setDraft("");
@@ -84,10 +82,15 @@ export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeC
     if (!trimmed) return;
     const id = routeUtterance(trimmed);
     if (id) {
-      launch(id);
+      launch(id, trimmed);
       return;
     }
     setUnknown(true);
+  }
+
+  function launchExample(utterance: string) {
+    const id = routeUtterance(utterance);
+    if (id) launch(id, utterance);
   }
 
   function submitVoice() {
@@ -95,12 +98,6 @@ export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeC
     submit(FALLBACK_SIMULATED);
     setMode("voice");
   }
-
-  const available = suggestions.length
-    ? suggestions
-    : Object.keys(SCENARIOS)
-        .filter((id) => id !== "onboarding")
-        .map((id) => ({ id, label: SCENARIOS[id].title, scenarioId: id }));
 
   const showVoiceOrb = mode === "voice" && !hideVoiceOrb;
 
@@ -116,13 +113,13 @@ export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeC
       )}
       {unknown && (
         <div className={styles.unknown}>
-          <Callout tone="info" title="Je n'ai pas reconnu cette demande">
-            Essayez l'un de ces besoins de démonstration.
+          <Callout tone="info" title={ROUTES.unknown.title}>
+            {ROUTES.unknown.text}
           </Callout>
           <div className={styles.links}>
-            {available.map((s) => (
-              <button key={s.id} type="button" className={styles.link} onClick={() => launch(s.scenarioId)}>
-                {s.label}
+            {ROUTES.unknown.examples.map((ex) => (
+              <button key={ex.id} type="button" className={styles.link} onClick={() => launchExample(ex.utterance)}>
+                {ex.label}
               </button>
             ))}
           </div>

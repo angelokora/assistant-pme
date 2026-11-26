@@ -222,6 +222,7 @@ type AnswerBlock = BaseBlock & {
   recommendation?: string;
   sources?: { label: string; detail?: string }[];
   savedTo?: { topicId: string; label: string };
+  confidence?: "confirmed" | "estimated" | "to-check";
 };
 ```
 

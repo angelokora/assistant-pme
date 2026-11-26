@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Briefcase, Mic, Target, User, Wallet } from "lucide-react";
 import {
-  ActionDock, Button, Callout, Chip, ChoiceCard, ChoiceGroup, ConfidenceBadge, DateField, DeviceFrame, DimensionCard, DropZone, FileTile, FindingCard, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, Skeleton, StepList, ToastProvider, TranscriptText, Waveform, useToast,
+  ActionDock, AnswerCard, Button, Callout, Chip, ChoiceCard, ChoiceGroup, ConfidenceBadge, DateField, DeviceFrame, DimensionCard, DropZone, FileTile, FindingCard, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, Skeleton, StepList, ToastProvider, TranscriptText, Waveform, useToast,
   type OrbState, type ProviderId, type StepItem, type StepStatus,
 } from "../index";
 import styles from "./Showcase.module.css";
@@ -299,6 +299,28 @@ function ShowcaseInner() {
           {dropFiles.map((f) => (
             <FileTile key={f.name + f.progress} name={f.name} progress={f.progress} kind={f.name.endsWith(".pdf") ? "pdf" : "image"} />
           ))}
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.h2}>AnswerCard</h2>
+        <p className="muted">Fiche de réponse (pas une bulle), badge à vérifier, rangement.</p>
+        <div style={{ maxWidth: 480 }}>
+          <AnswerCard
+            title="Plutôt un CDI à temps partiel"
+            summary="Un besoin qui revient chaque week-end toute l'année est un besoin permanent."
+            confidence="to-check"
+            keyPoints={["Besoin permanent : CDI", "Moins de 24 h : vérifier la convention"]}
+            sections={[
+              {
+                heading: "Pourquoi pas un CDD",
+                text: "Un CDD doit reposer sur un motif précis prévu par la loi.",
+              },
+            ]}
+            recommendation="Faites valider le contrat par votre expert-comptable."
+            sources={[{ label: "Code du travail", detail: "Motifs de recours au CDD" }]}
+            savedTo={{ label: "Équipe" }}
+          />
         </div>
       </section>
 

@@ -61,6 +61,8 @@ export function FindingDetail({ finding, showTitle = true }: Props) {
   const stop = usePlayer((s) => s.stop);
   const setAbout = useComposerContext((s) => s.setAbout);
   const provider = PROVIDER_ORIGIN[finding.origin];
+  /** Si le body porte déjà une fiche answer, on évite le double titre / résumé. */
+  const answerLed = finding.body?.some((b) => b.type === "answer") ?? false;
 
   function reopenNeed() {
     const scenarioId = finding.scenarioId;
@@ -88,15 +90,17 @@ export function FindingDetail({ finding, showTitle = true }: Props) {
         {finding.confidence && <ConfidenceBadge value={finding.confidence} />}
       </motion.div>
 
-      {showTitle && (
+      {showTitle && !answerLed && (
         <motion.h2 variants={blockItem} className={["voice", styles.title].join(" ")}>
           {finding.title}
         </motion.h2>
       )}
 
-      <motion.p variants={blockItem} className={styles.summary}>
-        {finding.summary}
-      </motion.p>
+      {!answerLed && (
+        <motion.p variants={blockItem} className={styles.summary}>
+          {finding.summary}
+        </motion.p>
+      )}
 
       {finding.body && finding.body.length > 0 && (
         <motion.div variants={blockItem} className={styles.body} aria-label="Contenu du constat">

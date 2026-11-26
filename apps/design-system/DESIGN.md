@@ -131,6 +131,7 @@ Chaque composant vit dans `src/ui/{Nom}/` avec `Nom.tsx`, `Nom.module.css` et un
 | `TranscriptText` | Texte transcrit mot à mot | streaming, done |
 | `ConfidenceBadge` | Confirmé, estimé, à vérifier | 3 variantes |
 | `FindingCard` | Carte d'un finding (type, titre, sujet, date) | default, compact, expanded |
+| `AnswerCard` | Fiche de réponse structurée (titre, sections, reco) | sections ouvertes / fermées |
 | `ProviderLogo` | Gmail, Outlook, Drive, Google, Apple | |
 | `ActionDock` | Barre d'actions collante (mobile) | ouverte, fermée |
 | `DropZone` | Zone de dépôt : glisser-déposer ≥ 640 px ; « Choisir un fichier » / « Prendre une photo » en dessous | idle, survol, disabled |

@@ -83,6 +83,8 @@ export type AnswerBlock = Base<"answer"> & {
   recommendation?: string;
   sources?: { label: string; detail?: string }[];
   savedTo?: { topicId: string; label: string };
+  /** Badge de confiance affiché sur la fiche (sinon lu depuis le finding lié). */
+  confidence?: Confidence;
 };
 export type FindingRefBlock = Base<"finding-ref"> & { findingId: string; reason?: string };
 export type SuggestionsBlock = Base<"suggestions"> & {

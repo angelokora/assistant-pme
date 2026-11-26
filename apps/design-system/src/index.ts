@@ -18,6 +18,7 @@ export { ActionDock } from "./ui/ActionDock/ActionDock";
 export { DropZone, type DropZoneAccept } from "./ui/DropZone/DropZone";
 export { FileTile } from "./ui/FileTile/FileTile";
 export { FindingCard, type FindingType, type FindingOrigin } from "./ui/FindingCard/FindingCard";
+export { AnswerCard, type AnswerSection, type AnswerSource } from "./ui/AnswerCard/AnswerCard";
 export { Skeleton } from "./ui/Skeleton/Skeleton";
 export { ToastProvider, useToast } from "./ui/Toast/Toast";
 export {

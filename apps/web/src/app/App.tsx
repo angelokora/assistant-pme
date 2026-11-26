@@ -53,6 +53,10 @@ export function App() {
     if (!framed && !desktop && device !== "desktop") setDevice("desktop");
   }, [framed, desktop, device, setDevice]);
 
+  useEffect(() => {
+    document.documentElement.dataset.animations = animations ? "on" : "off";
+  }, [animations]);
+
   const deviceHost = !framed && desktop && device !== "desktop";
 
   return (

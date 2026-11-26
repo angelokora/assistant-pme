@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion } from "motion/react";
 import { ArrowLeft } from "lucide-react";
-import { Button, Orb, blockItem, blockList } from "@elea/ds";
+import { Button, Elephant, blockItem, blockList } from "@elea/ds";
 import { Icon } from "../blocks/icons";
 import { useMemory } from "../memory/store";
 import { TopicFindings } from "./TopicFindings";
@@ -66,7 +66,7 @@ export function Topic() {
 
       {topicFindings.length === 0 ? (
         <motion.section variants={blockItem} className={styles.emptyState}>
-          <Orb size={56} state="idle" decorative />
+          <Elephant size={56} state="idle" decorative />
           <p className={["voice", styles.emptyVoice].join(" ")}>
             Je n'ai encore rien rangé dans « {topic.label} ». Donnez-moi une information, je la note ici.
           </p>

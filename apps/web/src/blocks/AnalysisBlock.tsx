@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Orb, StepList, type StepItem, type StepStatus } from "@elea/ds";
+import { Elephant, StepList, type StepItem, type StepStatus } from "@elea/ds";
 import type { AnalysisBlock } from "../engine/types";
 import { usePlayer } from "../engine/player";
 import type { BlockProps } from "./BlockRenderer";
@@ -58,7 +58,7 @@ export function AnalysisBlockView({ block, active }: BlockProps<AnalysisBlock>) 
   return (
     <section className={styles.analysis}>
       <div className={styles.analysisHead}>
-        <Orb
+        <Elephant
           size={96}
           state={active && !done ? "thinking" : done ? "done" : "idle"}
           layoutId={active ? "elea-presence" : undefined}

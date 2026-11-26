@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
-import { Mic } from "lucide-react";
-import { Button, FindingCard, Orb, blockItem, blockList, type FindingType } from "@elea/ds";
+import { Button, FindingCard, Elephant, blockItem, blockList, type FindingType } from "@elea/ds";
 import { Icon } from "../blocks/icons";
 import { useSimulatedSpeech } from "../composer/useSimulatedSpeech";
 import { foldText } from "../engine/router";
@@ -149,14 +148,13 @@ export function Search() {
           }}
         />
         <button type="button" className={styles.voiceBtn} aria-label="Parler" onClick={startVoice}>
-          <Orb size={36} state={listening ? "listening" : "idle"} level={speech.level} decorative />
-          <Mic size={16} strokeWidth={1.75} className={styles.micIcon} aria-hidden />
+          <Elephant size={36} state={listening ? "listening" : "idle"} level={speech.level} decorative mic="badge" />
         </button>
       </motion.div>
 
       {listening && (
         <motion.div variants={blockItem} className={styles.listening}>
-          <Orb size={24} state="listening" level={speech.level} decorative />
+          <Elephant size={24} state="listening" level={speech.level} decorative />
           <span>Je vous écoute…</span>
           <Button size="sm" onClick={commitVoice}>
             Utiliser

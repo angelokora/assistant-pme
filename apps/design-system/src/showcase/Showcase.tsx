@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Briefcase, Mic, Target, User, Wallet } from "lucide-react";
 import {
-  ActionDock, AnswerCard, Button, Callout, Chip, ChoiceCard, ChoiceGroup, ConfidenceBadge, DateField, DeviceFrame, DimensionCard, DropZone, FileTile, FindingCard, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, Skeleton, StepList, ToastProvider, TranscriptText, Waveform, useToast,
-  type OrbState, type ProviderId, type StepItem, type StepStatus,
+  ActionDock, AnswerCard, Button, Callout, Chip, ChoiceCard, ChoiceGroup, ConfidenceBadge, DateField, DeviceFrame, DimensionCard, DropZone, Elephant, FileTile, FindingCard, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, Skeleton, StepList, ToastProvider, TranscriptText, Waveform, useToast,
+  type ElephantState, type ProviderId, type StepItem, type StepStatus,
 } from "../index";
 import { NBSP, NNBSP } from "../format";
 import styles from "./Showcase.module.css";
@@ -45,7 +45,7 @@ function ShowcaseInner() {
       ? "classic"
       : "vivant",
   );
-  const [orb, setOrb] = useState<OrbState>("idle");
+  const [orb, setOrb] = useState<ElephantState>("idle");
   const [level, setLevel] = useState(0.4);
   const [progress, setProgress] = useState(0.35);
   const [pulse, setPulse] = useState(0);
@@ -77,7 +77,7 @@ function ShowcaseInner() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <Orb size={56} state="idle" />
+        <Elephant size={56} state="idle" />
         <div>
           <p className="eyebrow">Design system</p>
           <h1 className="voice">Éléa, l'atelier vivant</h1>
@@ -131,17 +131,32 @@ function ShowcaseInner() {
       </section>
 
       <section className={styles.section}>
-        <h2 className={styles.h2}>Orbe de présence</h2>
+        <h2 className={styles.h2}>Mascotte Éléa</h2>
+        <p className="muted">États, tailles 16 / 24 / 32 / 56 / 120. Variante selon le thème (CSS). Micro : option 1 pastille (défaut) ou option 2 sous la trompe.</p>
         <div className={styles.row}>
-          {(["idle", "listening", "thinking", "speaking", "done"] as OrbState[]).map((s) => (
+          {(["idle", "listening", "thinking", "speaking", "done"] as ElephantState[]).map((s) => (
             <Chip key={s} selected={orb === s} onClick={() => setOrb(s)}>{s}</Chip>
           ))}
         </div>
         <div className={styles.orbs}>
-          <Orb size={96} state={orb} level={level} />
-          <Orb size={56} state={orb} level={level} />
-          <Orb size={20} state={orb} level={level} />
+          {([16, 24, 32, 56, 120] as const).map((sz) => (
+            <Elephant key={sz} size={sz} state={orb} level={level} />
+          ))}
+        </div>
+        <div className={styles.row}>
+          <div className={styles.micDemo}>
+            <p className="eyebrow">Micro option 1</p>
+            <Elephant size={72} state={orb} mic="badge" />
+          </div>
+          <div className={styles.micDemo}>
+            <p className="eyebrow">Micro option 2</p>
+            <Elephant size={72} state={orb} mic="trunk" />
+          </div>
           <Waveform level={orb === "listening" ? level : 0} />
+        </div>
+        <p className="muted">Orbe (dépréciée) conservée pour référence.</p>
+        <div className={styles.orbs}>
+          <Orb size={56} state={orb === "done" ? "done" : orb} level={level} />
         </div>
       </section>
 

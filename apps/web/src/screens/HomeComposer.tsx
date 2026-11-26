@@ -1,7 +1,7 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Keyboard, Mic, SendHorizontal } from "lucide-react";
-import { IconButton, Orb, spring } from "@elea/ds";
+import { IconButton, Elephant, spring } from "@elea/ds";
 import { motion } from "motion/react";
 import { ROUTES, routeUtterance } from "../engine/router";
 import { usePlayer } from "../engine/player";
@@ -121,7 +121,7 @@ export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeC
 
       {unknown && (
         <div className={styles.unknownLine} role="status">
-          <Orb size={28} state="idle" decorative />
+          <Elephant size={28} state="idle" decorative />
           <p className={styles.unknownText}>
             {ROUTES.unknown.title}. Essayez l'un des exemples ci-dessus.
           </p>
@@ -136,8 +136,7 @@ export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeC
             aria-label={menuB ? "Toucher pour parler, glisser ou appui long pour le menu" : "Toucher pour parler"}
             {...radial}
           >
-            <Orb size={56} state="idle" decorative />
-            <Mic size={22} strokeWidth={1.75} className={styles.micIcon} />
+            <Elephant size={56} state="idle" decorative mic="badge" />
           </button>
           <button type="button" className={styles.switch} onClick={() => setMode("text")}>
             <Keyboard size={14} strokeWidth={1.75} /> Écrire plutôt
@@ -153,7 +152,7 @@ export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeC
 
       {mode === "listening" && (
         <div className={styles.panel}>
-          <Orb size={32} state="listening" level={speech.level} decorative />
+          <Elephant size={32} state="listening" level={speech.level} decorative />
           <p className={styles.listenLabel}>Je vous écoute…</p>
           <IconButton label="Envoyer" onClick={submitVoice}>
             <SendHorizontal size={16} />

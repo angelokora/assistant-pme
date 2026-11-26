@@ -1,4 +1,6 @@
+/** @deprecated Remplacé par `Elephant` (#33). Conservé pour référence Classique. */
 export { Orb, type OrbState } from "./ui/Orb/Orb";
+export { Elephant, type ElephantState, type ElephantMic } from "./ui/Elephant/Elephant";
 export { Button, IconButton } from "./ui/Button/Button";
 export { Chip } from "./ui/Chip/Chip";
 export { Card } from "./ui/Card/Card";

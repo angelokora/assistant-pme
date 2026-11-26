@@ -101,9 +101,9 @@ L'interface doit être **vivante**. Les animations restent actives même si le s
 
 Règles : jamais plus de 450 ms pour une transition d'interface ; rien ne bouge pendant la lecture d'un texte.
 
-## 6. Signature : présence d'Éléa
+## 6. Signature : mascotte Éléa
 
-En attendant #33 (mascotte), l'orbe reste le marqueur de présence. Après #33, le composant `Elephant` la remplace partout ; `Orb` reste dans le DS, marqué déprécié.
+Composant `Elephant` : tête d'éléphant (SVG de `docs/brand/elephant/`), états `idle | listening | thinking | speaking`. Variante CSS (détaillée / simplifiée ≤ 32 px / classique). Micro option 1 (pastille) ou 2 (sous la trompe). `Orb` reste disponible, dépréciée.
 
 ## 7. Composants
 

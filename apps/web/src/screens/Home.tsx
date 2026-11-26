@@ -6,8 +6,8 @@ import {
   Button,
   Card,
   DimensionCard,
+  Elephant,
   FindingCard,
-  Orb,
   Sheet,
   StepList,
   blockItem,
@@ -101,7 +101,7 @@ export function Home() {
     return (
       <motion.main className={styles.first} variants={blockList} initial="hidden" animate="shown">
         <motion.div variants={blockItem} className={styles.orb}>
-          <Orb size={96} state="idle" />
+          <Elephant size={96} state="idle" />
         </motion.div>
         <motion.p variants={blockItem} className="eyebrow">
           Votre conseillère
@@ -166,7 +166,7 @@ export function Home() {
               aria-label="Toucher pour parler, glisser ou appui long pour le menu"
               {...presenceRadial}
             >
-              <Orb size={96} state="idle" decorative />
+              <Elephant size={96} state="idle" decorative />
               <Mic size={28} strokeWidth={1.75} className={styles.presenceMicIcon} aria-hidden />
             </button>
           </motion.div>
@@ -186,7 +186,7 @@ export function Home() {
               swipeStartY.current = null;
             }}
           >
-            <Orb size={96} state="idle" />
+            <Elephant size={96} state="idle" />
           </motion.div>
         )}
         <motion.p variants={blockItem} className="eyebrow">

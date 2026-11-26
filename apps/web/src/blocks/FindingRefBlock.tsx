@@ -10,7 +10,8 @@ import styles from "./blocks.module.css";
 export function FindingRefBlockView({ block }: BlockProps<FindingRefBlockType>) {
   const navigate = useNavigate();
   const finding = useMemory((s) => s.findings.find((f) => f.id === block.findingId));
-  const topic = useMemory((s) => s.topics.find((t) => t.id === finding?.topicId));
+  const subject = useMemory((s) => s.subjects.find((t) => t.id === finding?.subjectId));
+  const dimension = useMemory((s) => s.dimensions.find((d) => d.id === finding?.dimensionId));
   const today = useMemory((s) => s.today);
   const openDetail = useDetail((s) => s.open);
 
@@ -29,7 +30,7 @@ export function FindingRefBlockView({ block }: BlockProps<FindingRefBlockType>) 
         layoutId={`finding-shell-${finding.id}`}
         findingType={finding.type}
         title={finding.title}
-        topicLabel={topic?.label ?? finding.topicId}
+        topicLabel={subject?.title ?? dimension?.label ?? finding.dimensionId}
         createdAt={finding.createdAt}
         today={today}
         origin={finding.origin}

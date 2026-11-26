@@ -13,28 +13,28 @@ function emptySuggestion(homeSuggestions: { label: string; scenarioId: string }[
   return homeSuggestions[0] ?? null;
 }
 
-/** Liste des constats d'un sujet, avec filtre par type. */
+/** Liste des constats d'un sujet traité (ancienne mise en page, en attendant #38). */
 export function Topic() {
-  const { topicId = "" } = useParams();
+  const { subjectId = "" } = useParams();
   const navigate = useNavigate();
-  const topics = useMemory((s) => s.topics);
+  const subjects = useMemory((s) => s.subjects);
   const findings = useMemory((s) => s.findings);
   const home = useMemory((s) => s.home);
-  const topic = topics.find((t) => t.id === topicId);
+  const subject = subjects.find((t) => t.id === subjectId);
 
-  const topicFindings = useMemo(
-    () => findings.filter((f) => f.topicId === topicId),
-    [findings, topicId],
+  const subjectFindings = useMemo(
+    () => findings.filter((f) => f.subjectId === subjectId),
+    [findings, subjectId],
   );
   const suggestion = emptySuggestion(home?.suggestions ?? []);
 
-  if (!topic) {
+  if (!subject) {
     return (
       <main className={styles.page}>
         <Link to="/entreprise" className={styles.back}>
           <ArrowLeft size={18} strokeWidth={1.75} /> Mon entreprise
         </Link>
-        <p className={styles.empty}>Ce sujet n'existe pas dans la mémoire.</p>
+        <p className={styles.empty}>Ce sujet traité n'existe pas dans la mémoire.</p>
       </main>
     );
   }
@@ -49,27 +49,29 @@ export function Topic() {
 
       <motion.header variants={blockItem} className={styles.header}>
         <span className={styles.topicIcon} aria-hidden>
-          <Icon name={topic.icon} />
+          <Icon name={subject.icon} />
         </span>
         <div>
-          <p className="eyebrow">Sujet</p>
-          <h1 className={["voice", styles.title].join(" ")}>{topic.label}</h1>
+          <p className="eyebrow">Sujet traité</p>
+          <h1 className={["voice", styles.title].join(" ")}>{subject.title}</h1>
           <p className={styles.count}>
-            {topicFindings.length === 0
+            {subject.summary}
+            {" · "}
+            {subjectFindings.length === 0
               ? "Aucun constat"
-              : topicFindings.length === 1
+              : subjectFindings.length === 1
                 ? "1 constat"
-                : `${topicFindings.length} constats`}
+                : `${subjectFindings.length} constats`}
           </p>
         </div>
       </motion.header>
 
-      {topicFindings.length === 0 ? (
+      {subjectFindings.length === 0 ? (
         <motion.section variants={blockItem} className={styles.emptyState}>
           <Elephant size={56} state="idle" decorative />
           <p className={["voice", styles.emptyVoice].join(" ")}>
             Je n'ai encore rien rangé dans «{"\u00a0"}
-            {topic.label}
+            {subject.title}
             {"\u00a0"}». Donnez-moi une information, je la note ici.
           </p>
           {suggestion && (
@@ -81,7 +83,7 @@ export function Topic() {
         </motion.section>
       ) : (
         <motion.div variants={blockItem}>
-          <TopicFindings topicId={topic.id} topicLabel={topic.label} />
+          <TopicFindings subjectId={subject.id} subjectTitle={subject.title} />
         </motion.div>
       )}
     </motion.main>

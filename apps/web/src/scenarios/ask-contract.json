@@ -51,7 +51,6 @@
           "finding": {
             "id": "f-contract-weekend",
             "type": "answer",
-            "topicId": "team",
             "title": "Vendeuse du week-end : plutôt un CDI à temps partiel",
             "summary": "Un besoin permanent se couvre en principe par un CDI. Le CDD exige un motif précis (surcroît temporaire, remplacement). Attention à la durée minimale du temps partiel.",
             "createdAt": "2026-12-16T11:05:00",
@@ -92,11 +91,13 @@
                   }
                 ],
                 "savedTo": {
-                  "topicId": "team",
-                  "label": "Équipe"
+                  "label": "Équipe",
+                  "subjectId": "weekend-hire"
                 }
               }
-            ]
+            ],
+            "dimensionId": "activity",
+            "subjectId": "weekend-hire"
           }
         }
       ],
@@ -134,8 +135,8 @@
             }
           ],
           "savedTo": {
-            "topicId": "team",
-            "label": "Équipe"
+            "label": "Équipe",
+            "subjectId": "weekend-hire"
           }
         },
         {
@@ -147,7 +148,7 @@
               "label": "Combien me coûterait-elle ?",
               "action": {
                 "kind": "route",
-                "target": "/entreprise/team"
+                "target": "/entreprise/weekend-hire"
               }
             },
             {
@@ -155,7 +156,7 @@
               "label": "Voir le sujet Équipe",
               "action": {
                 "kind": "route",
-                "target": "/entreprise/team"
+                "target": "/entreprise/weekend-hire"
               }
             }
           ]

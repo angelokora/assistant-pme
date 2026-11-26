@@ -6,7 +6,7 @@ import { useGauges, useMemory } from "../memory/store";
 import { findTarget, useFlights } from "./flight/flights";
 import type { BlockProps } from "./BlockRenderer";
 
-/** « Noté dans… » : à l'apparition, une pastille s'envole vers la dimension ou le sujet. */
+/** « Noté dans… » : à l'apparition, une pastille s'envole vers la dimension. */
 export function NotedBlockView({ block }: BlockProps<NotedBlock>) {
   const ref = useRef<HTMLDivElement>(null);
   const launch = useFlights((s) => s.launch);

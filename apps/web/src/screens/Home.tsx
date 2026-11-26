@@ -57,7 +57,7 @@ export function Home() {
   const plans = useMemory((s) => s.plans);
   const findings = useMemory((s) => s.findings);
   const dimensions = useMemory((s) => s.dimensions);
-  const topics = useMemory((s) => s.topics);
+  const subjects = useMemory((s) => s.subjects);
   const home = useMemory((s) => s.home);
   const openDetail = useDetail((s) => s.open);
 
@@ -83,7 +83,10 @@ export function Home() {
     () => [...findings].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 5),
     [findings],
   );
-  const topicLabel = (id: string) => topics.find((t) => t.id === id)?.label ?? id;
+  const contextLabel = (f: { subjectId?: string; dimensionId: string }) =>
+    subjects.find((t) => t.id === f.subjectId)?.title ??
+    dimensions.find((d) => d.id === f.dimensionId)?.label ??
+    f.dimensionId;
   const suggestions = home?.suggestions ?? [];
   const stop = usePlayer((s) => s.stop);
   const start = usePlayer((s) => s.start);
@@ -220,7 +223,7 @@ export function Home() {
           )}
           <FindingsList
             findings={recentFindings}
-            topicLabel={topicLabel}
+            contextLabel={contextLabel}
             today={today}
             onOpen={(id) => {
               openDetail("finding", id);
@@ -258,18 +261,18 @@ export function Home() {
             />
           ))}
         </motion.section>
-        <motion.section variants={blockItem} className={styles.topics} aria-label="Sujets">
-          {topics.map((t) => {
-            const count = findings.filter((f) => f.topicId === t.id).length;
+        <motion.section variants={blockItem} className={styles.topics} aria-label="Sujets traités">
+          {subjects.map((s) => {
+            const count = findings.filter((f) => f.subjectId === s.id).length;
             return (
               <button
-                key={t.id}
+                key={s.id}
                 type="button"
                 className={styles.topicRow}
-                onClick={() => navigate(`/entreprise/${t.id}`)}
+                onClick={() => navigate(`/entreprise/${s.id}`)}
               >
-                <Icon name={t.icon} />
-                <span>{t.label}</span>
+                <Icon name={s.icon} />
+                <span>{s.title}</span>
                 <span className={styles.count}>{count}</span>
               </button>
             );
@@ -320,7 +323,7 @@ export function Home() {
         </h2>
         <FindingsList
           findings={recentFindings}
-          topicLabel={topicLabel}
+          contextLabel={contextLabel}
           today={today}
           onOpen={(id) => {
             openDetail("finding", id);
@@ -398,12 +401,12 @@ function PlanCard({
 
 function FindingsList({
   findings,
-  topicLabel,
+  contextLabel,
   today,
   onOpen,
 }: {
   findings: ReturnType<typeof useMemory.getState>["findings"];
-  topicLabel: (id: string) => string;
+  contextLabel: (f: ReturnType<typeof useMemory.getState>["findings"][number]) => string;
   today: string;
   onOpen: (id: string) => void;
 }) {
@@ -415,7 +418,7 @@ function FindingsList({
           <FindingCard
             findingType={f.type as FindingType}
             title={f.title}
-            topicLabel={topicLabel(f.topicId)}
+            topicLabel={contextLabel(f)}
             createdAt={f.createdAt}
             today={today}
             origin={f.origin as FindingOrigin}

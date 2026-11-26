@@ -50,49 +50,22 @@
       "summary": "1 plan en cours, 1 en attente"
     }
   ],
-  "topics": [
-    {
-      "id": "finances",
-      "label": "Finances",
-      "icon": "wallet"
-    },
-    {
-      "id": "clients",
-      "label": "Clients",
-      "icon": "handshake"
-    },
-    {
-      "id": "team",
-      "label": "Équipe",
-      "icon": "users"
-    },
-    {
-      "id": "production",
-      "label": "Production et prix",
-      "icon": "croissant"
-    },
-    {
-      "id": "legal",
-      "label": "Juridique et administratif",
-      "icon": "scale"
-    }
-  ],
   "findings": [
     {
       "id": "f-charges",
       "type": "fact",
-      "topicId": "finances",
       "title": "Charges mensuelles : 57 400 €",
       "summary": "Masse salariale 38 000 €, matières 10 400 €, loyer 3 200 €, énergie 2 600 €, assurances et divers 3 200 €. Vérifié le 27 novembre.",
       "createdAt": "2026-11-27T19:20:00",
       "origin": "gmail",
       "confidence": "confirmed",
-      "scenarioId": "onboarding"
+      "scenarioId": "onboarding",
+      "dimensionId": "finances",
+      "subjectId": "breakeven"
     },
     {
       "id": "f-breakeven",
       "type": "fact",
-      "topicId": "finances",
       "title": "Seuil de rentabilité : 2 170 € de ventes par jour",
       "summary": "Charges fixes de 47 000 € par mois, matières à 17 % des ventes, 26 jours d'ouverture. En dessous de 2 170 €, la journée ne couvre pas ses charges.",
       "createdAt": "2026-12-03T20:05:00",
@@ -112,74 +85,81 @@
           "title": "2 170 € par jour",
           "text": "Charges fixes 47 000 € ÷ 26 jours d'ouverture, plus 17 % de matières sur les ventes."
         }
-      ]
+      ],
+      "dimensionId": "finances",
+      "subjectId": "breakeven"
     },
     {
       "id": "f-week-50",
       "type": "fact",
-      "topicId": "finances",
       "title": "Semaine du 8 décembre : 2 480 € par jour en moyenne",
       "summary": "310 € au-dessus du seuil. Mardi et mercredi sous le seuil, samedi à 4 100 €.",
       "createdAt": "2026-12-15T07:00:00",
       "origin": "conversation",
-      "confidence": "confirmed"
+      "confidence": "confirmed",
+      "dimensionId": "finances",
+      "subjectId": "breakeven"
     },
     {
       "id": "f-decision-breakeven",
       "type": "decision",
-      "topicId": "finances",
       "title": "Priorité : connaître le seuil de rentabilité",
       "summary": "Sophie choisit de traiter d'abord le seuil de rentabilité. Les retards du restaurant voisin restent la deuxième priorité.",
       "createdAt": "2026-11-25T10:52:00",
       "origin": "conversation",
       "confidence": "confirmed",
-      "scenarioId": "onboarding"
+      "scenarioId": "onboarding",
+      "dimensionId": "priorities",
+      "subjectId": "breakeven"
     },
     {
       "id": "f-comptoir",
       "type": "fact",
-      "topicId": "clients",
       "title": "Le Comptoir des Halles paie de plus en plus tard",
       "summary": "Environ 4 800 € de livraisons par mois. Factures d'octobre et de novembre en attente, soit 9 600 €. Délai réel passé de 30 à 46 jours depuis l'été.",
       "createdAt": "2026-11-25T10:46:00",
       "origin": "conversation",
       "confidence": "confirmed",
-      "scenarioId": "onboarding"
+      "scenarioId": "onboarding",
+      "dimensionId": "finances",
+      "subjectId": "comptoir-late"
     },
     {
       "id": "f-team-planning",
       "type": "fact",
-      "topicId": "team",
       "title": "Équipe : 7 en production, 5 en vente",
       "summary": "Deux apprentis en production. Une vendeuse à temps partiel en arrêt jusqu'au 5 janvier.",
       "createdAt": "2026-12-02T21:10:00",
       "origin": "conversation",
-      "confidence": "confirmed"
+      "confidence": "confirmed",
+      "dimensionId": "activity",
+      "subjectId": "weekend-hire"
     },
     {
       "id": "f-buche-price",
       "type": "decision",
-      "topicId": "production",
       "title": "Bûche 6 parts vendue 42 €",
       "summary": "Prix fixé le 4 novembre après calcul du coût de revient. Objectif : 180 bûches pour les fêtes.",
       "createdAt": "2026-11-04T20:30:00",
       "origin": "conversation",
-      "confidence": "confirmed"
+      "confidence": "confirmed",
+      "dimensionId": "activity",
+      "subjectId": "buches"
     },
     {
       "id": "f-buche-cost",
       "type": "fact",
-      "topicId": "production",
       "title": "Coût de revient de la bûche : 15,10 €",
       "summary": "Matières 11,40 €, emballage 1,20 €, main-d'œuvre 2,50 €. Marge de 64 % au prix de 42 €.",
       "createdAt": "2026-11-04T20:25:00",
       "origin": "conversation",
-      "confidence": "confirmed"
+      "confidence": "confirmed",
+      "dimensionId": "activity",
+      "subjectId": "buches"
     },
     {
       "id": "f-lease",
       "type": "document",
-      "topicId": "legal",
       "title": "Bail commercial : révision le 1er mars 2027",
       "summary": "Loyer indexé sur l'ILC. Hausse attendue d'environ 3 %, soit près de 100 € par mois.",
       "createdAt": "2026-11-28T08:40:00",
@@ -198,7 +178,8 @@
           "title": "Révision au 1er mars 2027",
           "text": "Hausse estimée d'environ 3 % sur le loyer actuel, soit près de 100 € par mois."
         }
-      ]
+      ],
+      "dimensionId": "finances"
     }
   ],
   "sources": [
@@ -231,7 +212,6 @@
       "title": "Connaître et suivre votre seuil de rentabilité",
       "goal": "Savoir chaque matin combien vendre pour couvrir vos charges, et suivre l'écart chaque semaine.",
       "status": "active",
-      "topicId": "finances",
       "steps": [
         {
           "id": "s1",
@@ -268,14 +248,14 @@
           "due": "2026-12-18",
           "status": "todo"
         }
-      ]
+      ],
+      "subjectId": "breakeven"
     },
     {
       "id": "p-late-payment",
       "title": "Être payée à temps par le Comptoir des Halles",
       "goal": "Revenir à un paiement à 30 jours et récupérer les 9 600 € dus.",
       "status": "waiting",
-      "topicId": "clients",
       "steps": [
         {
           "id": "l1",
@@ -298,7 +278,8 @@
           "due": "2027-01-05",
           "status": "todo"
         }
-      ]
+      ],
+      "subjectId": "comptoir-late"
     }
   ],
   "attention": [
@@ -351,5 +332,64 @@
         "scenarioId": "find-buches"
       }
     ]
-  }
+  },
+  "subjects": [
+    {
+      "id": "breakeven",
+      "title": "Seuil de rentabilité",
+      "icon": "target",
+      "status": "active",
+      "openedAt": "2026-11-25T10:52:00",
+      "lastExchangeAt": "2026-12-15T07:00:00",
+      "scenarioIds": [
+        "onboarding"
+      ],
+      "planIds": [
+        "p-breakeven"
+      ],
+      "summary": "Seuil fixé à 2 170 € par jour ; point du lundi en cours."
+    },
+    {
+      "id": "comptoir-late",
+      "title": "Retards du Comptoir des Halles",
+      "icon": "handshake",
+      "status": "active",
+      "openedAt": "2026-11-25T10:46:00",
+      "lastExchangeAt": "2026-11-25T10:46:00",
+      "scenarioIds": [
+        "onboarding",
+        "inform-payment"
+      ],
+      "planIds": [
+        "p-late-payment"
+      ],
+      "summary": "9 600 € en attente ; délai passé à 46 jours."
+    },
+    {
+      "id": "weekend-hire",
+      "title": "Embauche d'une vendeuse le week-end",
+      "icon": "users",
+      "status": "paused",
+      "openedAt": "2026-12-10T09:00:00",
+      "lastExchangeAt": "2026-12-10T09:30:00",
+      "scenarioIds": [
+        "ask-contract"
+      ],
+      "planIds": [],
+      "summary": "Question CDD ou CDI posée ; pas encore tranchée."
+    },
+    {
+      "id": "buches",
+      "title": "Prix des bûches de Noël",
+      "icon": "croissant",
+      "status": "resolved",
+      "openedAt": "2026-11-04T20:25:00",
+      "lastExchangeAt": "2026-11-04T20:30:00",
+      "scenarioIds": [
+        "find-buches"
+      ],
+      "planIds": [],
+      "summary": "Prix fixé à 42 € pour 6 parts ; coût de revient 15,10 €."
+    }
+  ]
 }

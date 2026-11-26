@@ -63,7 +63,8 @@ export function FindingDetail({ finding, showTitle = true }: Props) {
   const { show } = useToast();
   const close = useDetail((s) => s.close);
   const today = useMemory((s) => s.today);
-  const topic = useMemory((s) => s.topics.find((t) => t.id === finding.topicId));
+  const subject = useMemory((s) => s.subjects.find((t) => t.id === finding.subjectId));
+  const dimension = useMemory((s) => s.dimensions.find((d) => d.id === finding.dimensionId));
   const patchFinding = useMemory((s) => s.patchFinding);
   const removeFinding = useMemory((s) => s.removeFinding);
   const restoreFinding = useMemory((s) => s.restoreFinding);
@@ -117,7 +118,7 @@ export function FindingDetail({ finding, showTitle = true }: Props) {
     const snapshot = removeFinding(finding.id);
     setConfirmDelete(false);
     close();
-    navigate(topic ? `/entreprise/${topic.id}` : "/entreprise");
+    navigate(subject ? `/entreprise/${subject.id}` : "/entreprise");
     if (!snapshot) return;
     show("J'ai oublié ce constat.", {
       durationMs: 5000,
@@ -242,10 +243,16 @@ export function FindingDetail({ finding, showTitle = true }: Props) {
             <time dateTime={finding.createdAt}>{formatRelativeDate(finding.createdAt, today)}</time>
           </dd>
         </div>
-        {topic && (
+        {dimension && (
           <div>
-            <dt>Sujet</dt>
-            <dd>{topic.label}</dd>
+            <dt>Dimension</dt>
+            <dd>{dimension.label}</dd>
+          </div>
+        )}
+        {subject && (
+          <div>
+            <dt>Sujet traité</dt>
+            <dd>{subject.title}</dd>
           </div>
         )}
       </motion.dl>

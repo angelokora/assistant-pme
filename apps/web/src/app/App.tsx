@@ -30,7 +30,7 @@ function PrototypeRoutes() {
       <Route element={<Shell />}>
         <Route path="/" element={<Home />} />
         <Route path="/entreprise" element={<Company />} />
-        <Route path="/entreprise/:topicId" element={<Topic />} />
+        <Route path="/entreprise/:subjectId" element={<Topic />} />
         <Route path="/plans" element={<Plans />} />
         <Route path="/plans/:planId" element={<PlanDetail />} />
         <Route path="/recherche" element={<Search />} />

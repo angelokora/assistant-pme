@@ -48,33 +48,7 @@
       "summary": "À découvrir"
     }
   ],
-  "topics": [
-    {
-      "id": "finances",
-      "label": "Finances",
-      "icon": "wallet"
-    },
-    {
-      "id": "clients",
-      "label": "Clients",
-      "icon": "handshake"
-    },
-    {
-      "id": "team",
-      "label": "Équipe",
-      "icon": "users"
-    },
-    {
-      "id": "production",
-      "label": "Production et prix",
-      "icon": "croissant"
-    },
-    {
-      "id": "legal",
-      "label": "Juridique et administratif",
-      "icon": "scale"
-    }
-  ],
+  "subjects": [],
   "findings": [],
   "sources": [],
   "plans": [],

@@ -155,7 +155,11 @@ export const useMemory = create<MemoryState>()(
           ),
         })),
     }),
-    { name: "elea-memory", version: 1 },
+    {
+      name: "elea-memory",
+      version: 2,
+      migrate: () => clone(PRESETS["first-visit"]),
+    },
   ),
 );
 

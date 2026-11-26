@@ -15,7 +15,7 @@ export function DimensionGrid({ ids, compact }: { ids: string[]; compact?: boole
   const [openId, setOpenId] = useState<string | null>(null);
   const open = dimensions.find((d) => d.id === openId);
   const openFindings = open
-    ? findings.filter((f) => f.topicId === open.id)
+    ? findings.filter((f) => f.dimensionId === open.id)
     : [];
 
   return (

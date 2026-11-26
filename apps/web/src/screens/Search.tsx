@@ -30,13 +30,13 @@ export function Search() {
   const variant: FindVariant =
     params.get("find") === "b" ? "b" : params.get("find") === "a" ? "a" : findFromDemo;
 
-  const topics = useMemory((s) => s.topics);
+  const subjects = useMemory((s) => s.subjects);
   const findings = useMemory((s) => s.findings);
   const today = useMemory((s) => s.today);
   const openDetail = useDetail((s) => s.open);
 
   const [query, setQuery] = useState("");
-  const [topicFilter, setTopicFilter] = useState<string | "all">("all");
+  const [subjectFilter, setSubjectFilter] = useState<string | "all">("all");
   const [typeFilter, setTypeFilter] = useState<FindingType | "all">("all");
   const [listening, setListening] = useState(false);
   const speech = useSimulatedSpeech(VOICE_SAMPLE);
@@ -49,16 +49,19 @@ export function Search() {
 
   const matched = useMemo(() => {
     let list = queryMatches;
-    if (topicFilter !== "all") list = list.filter((f) => f.topicId === topicFilter);
+    if (subjectFilter !== "all") list = list.filter((f) => f.subjectId === subjectFilter);
     if (typeFilter !== "all") list = list.filter((f) => f.type === typeFilter);
     return sortFindingsRecent(list);
-  }, [queryMatches, topicFilter, typeFilter]);
+  }, [queryMatches, subjectFilter, typeFilter]);
 
   const presentTypes = useMemo(() => typesPresent(findings), [findings]);
 
-  const topicCounts = useMemo(() => {
+  const subjectCounts = useMemo(() => {
     const map = new Map<string, number>();
-    for (const f of queryMatches) map.set(f.topicId, (map.get(f.topicId) ?? 0) + 1);
+    for (const f of queryMatches) {
+      if (!f.subjectId) continue;
+      map.set(f.subjectId, (map.get(f.subjectId) ?? 0) + 1);
+    }
     return map;
   }, [queryMatches]);
 
@@ -69,38 +72,52 @@ export function Search() {
   }, [queryMatches]);
 
   useEffect(() => {
-    if (topicFilter !== "all" && (topicCounts.get(topicFilter) ?? 0) === 0) setTopicFilter("all");
-  }, [topicFilter, topicCounts]);
+    if (subjectFilter !== "all" && (subjectCounts.get(subjectFilter) ?? 0) === 0) setSubjectFilter("all");
+  }, [subjectFilter, subjectCounts]);
 
   useEffect(() => {
     if (typeFilter !== "all" && (typeCounts.get(typeFilter) ?? 0) === 0) setTypeFilter("all");
   }, [typeFilter, typeCounts]);
 
   const grouped = useMemo(() => {
-    const byTopic = new Map<string, typeof matched>();
+    const bySubject = new Map<string, typeof matched>();
+    const orphans: typeof matched = [];
     for (const f of matched) {
-      const bucket = byTopic.get(f.topicId) ?? [];
+      if (!f.subjectId) {
+        orphans.push(f);
+        continue;
+      }
+      const bucket = bySubject.get(f.subjectId) ?? [];
       bucket.push(f);
-      byTopic.set(f.topicId, bucket);
+      bySubject.set(f.subjectId, bucket);
     }
-    return topics
-      .map((t) => ({ topic: t, items: byTopic.get(t.id) ?? [] }))
+    const groups = subjects
+      .map((s) => ({
+        id: s.id,
+        title: s.title,
+        icon: s.icon,
+        items: bySubject.get(s.id) ?? [],
+      }))
       .filter((g) => g.items.length > 0);
-  }, [matched, topics]);
+    if (orphans.length) {
+      groups.push({ id: "_dimension", title: "Autres constats", icon: "briefcase", items: orphans });
+    }
+    return groups;
+  }, [matched, subjects]);
 
   const tiles = useMemo(() => {
     const q = foldText(query).trim();
-    return topics
-      .map((t) => {
-        const all = findings.filter((f) => f.topicId === t.id);
+    return subjects
+      .map((s) => {
+        const all = findings.filter((f) => f.subjectId === s.id);
         const items = q
           ? sortFindingsRecent(all.filter((f) => findingMatchesQuery(f.title, f.summary, query)))
           : [];
         const show = !q || items.length > 0;
-        return { topic: t, count: all.length, items, show };
+        return { subject: s, count: all.length, items, show };
       })
       .filter((t) => t.show);
-  }, [topics, findings, query]);
+  }, [subjects, findings, query]);
 
   function openFinding(id: string) {
     openDetail("finding", id);
@@ -124,7 +141,7 @@ export function Search() {
 
   const empty =
     variant === "a"
-      ? matched.length === 0 && (query.trim().length > 0 || typeFilter !== "all" || topicFilter !== "all")
+      ? matched.length === 0 && (query.trim().length > 0 || typeFilter !== "all" || subjectFilter !== "all")
       : query.trim().length > 0 && tiles.every((t) => t.items.length === 0);
 
   return (
@@ -165,22 +182,22 @@ export function Search() {
       {variant === "a" && (
         <motion.div variants={blockItem}>
           <FilterSection>
-            <FilterBar aria-label="Filtrer par sujet">
+            <FilterBar aria-label="Filtrer par sujet traité">
               <FilterChip
-                active={topicFilter === "all"}
-                onClick={() => setTopicFilter("all")}
+                active={subjectFilter === "all"}
+                onClick={() => setSubjectFilter("all")}
                 label="Tous les sujets"
                 count={queryMatches.length}
                 muted={queryMatches.length === 0}
               />
-              {topics.map((t) => {
-                const count = topicCounts.get(t.id) ?? 0;
+              {subjects.map((s) => {
+                const count = subjectCounts.get(s.id) ?? 0;
                 return (
                   <FilterChip
-                    key={t.id}
-                    active={topicFilter === t.id}
-                    onClick={() => setTopicFilter(t.id)}
-                    label={t.label}
+                    key={s.id}
+                    active={subjectFilter === s.id}
+                    onClick={() => setSubjectFilter(s.id)}
+                    label={s.title}
                     count={count}
                     muted={count === 0}
                   />
@@ -226,10 +243,10 @@ export function Search() {
         </motion.div>
       ) : variant === "a" ? (
         <LayoutGroup>
-          {grouped.map(({ topic, items }) => (
-            <motion.section key={topic.id} variants={blockItem} className={styles.group} aria-labelledby={`topic-${topic.id}`}>
-              <h2 id={`topic-${topic.id}`} className={styles.groupTitle}>
-                {topic.label}
+          {grouped.map(({ id, title, items }) => (
+            <motion.section key={id} variants={blockItem} className={styles.group} aria-labelledby={`subject-${id}`}>
+              <h2 id={`subject-${id}`} className={styles.groupTitle}>
+                {title}
               </h2>
               <ul className={styles.list}>
                 <AnimatePresence mode="popLayout" initial={false}>
@@ -246,7 +263,7 @@ export function Search() {
                         findingType={f.type}
                         title={f.title}
                         titleNode={query.trim() ? <HighlightText text={f.title} query={query} /> : undefined}
-                        topicLabel={topic.label}
+                        topicLabel={title}
                         createdAt={f.createdAt}
                         today={today}
                         origin={f.origin}
@@ -263,14 +280,14 @@ export function Search() {
         </LayoutGroup>
       ) : (
         <motion.div variants={blockItem} className={styles.tiles}>
-          {tiles.map(({ topic, count, items }) => (
-            <article key={topic.id} className={styles.tile}>
+          {tiles.map(({ subject, count, items }) => (
+            <article key={subject.id} className={styles.tile}>
               <div className={styles.tileHead}>
                 <span className={styles.tileIcon}>
-                  <Icon name={topic.icon} size={22} />
+                  <Icon name={subject.icon} size={22} />
                 </span>
                 <div>
-                  <h2 className={styles.tileTitle}>{topic.label}</h2>
+                  <h2 className={styles.tileTitle}>{subject.title}</h2>
                   <p className={styles.tileCount}>
                     {count} {count > 1 ? "constats" : "constat"}
                     {query.trim() && items.length
@@ -288,7 +305,7 @@ export function Search() {
                         findingType={f.type}
                         title={f.title}
                         titleNode={<HighlightText text={f.title} query={query} />}
-                        topicLabel={topic.label}
+                        topicLabel={subject.title}
                         createdAt={f.createdAt}
                         today={today}
                         origin={f.origin}

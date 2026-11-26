@@ -10,22 +10,22 @@ type Props = {
   active: DestinationId | null;
 };
 
-/** Colonne gauche desktop : navigation + sujets. */
+/** Colonne gauche desktop : navigation + sujets traités. */
 export function DesktopNav({ active }: Props) {
   const location = useLocation();
   const params = useParams();
-  const topics = useMemory((s) => s.topics);
+  const subjects = useMemory((s) => s.subjects);
   const findings = useMemory((s) => s.findings);
 
-  const topicFromPath = location.pathname.match(/^\/entreprise\/([^/]+)/)?.[1];
+  const subjectFromPath = location.pathname.match(/^\/entreprise\/([^/]+)/)?.[1];
   const findingFromPath = location.pathname.match(/^\/finding\/([^/]+)/)?.[1];
-  const activeTopicId =
-    topicFromPath ??
-    (findingFromPath ? findings.find((f) => f.id === findingFromPath)?.topicId : undefined) ??
-    (typeof params.topicId === "string" ? params.topicId : undefined);
+  const activeSubjectId =
+    subjectFromPath ??
+    (findingFromPath ? findings.find((f) => f.id === findingFromPath)?.subjectId : undefined) ??
+    (typeof params.subjectId === "string" ? params.subjectId : undefined);
 
   return (
-    <aside className={styles.aside} aria-label="Navigation et sujets">
+    <aside className={styles.aside} aria-label="Navigation et sujets traités">
       <EleaLogo className={styles.brand} />
       <nav aria-label="Navigation principale">
         <ul className={styles.nav}>
@@ -50,20 +50,20 @@ export function DesktopNav({ active }: Props) {
       </nav>
 
       <div className={styles.topics}>
-        <p className={styles.topicsTitle}>Sujets</p>
+        <p className={styles.topicsTitle}>Sujets traités</p>
         <ul className={styles.topicList}>
-          {topics.map((t) => {
-            const count = findings.filter((f) => f.topicId === t.id).length;
-            const topicActive = activeTopicId === t.id;
+          {subjects.map((s) => {
+            const count = findings.filter((f) => f.subjectId === s.id).length;
+            const subjectActive = activeSubjectId === s.id;
             return (
-              <li key={t.id}>
+              <li key={s.id}>
                 <NavLink
-                  to={`/entreprise/${t.id}`}
-                  data-topic-target={t.id}
-                  className={[styles.topic, topicActive && styles.topicActive].filter(Boolean).join(" ")}
-                  aria-current={topicActive ? "page" : undefined}
+                  to={`/entreprise/${s.id}`}
+                  data-subject-target={s.id}
+                  className={[styles.topic, subjectActive && styles.topicActive].filter(Boolean).join(" ")}
+                  aria-current={subjectActive ? "page" : undefined}
                 >
-                  <span>{t.label}</span>
+                  <span>{s.title}</span>
                   <span className={styles.count}>{count}</span>
                 </NavLink>
               </li>

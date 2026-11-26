@@ -18,12 +18,15 @@ export type QuestionBlock = Base<"question"> & {
   attachments?: ("document" | "photo")[];
 };
 export type NotedBlock = Base<"noted"> & {
-  target: { kind: "dimension" | "topic"; id: string; label: string };
+  /** Toujours une dimension : « Noté dans Mes finances ». */
+  target: { kind: "dimension"; id: string; label: string };
   text: string;
   confidence?: Confidence;
   editable?: boolean;
   /** Finding lié pour la correction (#23). */
   findingId?: string;
+  /** Sujet traité associé, s'il y a lieu. */
+  subjectId?: string;
 };
 export type CalloutBlock = Base<"callout"> & { tone: "info" | "memory" | "warning" | "success"; title?: string; text: string };
 export type DimensionsBlock = Base<"dimensions"> & { title?: string; subtitle?: string; compact?: boolean; dimensionIds: string[] };
@@ -84,7 +87,7 @@ export type AnswerBlock = Base<"answer"> & {
   keyPoints?: string[];
   recommendation?: string;
   sources?: { label: string; detail?: string }[];
-  savedTo?: { topicId: string; label: string };
+  savedTo?: { subjectId?: string; dimensionId?: string; label: string };
   /** Badge de confiance affiché sur la fiche (sinon lu depuis le finding lié). */
   confidence?: Confidence;
 };
@@ -125,11 +128,28 @@ export type Dimension = {
   status: DimensionStatus;
   summary: string;
 };
-export type Topic = { id: string; label: string; icon: string };
+/** Statut d'un sujet traité (problématique travaillée avec Éléa). */
+export type SubjectStatus = "active" | "paused" | "resolved";
+/** Sujet traité : problématique, échanges et plans qui en découlent. */
+export type Subject = {
+  id: string;
+  title: string;
+  icon: string;
+  status: SubjectStatus;
+  openedAt: string;
+  lastExchangeAt: string;
+  scenarioIds: string[];
+  planIds: string[];
+  /** Une phrase : où on en est. */
+  summary: string;
+};
 export type Finding = {
   id: string;
   type: "answer" | "fact" | "decision" | "plan" | "document" | "action";
-  topicId: string;
+  /** Dimension obligatoire (Mon activité, Mes finances…). */
+  dimensionId: string;
+  /** Sujet traité, s'il y a lieu. */
+  subjectId?: string;
   title: string;
   summary: string;
   createdAt: string;
@@ -152,7 +172,7 @@ export type Plan = {
   title: string;
   goal: string;
   status: "draft" | "active" | "waiting" | "done";
-  topicId: string;
+  subjectId?: string;
   steps: PlanStep[];
 };
 export type Attention = {
@@ -177,7 +197,7 @@ export type Memory = {
   company: { name: string; sector: string; city: string; employees: number | null; since: string | null };
   owner: { firstName: string; lastName: string };
   dimensions: Dimension[];
-  topics: Topic[];
+  subjects: Subject[];
   findings: Finding[];
   sources: Source[];
   plans: Plan[];

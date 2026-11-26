@@ -123,8 +123,8 @@ Un store `zustand`, persisté en `localStorage` pour survivre au rechargement.
 type Memory = {
   company: Company;              // nom, secteur, ville, effectif, ancienneté
   owner: Owner;                  // prénom, rôle
-  dimensions: Dimension[];       // Mon activité, Mes finances, Mon profil, Mes priorités
-  topics: Topic[];               // Finances, Clients, Équipe, Production, Juridique...
+  dimensions: Dimension[];       // Mon activité, Mes finances, Mon profil, Mes priorités (standard)
+  subjects: Subject[];           // sujets traités : problématiques travaillées avec Éléa
   findings: Finding[];
   sources: Source[];             // Gmail, Outlook, Drive, Documents déposés
   plans: Plan[];                 // schéma dans docs/BLOCKS.md
@@ -146,10 +146,23 @@ type Attention = {
   planId?: string; stepId?: string; findingId?: string;
 };
 
+type Subject = {
+  id: string;
+  title: string;
+  icon: string;
+  status: "active" | "paused" | "resolved";
+  openedAt: string;
+  lastExchangeAt: string;
+  scenarioIds: string[];
+  planIds: string[];
+  summary: string;               // une phrase : où on en est
+};
+
 type Finding = {
   id: string;
   type: "answer" | "fact" | "decision" | "plan" | "document" | "action";
-  topicId: string;
+  dimensionId: string;           // obligatoire
+  subjectId?: string;            // sujet traité, s'il y a lieu
   title: string;
   summary: string;
   createdAt: string;             // ISO, dates fictives cohérentes
@@ -160,7 +173,7 @@ type Finding = {
 };
 ```
 
-Les écrans Accueil, Mon entreprise, Sujet, Plans et Recherche **ne lisent que la mémoire**. Ils n'ont aucune donnée en dur.
+Les écrans Accueil, Mon entreprise, sujet traité, Plans et Recherche **ne lisent que la mémoire**. Ils n'ont aucune donnée en dur.
 
 ## 5. Navigation et mise en page
 
@@ -209,7 +222,7 @@ Quand `planId` est posé (choix de plan), le moteur enrichit automatiquement les
 
 **Auth déjà faite.** Si l'étape attend un `await.kind === "auth"` et que `account.created` est vrai en mémoire (compte créé plus tôt, p.ex. au connecteur), le moteur saute l'étape sans afficher le bloc.
 
-Routes (`react-router`) : `/`, `/entreprise`, `/entreprise/:topicId`, `/plans`, `/plans/:planId`, `/recherche`, `/besoin/:scenarioId`, `/finding/:findingId`. Le paramètre `?v=a|b|c` choisit la variante de l'accueil ; `?menu=a|b` le menu mobile ; `?find=a|b` la variante Recherche (liste ou tuiles). Les choix du panneau démo sont persistés et utilisés en l'absence de paramètre d'URL.
+Routes (`react-router`) : `/`, `/entreprise`, `/entreprise/:subjectId`, `/plans`, `/plans/:planId`, `/recherche`, `/besoin/:scenarioId`, `/finding/:findingId`. Le paramètre `?v=a|b|c` choisit la variante de l'accueil ; `?menu=a|b` le menu mobile ; `?find=a|b` la variante Recherche (liste ou tuiles). Les choix du panneau démo sont persistés et utilisés en l'absence de paramètre d'URL.
 
 ## 6. Mouvement
 

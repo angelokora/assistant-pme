@@ -368,7 +368,7 @@ function ShowcaseInner() {
           <FindingCard
             findingType="fact"
             title={`Seuil de rentabilité : 2${NNBSP}170${NBSP}€ par jour`}
-            topicLabel="Finances"
+            topicLabel="Mes finances"
             createdAt="2026-12-15T07:00:00"
             today="2026-12-16"
             origin="conversation"
@@ -378,7 +378,7 @@ function ShowcaseInner() {
             variant="compact"
             findingType="decision"
             title="Priorité : connaître le seuil"
-            topicLabel="Finances"
+            topicLabel="Mes finances"
             createdAt="2026-11-25T10:52:00"
             today="2026-12-16"
             origin="conversation"
@@ -388,7 +388,7 @@ function ShowcaseInner() {
             variant="expanded"
             findingType="fact"
             title={`9${NNBSP}600${NBSP}€ attendus du Comptoir des Halles`}
-            topicLabel="Clients"
+            topicLabel="Mon activité"
             createdAt="2026-12-16T08:00:00"
             today="2026-12-16"
             origin="gmail"

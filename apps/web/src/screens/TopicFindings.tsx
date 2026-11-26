@@ -9,26 +9,26 @@ import { FINDING_TYPE_FILTER, sortFindingsRecent, typesPresent } from "./finding
 import styles from "./Topic.module.css";
 
 type Props = {
-  topicId: string;
-  topicLabel: string;
+  subjectId: string;
+  subjectTitle: string;
   /** Constat ouvert : pas de layoutId sur sa carte (le panneau porte le shell). */
   openFindingId?: string;
 };
 
-/** Filtres + liste de constats d'un sujet (réutilisé par Topic et FindingPage). */
-export function TopicFindings({ topicId, topicLabel, openFindingId }: Props) {
+/** Filtres + liste de constats d'un sujet traité (réutilisé par Topic et FindingPage). */
+export function TopicFindings({ subjectId, subjectTitle, openFindingId }: Props) {
   const navigate = useNavigate();
   const openDetail = useDetail((s) => s.open);
   const findings = useMemory((s) => s.findings);
   const today = useMemory((s) => s.today);
   const [filter, setFilter] = useState<FindingType | "all">("all");
 
-  const topicFindings = useMemo(
-    () => sortFindingsRecent(findings.filter((f) => f.topicId === topicId)),
-    [findings, topicId],
+  const subjectFindings = useMemo(
+    () => sortFindingsRecent(findings.filter((f) => f.subjectId === subjectId)),
+    [findings, subjectId],
   );
-  const present = useMemo(() => typesPresent(topicFindings), [topicFindings]);
-  const visible = filter === "all" ? topicFindings : topicFindings.filter((f) => f.type === filter);
+  const present = useMemo(() => typesPresent(subjectFindings), [subjectFindings]);
+  const visible = filter === "all" ? subjectFindings : subjectFindings.filter((f) => f.type === filter);
 
   return (
     <>
@@ -38,11 +38,11 @@ export function TopicFindings({ topicId, topicLabel, openFindingId }: Props) {
             active={filter === "all"}
             onClick={() => setFilter("all")}
             label="Tous"
-            count={topicFindings.length}
-            muted={topicFindings.length === 0}
+            count={subjectFindings.length}
+            muted={subjectFindings.length === 0}
           />
           {present.map((t) => {
-            const count = topicFindings.filter((f) => f.type === t).length;
+            const count = subjectFindings.filter((f) => f.type === t).length;
             return (
               <FilterChip
                 key={t}
@@ -75,7 +75,7 @@ export function TopicFindings({ topicId, topicLabel, openFindingId }: Props) {
                     layoutId={isOpen ? undefined : `finding-shell-${f.id}`}
                     findingType={f.type}
                     title={f.title}
-                    topicLabel={topicLabel}
+                    topicLabel={subjectTitle}
                     createdAt={f.createdAt}
                     today={today}
                     origin={f.origin}

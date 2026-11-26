@@ -8,16 +8,49 @@
     "results": {
       "delayMs": 900,
       "blocks": [
-        { "id": "fb-lead", "type": "lead", "text": "Nous en avons parlé le 4 novembre. Voici ce que j'ai gardé." },
-        { "id": "fb-ref-1", "type": "finding-ref", "findingId": "f-buche-price", "reason": "La décision prise" },
-        { "id": "fb-ref-2", "type": "finding-ref", "findingId": "f-buche-cost", "reason": "Le calcul qui l'a justifiée" },
-        { "id": "fb-callout", "type": "callout", "tone": "info", "text": "Le beurre a augmenté de 18 % depuis. Votre marge sur la bûche passe de 64 % à 61 %." },
+        {
+          "id": "fb-lead",
+          "type": "lead",
+          "text": "Nous en avons parlé le 4 novembre. Voici ce que j'ai gardé."
+        },
+        {
+          "id": "fb-ref-1",
+          "type": "finding-ref",
+          "findingId": "f-buche-price",
+          "reason": "La décision prise"
+        },
+        {
+          "id": "fb-ref-2",
+          "type": "finding-ref",
+          "findingId": "f-buche-cost",
+          "reason": "Le calcul qui l'a justifiée"
+        },
+        {
+          "id": "fb-callout",
+          "type": "callout",
+          "tone": "info",
+          "text": "Le beurre a augmenté de 18 % depuis. Votre marge sur la bûche passe de 64 % à 61 %."
+        },
         {
           "id": "fb-suggestions",
           "type": "suggestions",
           "items": [
-            { "id": "search", "label": "Chercher dans la mémoire", "action": { "kind": "route", "target": "/recherche?find=a" } },
-            { "id": "topic", "label": "Ouvrir Production et prix", "action": { "kind": "route", "target": "/entreprise/production" } }
+            {
+              "id": "search",
+              "label": "Chercher dans la mémoire",
+              "action": {
+                "kind": "route",
+                "target": "/recherche?find=a"
+              }
+            },
+            {
+              "id": "topic",
+              "label": "Ouvrir Production et prix",
+              "action": {
+                "kind": "route",
+                "target": "/entreprise/buches"
+              }
+            }
           ]
         }
       ]

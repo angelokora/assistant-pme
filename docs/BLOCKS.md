@@ -43,15 +43,16 @@ type QuestionBlock = BaseBlock & {
 Routage : l'`await` de type `input` accepte un `quickRoutes` optionnel (`Record<idRéponse, idÉtape>`). Sans entrée pour l'id, la réponse rapide suit `next` comme une saisie libre. Avec une entrée, le moteur va à l'étape indiquée (ex. noter « à vérifier » puis continuer). Voir `docs/ARCHITECTURE.md`.
 
 ### `noted` : « Noté dans… »
-Confirme ce qui vient d'être retenu, avec la dimension ou le sujet de destination. **Animation signature** : l'étiquette s'envole vers la carte de sa dimension (`layoutId`), dont la jauge progresse. Bouton « Modifier » qui ouvre une correction en ligne.
+Confirme ce qui vient d'être retenu. Affiche toujours la **dimension** (« Noté dans Mes finances »). **Animation signature** : l'étiquette s'envole vers la carte de sa dimension, dont la jauge progresse. Bouton « Modifier » qui ouvre une correction en ligne.
 ```ts
 type NotedBlock = BaseBlock & {
   type: "noted";
-  target: { kind: "dimension" | "topic"; id: string; label: string }; // « Mes finances »
+  target: { kind: "dimension"; id: string; label: string }; // « Mes finances »
   text: string;                                   // « Charges : environ 58 000 € par mois »
   confidence?: "confirmed" | "estimated" | "to-check";
   editable?: boolean;
   findingId?: string;                             // constat à mettre à jour si « Modifier »
+  subjectId?: string;                             // sujet traité associé, s'il y a lieu
 };
 ```
 
@@ -222,7 +223,7 @@ type AnswerBlock = BaseBlock & {
   keyPoints?: string[];
   recommendation?: string;
   sources?: { label: string; detail?: string }[];
-  savedTo?: { topicId: string; label: string };
+  savedTo?: { subjectId?: string; dimensionId?: string; label: string };
   confidence?: "confirmed" | "estimated" | "to-check";
 };
 ```
@@ -318,7 +319,7 @@ type Plan = {
   title: string;
   goal: string;
   status: "draft" | "active" | "waiting" | "done";
-  topicId: string;
+  subjectId?: string;
   steps: { id: string; title: string; detail: string; due: string; status: "todo" | "doing" | "done" }[];
 };
 ```

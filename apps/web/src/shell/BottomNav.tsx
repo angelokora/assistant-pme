@@ -56,7 +56,7 @@ function NavItem({
   return (
     <NavLink
       to={to}
-      data-topic-fallback={topicFallback ? "" : undefined}
+      data-subject-fallback={topicFallback ? "" : undefined}
       className={[styles.item, active && styles.itemActive].filter(Boolean).join(" ")}
       end={to === "/"}
     >

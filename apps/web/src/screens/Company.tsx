@@ -36,7 +36,7 @@ export function Company() {
     document.getElementById("sources")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [location.hash]);
   const dimensions = useMemory((s) => s.dimensions);
-  const topics = useMemory((s) => s.topics);
+  const subjects = useMemory((s) => s.subjects);
   const findings = useMemory((s) => s.findings);
   const theme = useTheme((s) => s.theme);
   const setTheme = useTheme((s) => s.setTheme);
@@ -83,23 +83,23 @@ export function Company() {
         </div>
       </motion.section>
 
-      <motion.section variants={blockItem} aria-labelledby="topics-title">
-        <h2 id="topics-title" className={styles.sectionTitle}>
-          Sujets
+      <motion.section variants={blockItem} aria-labelledby="subjects-title">
+        <h2 id="subjects-title" className={styles.sectionTitle}>
+          Sujets traités
         </h2>
         <ul className={styles.topicList}>
           <AnimatePresence initial={false}>
-            {topics.map((t) => {
-              const list = findings.filter((f) => f.topicId === t.id);
+            {subjects.map((s) => {
+              const list = findings.filter((f) => f.subjectId === s.id);
               const latest = latestFindingDate(list);
               return (
-                <motion.li key={t.id} layout transition={{ type: "spring", stiffness: 420, damping: 32 }}>
-                  <button type="button" className={styles.topicRow} onClick={() => navigate(`/entreprise/${t.id}`)}>
+                <motion.li key={s.id} layout transition={{ type: "spring", stiffness: 420, damping: 32 }}>
+                  <button type="button" className={styles.topicRow} onClick={() => navigate(`/entreprise/${s.id}`)}>
                     <span className={styles.topicIcon} aria-hidden>
-                      <Icon name={t.icon} />
+                      <Icon name={s.icon} />
                     </span>
                     <span className={styles.topicBody}>
-                      <span className={styles.topicLabel}>{t.label}</span>
+                      <span className={styles.topicLabel}>{s.title}</span>
                       <span className={styles.topicMeta}>
                         {list.length === 0
                           ? "Aucun constat"

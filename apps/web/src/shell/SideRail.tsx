@@ -23,7 +23,7 @@ export function SideRail({ active }: Props) {
               <NavLink
                 to={d.path}
                 end={d.path === "/"}
-                data-topic-fallback={d.path === "/entreprise" ? "" : undefined}
+                data-subject-fallback={d.path === "/entreprise" ? "" : undefined}
                 className={[styles.item, isActive && styles.itemActive].filter(Boolean).join(" ")}
               >
                 {isActive && <motion.span layoutId="nav-active-rail" className={styles.pip} transition={spring.snappy} />}

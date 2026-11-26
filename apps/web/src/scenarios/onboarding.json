@@ -274,13 +274,14 @@
           "finding": {
             "id": "f-charges",
             "type": "fact",
-            "topicId": "finances",
             "title": "Charges mensuelles : environ 58 000 €",
             "summary": "Masse salariale 38 000 €, matières premières 11 000 €, loyer 3 200 €, énergie 2 600 €, assurances et divers 3 200 €.",
             "createdAt": "2026-11-25T10:43:00",
             "origin": "{{provider}}",
             "confidence": "estimated",
-            "scenarioId": "onboarding"
+            "scenarioId": "onboarding",
+            "dimensionId": "finances",
+            "subjectId": "breakeven"
           }
         }
       ],
@@ -361,13 +362,14 @@
           "finding": {
             "id": "f-charges",
             "type": "fact",
-            "topicId": "finances",
             "title": "Charges mensuelles : environ 58 000 €",
             "summary": "Masse salariale 38 000 €, matières premières 11 000 €, loyer 3 200 €, énergie 2 600 €, assurances et divers 3 200 €. Lues dans {{fileCountLabel}}.",
             "createdAt": "2026-11-25T10:43:00",
             "origin": "upload",
             "confidence": "estimated",
-            "scenarioId": "onboarding"
+            "scenarioId": "onboarding",
+            "dimensionId": "finances",
+            "subjectId": "breakeven"
           }
         }
       ],
@@ -483,13 +485,14 @@
           "finding": {
             "id": "f-charges",
             "type": "fact",
-            "topicId": "finances",
             "title": "Charges mensuelles : environ 58 000 €",
             "summary": "Masse salariale 38 000 €, matières environ 10 000 €, loyer 3 200 €, énergie 2 600 €. Estimation de Sophie, à confirmer avec les factures.",
             "createdAt": "2026-11-25T10:43:00",
             "origin": "conversation",
             "confidence": "estimated",
-            "scenarioId": "onboarding"
+            "scenarioId": "onboarding",
+            "dimensionId": "finances",
+            "subjectId": "breakeven"
           }
         }
       ],
@@ -556,13 +559,14 @@
           "finding": {
             "id": "f-comptoir",
             "type": "fact",
-            "topicId": "clients",
             "title": "Le Comptoir des Halles paie de plus en plus tard",
             "summary": "Environ 4 800 € de livraisons par mois. Factures d'octobre et de novembre en attente, soit 9 600 €. Délai réel passé de 30 à 46 jours depuis l'été.",
             "createdAt": "2026-11-25T10:46:00",
             "origin": "conversation",
             "confidence": "confirmed",
-            "scenarioId": "onboarding"
+            "scenarioId": "onboarding",
+            "dimensionId": "finances",
+            "subjectId": "comptoir-late"
           }
         }
       ],
@@ -603,13 +607,14 @@
           "finding": {
             "id": "f-comptoir",
             "type": "fact",
-            "topicId": "clients",
             "title": "Restaurant voisin : à vérifier",
             "summary": "Montant des livraisons et délais de paiement à confirmer avec Sophie.",
             "createdAt": "2026-11-25T10:46:00",
             "origin": "conversation",
             "confidence": "to-check",
-            "scenarioId": "onboarding"
+            "scenarioId": "onboarding",
+            "dimensionId": "finances",
+            "subjectId": "comptoir-late"
           }
         }
       ],
@@ -716,13 +721,13 @@
           "finding": {
             "id": "f-profile-day",
             "type": "fact",
-            "topicId": "profile",
             "title": "Organisation des journées : à vérifier",
             "summary": "Répartition production / vente / gestion à confirmer avec Sophie.",
             "createdAt": "2026-11-25T10:48:00",
             "origin": "conversation",
             "confidence": "to-check",
-            "scenarioId": "onboarding"
+            "scenarioId": "onboarding",
+            "dimensionId": "profile"
           }
         }
       ],
@@ -846,7 +851,6 @@
             "title": "Connaître et suivre votre seuil de rentabilité",
             "goal": "Savoir chaque matin combien vendre pour couvrir vos charges, et suivre l'écart chaque semaine.",
             "status": "draft",
-            "topicId": "finances",
             "steps": [
               {
                 "id": "s1",
@@ -883,7 +887,8 @@
                 "due": "2026-12-18",
                 "status": "todo"
               }
-            ]
+            ],
+            "subjectId": "breakeven"
           }
         },
         {
@@ -893,7 +898,6 @@
             "title": "Revoir le prix de vos 5 produits phares",
             "goal": "Aligner coût de revient et prix de vente sur ce que vous vendez le plus.",
             "status": "draft",
-            "topicId": "finances",
             "steps": [
               {
                 "id": "pr1",
@@ -916,7 +920,8 @@
                 "due": "2026-12-05",
                 "status": "todo"
               }
-            ]
+            ],
+            "subjectId": "breakeven"
           }
         },
         {
@@ -926,7 +931,6 @@
             "title": "Réduire vos charges variables",
             "goal": "Trouver des écarts sur les matières et l'énergie, et des marges de négociation.",
             "status": "draft",
-            "topicId": "finances",
             "steps": [
               {
                 "id": "c1",
@@ -949,7 +953,8 @@
                 "due": "2026-12-13",
                 "status": "todo"
               }
-            ]
+            ],
+            "subjectId": "breakeven"
           }
         }
       ],
@@ -1123,13 +1128,14 @@
           "finding": {
             "id": "f-decision-{{planId}}",
             "type": "decision",
-            "topicId": "finances",
             "title": "Priorité : {{planTitle}}",
             "summary": "Sophie choisit de traiter d'abord : {{planTitle}}. Première étape : {{planFirstStep}}.",
             "createdAt": "2026-11-25T10:52:00",
             "origin": "conversation",
             "confidence": "confirmed",
-            "scenarioId": "onboarding"
+            "scenarioId": "onboarding",
+            "dimensionId": "priorities",
+            "subjectId": "breakeven"
           }
         }
       ],
@@ -1171,7 +1177,7 @@
       {
         "id": "resume-lead",
         "type": "lead",
-        "text": "Depuis, vous avez avancé : {{planDoneCount}} étapes sur {{planStepCount}} pour «\u00a0{{planTitle}}\u00a0». On continue ?"
+        "text": "Depuis, vous avez avancé : {{planDoneCount}} étapes sur {{planStepCount}} pour « {{planTitle}} ». On continue ?"
       },
       {
         "id": "resume-suggestions",

@@ -70,8 +70,9 @@ function interpolateString(input: string, vars: StepVars) {
 function varsFromConnector(value: string): StepVars {
   if (!value.startsWith("connect:")) return {};
   const provider = value.slice("connect:".length);
-  const labels: Record<string, string> = { gmail: "Gmail", outlook: "Outlook", drive: "Drive" };
-  return { provider, providerLabel: labels[provider] ?? provider };
+  // `google` : Gmail et Drive en un geste (compte Google). `provider` reste « gmail » pour l'origine des findings.
+  const labels: Record<string, string> = { gmail: "Gmail", outlook: "Outlook", drive: "Drive", google: "Gmail et Drive" };
+  return { provider: provider === "google" ? "gmail" : provider, providerLabel: labels[provider] ?? provider };
 }
 
 /** Jetons dérivés du plan choisi en mémoire (docs/ARCHITECTURE.md). */
@@ -135,40 +136,109 @@ export function lastMainStepId(scenario: Scenario): string {
 /**
  * Suit la route « principale » d'une étape (recommandée / première).
  * `dry` : aucun effet mémoire (auth), pour la reconstitution en lecture seule.
+ * `forced` : route imposée (saut démo vers une branche), les jetons suivent la branche choisie.
  */
-function mainPathNext(step: Step, vars: StepVars, dry = false): { next?: string; vars: StepVars } {
+function mainPathNext(step: Step, vars: StepVars, dry = false, forced?: string): { next?: string; vars: StepVars } {
   const a = step.await;
   if (!a) return { next: step.next, vars };
   switch (a.kind) {
     case "input":
     case "form":
     case "plan":
-      return { next: a.next, vars };
+      return { next: forced ?? a.next, vars };
     case "auth":
       if (!dry) useMemory.getState().apply([{ kind: "account", method: "google" }]);
-      return { next: a.next, vars };
-    case "connector":
       return {
-        next: a.onConnect,
-        vars: { ...vars, ...varsFromConnector("connect:gmail"), connectorBlockId: a.blockId },
+        next: forced ?? a.next,
+        vars: { ...vars, accountMethod: useMemory.getState().account.method ?? "google" },
       };
-    case "upload":
+    case "connector": {
+      // Compte pas encore créé (saut démo) : le chemin principal suppose un compte Google simulé.
+      const { created, method } = useMemory.getState().account;
+      const google = (method === "google" || !created) && !!a.onConnectGoogle;
+      const next = forced ?? (google ? a.onConnectGoogle : a.onConnect);
+      if (next === a.onSkip && next !== a.onConnect) return { next, vars };
+      const viaGoogle = next === a.onConnectGoogle;
       return {
-        next: a.onUpload,
-        vars: { ...vars, provider: "document", providerLabel: "Documents" },
+        next,
+        vars: { ...vars, ...varsFromConnector(viaGoogle ? "connect:google" : "connect:gmail"), connectorBlockId: a.blockId },
       };
+    }
+    case "upload": {
+      const next = forced ?? a.onUpload;
+      if (next === a.onSkip && next !== a.onUpload) return { next, vars };
+      return { next, vars: { ...vars, provider: "document", providerLabel: "Documents" } };
+    }
     case "choice": {
       const choice = step.blocks.find((b) => b.type === "choice" && b.id === a.blockId);
+      const fromForced = forced ? Object.keys(a.routes).find((id) => a.routes[id] === forced) : undefined;
       const preferred =
+        fromForced ||
         (choice && choice.type === "choice" && choice.options.find((o) => o.recommended)?.id) ||
         Object.keys(a.routes)[0];
       let nextVars = vars;
       if (choice && choice.type === "choice" && choice.sideDetail === "plan") {
         nextVars = enrichPlanVars({ ...vars, planId: preferred });
       }
-      return { next: a.routes[preferred], vars: nextVars };
+      return { next: forced ?? a.routes[preferred], vars: nextVars };
     }
   }
+}
+
+/** Toutes les étapes atteignables en une réponse depuis `step`. */
+function edgesOf(step: Step): string[] {
+  const a = step.await;
+  if (!a) return step.next ? [step.next] : [];
+  switch (a.kind) {
+    case "input":
+      return [a.next, ...Object.values(a.quickRoutes ?? {})];
+    case "choice":
+      return Object.values(a.routes);
+    case "connector":
+      return [a.onConnectGoogle, a.onConnect, a.onSkip].filter((id): id is string => !!id);
+    case "upload":
+      return [a.onUpload, a.onSkip];
+    default:
+      return [a.next];
+  }
+}
+
+/**
+ * Chemin de `scenario.start` jusqu'à `target` (inclus) pour un saut démo : d'abord la route
+ * principale, sinon le plus court chemin (les branches comme `upload` ou `discuss-open`).
+ */
+function routeTo(scenario: Scenario, target: string): string[] | null {
+  const main: string[] = [];
+  let cursor: string | undefined = scenario.start;
+  let vars: StepVars = {};
+  while (cursor && !main.includes(cursor)) {
+    main.push(cursor);
+    if (cursor === target) return main;
+    const step: Step | undefined = scenario.steps[cursor];
+    if (!step) break;
+    const progressed = mainPathNext(step, vars, true);
+    vars = progressed.vars;
+    cursor = progressed.next;
+  }
+  const parents = new Map<string, string | null>([[scenario.start, null]]);
+  const queue = [scenario.start];
+  while (queue.length) {
+    const id = queue.shift() as string;
+    if (id === target) {
+      const route: string[] = [];
+      for (let at: string | null | undefined = id; at; at = parents.get(at)) route.unshift(at);
+      return route;
+    }
+    const step = scenario.steps[id];
+    if (!step) continue;
+    for (const to of edgesOf(step)) {
+      if (!parents.has(to)) {
+        parents.set(to, id);
+        queue.push(to);
+      }
+    }
+  }
+  return null;
 }
 
 /** Applique les effets d'une étape sans l'afficher (saut démo). */
@@ -278,6 +348,8 @@ export const usePlayer = create<PlayerState>((set, get) => {
       useGauges.setState({ shown: {}, pulses: {} });
       useUploadInbox.getState().clear();
 
+      // Route principale si elle passe par l'étape, sinon plus court chemin (branches : upload, discuss-open…).
+      const route = routeTo(scenario, stepId) ?? [];
       let cursor: string | undefined = scenario.start;
       let vars: StepVars = {};
       const seen = new Set<string>();
@@ -291,6 +363,7 @@ export const usePlayer = create<PlayerState>((set, get) => {
         seen.add(cursor);
         const step: Step | undefined = scenario.steps[cursor];
         if (!step) break;
+        const forced = route[route.indexOf(cursor) + 1];
         // Auth déjà satisfaite : même règle que goTo.
         if (step.await?.kind === "auth" && useMemory.getState().account.created) {
           cursor = step.await.next;
@@ -305,9 +378,9 @@ export const usePlayer = create<PlayerState>((set, get) => {
             resolutions[b.id] = { summary: "Fait" };
           }
         }
-        // dry : ne pas créer le compte en passant un auth antérieur, sinon l'étape
-        // cible account-* est sautée.
-        const progressed = mainPathNext(step, vars, true);
+        // Le compte est toujours créé en premier : en sautant plus loin, on passe l'étape auth
+        // (compte Google simulé), pour que les étapes suivantes le trouvent en mémoire.
+        const progressed = mainPathNext(step, vars, false, route.includes(cursor) ? forced : undefined);
         vars = progressed.vars;
         cursor = progressed.next;
       }
@@ -445,7 +518,12 @@ export const usePlayer = create<PlayerState>((set, get) => {
             next = value === "start" ? awaiting.next : undefined;
             break;
           case "connector":
-            next = value === "skip" ? awaiting.onSkip : awaiting.onConnect;
+            next =
+              value === "skip"
+                ? awaiting.onSkip
+                : value === "connect:google" && awaiting.onConnectGoogle
+                  ? awaiting.onConnectGoogle
+                  : awaiting.onConnect;
             if (value.startsWith("connect:")) {
               nextVars = { ...nextVars, ...varsFromConnector(value), connectorBlockId: reply.kind === "event" ? reply.blockId : awaiting.blockId };
             }
@@ -460,6 +538,7 @@ export const usePlayer = create<PlayerState>((set, get) => {
           case "auth":
             next = awaiting.next;
             useMemory.getState().apply([{ kind: "account", method: (value as "google" | "apple" | "email") ?? "google" }]);
+            nextVars = { ...nextVars, accountMethod: value };
             break;
         }
 

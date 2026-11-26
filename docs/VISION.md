@@ -43,15 +43,15 @@ Source : `docs/trancript-seance-23nov-lelio.txt`.
 
 Adapté des maquettes Figma (`docs/figma-parcours/`) et des remarques ci-dessus :
 
-1. Accueil : Éléa se présente, une question ouverte (« Qu'est-ce qui vous occupe en ce moment ? »).
-2. Faisons connaissance : 4 dimensions avec jauges (Mon activité, Mes finances, Mon profil, Mes priorités).
-3. Proposition de connecter les mails (écran de réassurance) ou de déposer des factures. Extraction simulée qui remplit les finances sans poser de question.
-4. Une ou deux questions d'approfondissement, en voix ou en texte ; chaque réponse est « notée » dans une dimension.
-5. Analyse animée en étapes.
-6. Choix d'une priorité, avec une recommandée.
-7. Choix d'un plan parmi 2 ou 3, avec un recommandé, et détail des étapes.
-8. Création de compte au moment où le dirigeant veut garder son plan (ou plus tôt si un connecteur est demandé).
-9. Plan personnalisé : dates modifiables, démarrage.
+1. Accueil : Éléa se présente en quelques phrases, sans question ouverte.
+2. Création du compte (Google, Apple ou e-mail, simulé) : le compte vient en premier.
+3. Écran de départ, trois options : connecter ses sources (Gmail et Drive en un geste avec un compte Google), importer des documents, ou commencer à discuter.
+4. Chemin sources ou documents : extraction simulée qui remplit les finances sans poser de question. Chemin discussion : question d'ouverture (« Qu'est-ce qui vous occupe en ce moment ? »), puis Éléa propose une seule fois de lire les sources pour avoir du contexte ; un refus n'est jamais rediscuté.
+5. Faisons connaissance : 4 dimensions avec jauges (Mon activité, Mes finances, Mon profil, Mes priorités), une ou deux questions d'approfondissement, chaque réponse « notée » dans une dimension.
+6. Analyse animée en étapes.
+7. Choix d'une priorité, avec une recommandée.
+8. Choix d'un plan parmi 2 ou 3, avec un recommandé, et détail des étapes.
+9. Plan personnalisé : dates modifiables, démarrage (plus d'étape compte à la fin).
 10. Arrivée sur l'accueil quotidien.
 
 ## 6. Ce que le prototype doit prouver

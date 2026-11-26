@@ -12,80 +12,105 @@
           "text": "Bonjour Thomas, je suis Éléa."
         },
         {
-          "id": "welcome-q",
-          "type": "question",
-          "text": "Qu'est-ce qui vous occupe le plus en ce moment dans votre entreprise ?",
-          "hint": "Parlez librement, je fais le tri.",
-          "inputModes": [
-            "voice",
-            "text"
+          "id": "welcome-intro",
+          "type": "callout",
+          "tone": "memory",
+          "title": "Une mémoire d'éléphant pour votre entreprise",
+          "text": "Je retiens ce que vous me dites, je range ce qui compte et je vous aide à poser une question, à résoudre un problème ou à retrouver ce qui a déjà été décidé."
+        },
+        {
+          "id": "welcome-go",
+          "type": "choice",
+          "title": "Faisons connaissance ?",
+          "subtitle": "Commençons par créer votre espace, ça prend quelques secondes.",
+          "options": [
+            {
+              "id": "start",
+              "title": "Créer mon espace",
+              "body": "Ce que vous me direz restera rangé dans la mémoire de Morel Ingénierie.",
+              "recommended": true
+            }
+          ],
+          "confirmLabel": "Continuer",
+          "doneLabel": "Première étape"
+        }
+      ],
+      "await": {
+        "kind": "choice",
+        "blockId": "welcome-go",
+        "routes": {
+          "start": "create-account"
+        }
+      }
+    },
+    "create-account": {
+      "delayMs": 300,
+      "blocks": [
+        {
+          "id": "ca-auth",
+          "type": "auth",
+          "eyebrow": "Votre espace",
+          "title": "Créons votre espace, Thomas.",
+          "text": "Un compte à votre nom pour que je garde tout en sécurité, d'une visite à l'autre.",
+          "keepsTitle": "Avec votre compte, vous gardez",
+          "keeps": [
+            "Ce que vous m'apprenez sur Morel Ingénierie",
+            "Vos plans et leurs étapes",
+            "Vos sources et documents, que vous pouvez couper à tout moment"
           ]
         }
       ],
       "await": {
-        "kind": "input",
-        "simulated": "J'ai monté le bureau d'études il y a neuf ans. On est dix-huit, on a du boulot par-dessus la tête, mais je ne sais pas quelles affaires me font vraiment gagner de l'argent. Et les mairies me paient de plus en plus tard.",
-        "next": "first-notes"
+        "kind": "auth",
+        "next": "departure"
       }
     },
-    "first-notes": {
-      "delayMs": 900,
-      "effects": [
-        {
-          "kind": "progress",
-          "dimensionId": "activity",
-          "to": 0.4,
-          "status": "active",
-          "summary": "Bureau d'études fluides et thermique, 18 salariés, Nantes"
-        },
-        {
-          "kind": "progress",
-          "dimensionId": "priorities",
-          "to": 0.3,
-          "summary": "2 sujets identifiés",
-          "status": "active"
-        }
-      ],
+    "departure": {
+      "delayMs": 500,
       "blocks": [
         {
-          "id": "fn-noted-1",
-          "type": "noted",
-          "target": {
-            "kind": "dimension",
-            "id": "activity",
-            "label": "Mon activité"
-          },
-          "text": "Bureau d'études fluides et thermique, 18 salariés, Nantes",
-          "editable": true
+          "id": "dep-lead",
+          "type": "lead",
+          "text": "Votre espace est prêt. Comment voulez-vous commencer ?"
         },
         {
-          "id": "fn-noted-2",
-          "type": "noted",
-          "target": {
-            "kind": "dimension",
-            "id": "priorities",
-            "label": "Mes priorités"
-          },
-          "text": "Savoir quelles affaires sont rentables ; être payé plus vite par les collectivités",
-          "editable": true
-        },
-        {
-          "id": "fn-dims",
-          "type": "dimensions",
-          "title": "Approfondissons",
-          "subtitle": "Quelques précisions pour bien vous conseiller",
-          "dimensionIds": [
-            "activity",
-            "finances",
-            "profile",
-            "priorities"
-          ]
+          "id": "dep-choice",
+          "type": "choice",
+          "title": "Trois façons de démarrer",
+          "subtitle": "Vous pourrez toujours ajouter des sources ou des documents plus tard, depuis le Profil et Documents.",
+          "options": [
+            {
+              "id": "connect-sources",
+              "title": "Connecter mes sources",
+              "body": "Gmail et Drive : je retrouve vos factures et vos affaires sans vous poser de questions."
+            },
+            {
+              "id": "import-docs",
+              "title": "Importer des documents",
+              "body": "Factures, relevés, bulletins : déposez ce que vous avez sous la main, je lis."
+            },
+            {
+              "id": "start-discuss",
+              "title": "Commencer à discuter",
+              "body": "Vous me racontez votre entreprise, à voix haute ou à l'écrit."
+            }
+          ],
+          "confirmLabel": "Commencer comme ça",
+          "doneLabel": "Pour commencer"
         }
       ],
-      "next": "connector"
+      "await": {
+        "kind": "choice",
+        "blockId": "dep-choice",
+        "routes": {
+          "connect-sources": "connector",
+          "import-docs": "upload",
+          "start-discuss": "discuss-open"
+        }
+      }
     },
     "connector": {
-      "delayMs": 700,
+      "delayMs": 600,
       "blocks": [
         {
           "id": "cn-lead",
@@ -115,45 +140,16 @@
             "Données chiffrées, hébergées en France",
             "Vous pouvez couper l'accès à tout moment"
           ],
-          "skipLabel": "Je préfère déposer mes factures"
+          "skipLabel": "Je préfère déposer mes factures",
+          "googleOneGesture": true
         }
       ],
       "await": {
         "kind": "connector",
         "blockId": "cn-connector",
-        "onConnect": "account-for-connector",
+        "onConnect": "mail-search",
+        "onConnectGoogle": "mail-search-google",
         "onSkip": "upload"
-      }
-    },
-    "account-for-connector": {
-      "delayMs": 300,
-      "blocks": [
-        {
-          "id": "acc-c-auth",
-          "type": "auth",
-          "eyebrow": "Avant de connecter {{providerLabel}}",
-          "title": "Créons votre espace, Thomas.",
-          "text": "Pour me connecter à {{providerLabel}} en toute sécurité, j'ai besoin d'un compte à votre nom.",
-          "keeps": [
-            "Ce que vous m'avez déjà dit",
-            "L'accès à vos factures, en lecture seule"
-          ],
-          "consent": {
-            "title": "Autoriser la lecture",
-            "text": "Éléa demande l'accès en lecture seule à {{providerLabel}} pour retrouver vos factures.",
-            "items": [
-              "Lecture des messages contenant une facture ou un relevé",
-              "Aucune modification, aucun envoi",
-              "Accès révocable à tout moment depuis le Profil"
-            ],
-            "confirmLabel": "Autoriser",
-            "cancelLabel": "Annuler"
-          }
-        }
-      ],
-      "await": {
-        "kind": "auth",
-        "next": "mail-search"
       }
     },
     "mail-search": {
@@ -188,6 +184,57 @@
             },
             {
               "id": "ms-3",
+              "label": "Je classe vos charges par nature…",
+              "durationMs": 1200
+            }
+          ]
+        }
+      ],
+      "next": "extraction-mail"
+    },
+    "mail-search-google": {
+      "effects": [
+        {
+          "kind": "source",
+          "source": {
+            "id": "gmail",
+            "provider": "gmail",
+            "label": "Gmail",
+            "status": "connected",
+            "detail": "thomas@morel-ingenierie.fr",
+            "lastSync": "2026-11-25T10:42:00"
+          }
+        },
+        {
+          "kind": "source",
+          "source": {
+            "id": "drive",
+            "provider": "drive",
+            "label": "Google Drive",
+            "status": "connected",
+            "detail": "Dossier « Affaires 2026 »",
+            "lastSync": "2026-11-25T10:42:00"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "msg-analysis",
+          "type": "analysis",
+          "title": "Je parcours vos mails et votre Drive",
+          "steps": [
+            {
+              "id": "msg-1",
+              "label": "Je repère les factures des trois derniers mois dans Gmail…",
+              "durationMs": 1400
+            },
+            {
+              "id": "msg-2",
+              "label": "Je lis les montants et les échéances, et je regarde le dossier « Affaires 2026 »…",
+              "durationMs": 1600
+            },
+            {
+              "id": "msg-3",
               "label": "Je classe vos charges par nature…",
               "durationMs": 1200
             }
@@ -278,7 +325,9 @@
             "status": "active",
             "openedAt": "2026-11-25T10:43:00",
             "lastExchangeAt": "2026-11-25T10:43:00",
-            "scenarioIds": ["onboarding"],
+            "scenarioIds": [
+              "onboarding"
+            ],
             "planIds": [],
             "summary": "Charges et heures en cours de collecte pour savoir quelles affaires gagnent de l'argent."
           }
@@ -359,7 +408,7 @@
           "editable": true
         }
       ],
-      "next": "hours-question"
+      "next": "docs-notes"
     },
     "extraction-upload": {
       "delayMs": 300,
@@ -380,7 +429,9 @@
             "status": "active",
             "openedAt": "2026-11-25T10:43:00",
             "lastExchangeAt": "2026-11-25T10:43:00",
-            "scenarioIds": ["onboarding"],
+            "scenarioIds": [
+              "onboarding"
+            ],
             "planIds": [],
             "summary": "Charges et heures en cours de collecte pour savoir quelles affaires gagnent de l'argent."
           }
@@ -461,7 +512,176 @@
           "editable": true
         }
       ],
+      "next": "docs-notes"
+    },
+    "docs-notes": {
+      "delayMs": 900,
+      "effects": [
+        {
+          "kind": "progress",
+          "dimensionId": "activity",
+          "to": 0.5,
+          "status": "active",
+          "summary": "Bureau d'études fluides et thermique, 18 salariés dont 14 en production"
+        },
+        {
+          "kind": "progress",
+          "dimensionId": "priorities",
+          "to": 0.4,
+          "status": "active",
+          "summary": "Délais de paiement des collectivités à surveiller"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "dn-noted-1",
+          "type": "noted",
+          "target": {
+            "kind": "dimension",
+            "id": "activity",
+            "label": "Mon activité"
+          },
+          "text": "Bureau d'études fluides et thermique à Nantes, 18 salariés dont 14 en production",
+          "editable": true
+        },
+        {
+          "id": "dn-noted-2",
+          "type": "noted",
+          "target": {
+            "kind": "dimension",
+            "id": "priorities",
+            "label": "Mes priorités"
+          },
+          "text": "Les collectivités paient de plus en plus tard : 61 jours en moyenne, contre 45 en juin",
+          "confidence": "estimated",
+          "editable": true
+        }
+      ],
       "next": "hours-question"
+    },
+    "discuss-open": {
+      "delayMs": 500,
+      "blocks": [
+        {
+          "id": "do-lead",
+          "type": "lead",
+          "text": "Très bien, parlons-en."
+        },
+        {
+          "id": "do-q",
+          "type": "question",
+          "text": "Qu'est-ce qui vous occupe le plus en ce moment dans votre entreprise ?",
+          "hint": "Parlez librement, je fais le tri.",
+          "inputModes": [
+            "voice",
+            "text"
+          ]
+        }
+      ],
+      "await": {
+        "kind": "input",
+        "simulated": "J'ai monté le bureau d'études il y a neuf ans. On est dix-huit, on a du boulot par-dessus la tête, mais je ne sais pas quelles affaires me font vraiment gagner de l'argent. Et les mairies me paient de plus en plus tard.",
+        "next": "first-notes"
+      }
+    },
+    "first-notes": {
+      "delayMs": 900,
+      "effects": [
+        {
+          "kind": "progress",
+          "dimensionId": "activity",
+          "to": 0.4,
+          "status": "active",
+          "summary": "Bureau d'études fluides et thermique, 18 salariés, Nantes"
+        },
+        {
+          "kind": "progress",
+          "dimensionId": "priorities",
+          "to": 0.3,
+          "summary": "2 sujets identifiés",
+          "status": "active"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "fn-noted-1",
+          "type": "noted",
+          "target": {
+            "kind": "dimension",
+            "id": "activity",
+            "label": "Mon activité"
+          },
+          "text": "Bureau d'études fluides et thermique, 18 salariés, Nantes",
+          "editable": true
+        },
+        {
+          "id": "fn-noted-2",
+          "type": "noted",
+          "target": {
+            "kind": "dimension",
+            "id": "priorities",
+            "label": "Mes priorités"
+          },
+          "text": "Savoir quelles affaires sont rentables ; être payé plus vite par les collectivités",
+          "editable": true
+        },
+        {
+          "id": "fn-dims",
+          "type": "dimensions",
+          "title": "Approfondissons",
+          "subtitle": "Quelques précisions pour bien vous conseiller",
+          "dimensionIds": [
+            "activity",
+            "finances",
+            "profile",
+            "priorities"
+          ]
+        }
+      ],
+      "next": "soft-connector"
+    },
+    "soft-connector": {
+      "delayMs": 900,
+      "blocks": [
+        {
+          "id": "sc-lead",
+          "type": "lead",
+          "text": "Une chose pourrait vous éviter bien des questions."
+        },
+        {
+          "id": "sc-connector",
+          "type": "connector",
+          "title": "Voulez-vous que je lise vos mails et votre Drive ?",
+          "why": "Avec vos factures et vos dossiers, j'ai du contexte sans tout vous demander. C'est facultatif, et je n'y reviendrai pas.",
+          "providers": [
+            "gmail",
+            "outlook",
+            "drive"
+          ],
+          "willRead": [
+            "Les factures et relevés que vous recevez",
+            "Les pièces jointes en PDF de vos fournisseurs et clients"
+          ],
+          "willNotRead": [
+            "Vos échanges personnels",
+            "Les messages sans facture ni relevé"
+          ],
+          "reassurance": [
+            "Lecture seule : je n'envoie et ne supprime rien",
+            "Données chiffrées, hébergées en France",
+            "Vous pouvez couper l'accès à tout moment"
+          ],
+          "skipLabel": "Non merci, je préfère répondre moi-même",
+          "googleOneGesture": true
+        }
+      ],
+      "await": {
+        "kind": "connector",
+        "blockId": "sc-connector",
+        "onConnect": "mail-search",
+        "onConnectGoogle": "mail-search-google",
+        "onSkip": "charges-question"
+      }
     },
     "charges-question": {
       "delayMs": 500,
@@ -517,7 +737,9 @@
             "status": "active",
             "openedAt": "2026-11-25T10:43:00",
             "lastExchangeAt": "2026-11-25T10:43:00",
-            "scenarioIds": ["onboarding"],
+            "scenarioIds": [
+              "onboarding"
+            ],
             "planIds": [],
             "summary": "Charges et heures en cours de collecte pour savoir quelles affaires gagnent de l'argent."
           }
@@ -890,7 +1112,9 @@
           "kind": "update-subject",
           "subjectId": "rentabilite-affaire",
           "patch": {
-            "planIds": ["p-rentabilite"],
+            "planIds": [
+              "p-rentabilite"
+            ],
             "lastExchangeAt": "2026-11-25T10:50:00",
             "summary": "Plan proposé : connaître la rentabilité de chaque affaire."
           }
@@ -1112,32 +1336,6 @@
       "await": {
         "kind": "plan",
         "blockId": "pp-plan",
-        "next": "account-or-plan"
-      }
-    },
-    "account-or-plan": {
-      "blocks": [
-        {
-          "id": "ap-auth",
-          "type": "auth",
-          "eyebrow": "Dernière étape",
-          "title": "Gardez votre plan, Thomas.",
-          "text": "Créez votre compte pour enregistrer votre synthèse et suivre votre plan.",
-          "recap": {
-            "label": "Votre plan",
-            "value": "{{planTitle}}",
-            "highlight": "Vous commencez par : {{planFirstStep}}"
-          },
-          "keepsTitle": "Avec votre compte, vous gardez",
-          "keeps": [
-            "Votre synthèse",
-            "Votre plan et ses {{planStepCountLabel}}",
-            "Ce que vous m'avez appris sur Morel Ingénierie"
-          ]
-        }
-      ],
-      "await": {
-        "kind": "auth",
         "next": "plan-edit"
       }
     },
@@ -1178,7 +1376,9 @@
           "kind": "update-subject",
           "subjectId": "rentabilite-affaire",
           "patch": {
-            "planIds": ["{{planId}}"],
+            "planIds": [
+              "{{planId}}"
+            ],
             "lastExchangeAt": "2026-11-25T10:52:00",
             "summary": "Plan démarré : {{planTitle}}. Première étape : {{planFirstStep}}."
           }

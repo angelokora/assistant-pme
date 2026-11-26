@@ -7,11 +7,11 @@ import type { Plan } from "../engine/types";
 import { useMemory } from "../memory/store";
 import styles from "./Plans.module.css";
 
-const STATUS_ORDER: Plan["status"][] = ["active", "waiting", "draft", "done"];
-const STATUS_LABEL: Record<Plan["status"], string> = {
+/** Sections affichées : En cours, En attente, Terminés (pas de brouillons ni d'alerte de surcharge). */
+const STATUS_ORDER = ["active", "waiting", "done"] as const;
+const STATUS_LABEL: Record<(typeof STATUS_ORDER)[number], string> = {
   active: "En cours",
   waiting: "En attente",
-  draft: "Brouillons",
   done: "Terminés",
 };
 
@@ -42,6 +42,7 @@ function ProgressBar({ plan }: { plan: Plan }) {
 export function Plans() {
   const navigate = useNavigate();
   const plans = useMemory((s) => s.plans);
+  const subjects = useMemory((s) => s.subjects);
 
   const groups = useMemo(() => {
     return STATUS_ORDER.map((status) => ({
@@ -70,6 +71,7 @@ export function Plans() {
             <ul className={styles.list}>
               {g.items.map((plan) => {
                 const next = nextStep(plan);
+                const subject = subjects.find((s) => s.id === plan.subjectId);
                 return (
                   <li key={plan.id}>
                     <button type="button" className={styles.card} onClick={() => navigate(`/plans/${plan.id}`)}>
@@ -78,13 +80,17 @@ export function Plans() {
                         <ChevronRight size={18} strokeWidth={1.75} aria-hidden className={styles.chevron} />
                       </div>
                       <p className={styles.goal}>{plan.goal}</p>
+                      {subject ? <p className={styles.subject}>Sujet : {subject.title}</p> : null}
                       <ProgressBar plan={plan} />
-                      {next && (
+                      {plan.status === "done" && plan.completedAt ? (
+                        <p className={styles.completed}>Terminé le {formatDate(plan.completedAt, "short")}</p>
+                      ) : null}
+                      {next && plan.status !== "done" ? (
                         <p className={styles.next}>
                           Prochaine étape : {next.title}
                           {next.due ? ` · ${formatDate(next.due, "short")}` : ""}
                         </p>
-                      )}
+                      ) : null}
                     </button>
                   </li>
                 );

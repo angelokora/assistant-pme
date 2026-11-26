@@ -481,6 +481,37 @@
         }
       ],
       "subjectId": "retards-collectivites"
+    },
+    {
+      "id": "p-taux-publics",
+      "title": "Fixer le taux vendu sur les marchés publics",
+      "goal": "Décider d'un taux vendu cohérent avec le revient, et le retrouver facilement.",
+      "status": "done",
+      "completedAt": "2026-11-04",
+      "subjectId": "taux-horaire-publics",
+      "steps": [
+        {
+          "id": "t1",
+          "title": "Calculer le taux horaire de revient",
+          "detail": "58 € de l'heure, à partir des charges et des heures facturables.",
+          "due": "2026-11-03",
+          "status": "done"
+        },
+        {
+          "id": "t2",
+          "title": "Choisir le taux vendu sur les marchés publics",
+          "detail": "72 € de l'heure, soit environ 24 % de marge.",
+          "due": "2026-11-04",
+          "status": "done"
+        },
+        {
+          "id": "t3",
+          "title": "Noter la décision dans la mémoire",
+          "detail": "Rangée dans Mes finances, sujet Taux horaire des marchés publics.",
+          "due": "2026-11-04",
+          "status": "done"
+        }
+      ]
     }
   ],
   "attention": [
@@ -589,7 +620,9 @@
       "scenarioIds": [
         "find-hourly-rate"
       ],
-      "planIds": [],
+      "planIds": [
+        "p-taux-publics"
+      ],
       "summary": "Taux vendu fixé à 72 € de l'heure ; revient de 58 € de l'heure."
     }
   ]

@@ -167,6 +167,7 @@ export const useMemory = create<MemoryState>()(
               ...p,
               steps,
               status: allDone ? ("done" as const) : p.status === "waiting" ? ("active" as const) : p.status,
+              completedAt: allDone ? (p.completedAt ?? s.today) : p.completedAt,
             };
           });
           const attention = s.attention.filter((a) => !(a.kind === "plan-step" && a.planId === planId && a.stepId === stepId));

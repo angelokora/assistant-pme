@@ -205,6 +205,8 @@ export type Plan = {
   status: "draft" | "active" | "waiting" | "done";
   subjectId?: string;
   steps: PlanStep[];
+  /** Date de fin (ISO jour), renseignée quand le plan passe en Terminés. */
+  completedAt?: string;
 };
 export type Attention = {
   id: string;

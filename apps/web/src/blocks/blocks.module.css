@@ -648,6 +648,17 @@
   line-height: var(--leading-snug);
 }
 
+.planSubject,
+.planCompleted {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.planCompleted {
+  font-weight: var(--weight-medium);
+}
+
 .planMeta {
   font-size: var(--text-xs);
   font-weight: var(--weight-medium);

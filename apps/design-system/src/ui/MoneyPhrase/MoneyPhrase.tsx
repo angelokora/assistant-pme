@@ -1,13 +1,11 @@
-import { formatEuro, hardenMoneySpaces, NNBSP } from "../../format";
+import { formatEuro, hardenMoneySpaces, NBSP } from "../../format";
 import styles from "./MoneyPhrase.module.css";
 
 const MONEY_RE = /(\d[\d\s\u00a0\u202f]*)([\s\u00a0\u202f]*€)/;
 
-const amountFmt = new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 });
-
 /** Affiche un montant saisi avec les espaces fines FR (sans symbole €). */
 export function formatAmountDraft(value: number): string {
-  return amountFmt.format(value).replace(/\s/g, NNBSP);
+  return formatEuro(value).replace(new RegExp(`${NBSP}?€$`), "");
 }
 
 export type MoneyParts = {

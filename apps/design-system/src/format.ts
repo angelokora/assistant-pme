@@ -7,24 +7,46 @@ const euro = new Intl.NumberFormat("fr-FR", {
   style: "currency",
   currency: "EUR",
   maximumFractionDigits: 0,
+  useGrouping: true,
 });
 
-/**
- * 58000 -> montant FR : NNBSP (\u202f) entre milliers, NBSP (\u00a0) avant euro.
- * Intl fr-FR le fait déjà ; on normalise au cas où.
- */
-export function formatEuro(value: number): string {
-  return hardenMoneySpaces(euro.format(value));
+/** Groupe la partie entière à la française (espace fine dès 1 000). */
+function groupIntDigits(intDigits: string): string {
+  const bare = intDigits.replace(/[\s\u00a0\u202f]/g, "");
+  if (!/^\d+$/.test(bare) || bare.length <= 3) return bare;
+  // 2170 -> 2<NNBSP>170 ; 57400 -> 57<NNBSP>400
+  return bare.replace(/\B(?=(\d{3})+(?!\d))/g, NNBSP);
 }
 
 /**
- * Normalise un montant écrit : fine insécable entre chiffres groupés,
- * insécable classique avant €.
+ * 58000 -> montant FR : NNBSP (\u202f) entre milliers, NBSP (\u00a0) avant euro.
+ * Intl fr-FR le fait déjà ; hardenMoneySpaces garantit le groupement même si
+ * la chaîne d'entrée était « 2170 € » sans séparateur.
+ */
+export function formatEuro(value: number): string {
+  if (!Number.isFinite(value)) return hardenMoneySpaces(String(value));
+  return hardenMoneySpaces(euro.format(Math.round(value)));
+}
+
+/**
+ * Normalise les montants dans un texte :
+ * - espace fine insécable entre milliers dès 1 000 (même sur « 2170 € ») ;
+ * - espace insécable classique avant €.
+ * Les décimales FR (« 15,10 € ») sont préservées.
  */
 export function hardenMoneySpaces(text: string): string {
-  return text
-    .replace(/(\d)[\s\u00a0\u202f]+(?=\d)/g, `$1${NNBSP}`)
-    .replace(/(\d)[\s\u00a0\u202f]*€/g, `$1${NBSP}€`);
+  return text.replace(/(\d[\d\s\u00a0\u202f]*(?:,\d+)?)([\s\u00a0\u202f]*€)/g, (_full, rawAmount: string) => {
+    const cleaned = rawAmount.replace(/[\s\u00a0\u202f]/g, "");
+    const comma = cleaned.indexOf(",");
+    const intPart = comma === -1 ? cleaned : cleaned.slice(0, comma);
+    const fracPart = comma === -1 ? null : cleaned.slice(comma + 1);
+    if (!/^\d+$/.test(intPart) || (fracPart != null && !/^\d+$/.test(fracPart))) {
+      return `${rawAmount}${NBSP}€`;
+    }
+    const grouped = groupIntDigits(intPart);
+    const amount = fracPart != null ? `${grouped},${fracPart}` : grouped;
+    return `${amount}${NBSP}€`;
+  });
 }
 
 function parseDay(iso: string) {

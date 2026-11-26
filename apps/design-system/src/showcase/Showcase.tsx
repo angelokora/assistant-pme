@@ -4,6 +4,7 @@ import {
   ActionDock, AnswerCard, Button, Callout, Chip, ChoiceCard, ChoiceGroup, ConfidenceBadge, DateField, DeviceFrame, DimensionCard, DropZone, FileTile, FindingCard, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, Skeleton, StepList, ToastProvider, TranscriptText, Waveform, useToast,
   type OrbState, type ProviderId, type StepItem, type StepStatus,
 } from "../index";
+import { NBSP, NNBSP } from "../format";
 import styles from "./Showcase.module.css";
 
 const COLORS: { token: string; hex: string; role: string; on: string }[] = [
@@ -104,7 +105,7 @@ function ShowcaseInner() {
         <p className="eyebrow" style={{ marginTop: 24 }}>Interface · Instrument Sans</p>
         <p style={{ maxWidth: 560 }}>
           Un ordre de grandeur suffit. Je fais le tri et je range ce que vous me dites dans <strong>Mes finances</strong>.
-          Montant : <span className="tabular">58 000 €</span>.
+          Montant : <span className="tabular">{`58${NNBSP}000${NBSP}€`}</span>.
         </p>
       </section>
 
@@ -157,7 +158,7 @@ function ShowcaseInner() {
           <DimensionCard id="t" label="Mes priorités" icon={<Target size={18} />} tone="bronze" summary="2 sujets identifiés" progress={0.3} status="active" compact />
         </div>
         <div style={{ maxWidth: 520, display: "grid", gap: 12 }}>
-          <NotedTag targetLabel="Mes finances" text="Charges : environ 58 000 € par mois" confidence="estimated" editable />
+          <NotedTag targetLabel="Mes finances" text={`Charges : environ 58${NNBSP}000${NBSP}€ par mois`} confidence="estimated" editable />
           <Callout tone="memory" title="Il reste novembre">La facture de novembre arrive à échéance le 30 décembre.</Callout>
           <Callout tone="success" title="C'est parti">Je vous rappelle la première étape jeudi matin.</Callout>
         </div>
@@ -220,7 +221,7 @@ function ShowcaseInner() {
             <ChoiceCard
               id="breakeven"
               title="Savoir combien vendre chaque jour pour couvrir vos charges"
-              body="Vous vendez autour de 2 400 € par jour pour environ 58 000 € de charges par mois."
+              body={`Vous vendez autour de 2${NNBSP}400${NBSP}€ par jour pour environ 58${NNBSP}000${NBSP}€ de charges par mois.`}
               meta="4 étapes · 2 semaines"
               recommended
               selected={choice === "breakeven"}
@@ -230,7 +231,7 @@ function ShowcaseInner() {
             <ChoiceCard
               id="late"
               title="Être payée à temps par le restaurant voisin"
-              body="Il vous doit 9 600 € et paie de plus en plus tard."
+              body={`Il vous doit 9${NNBSP}600${NBSP}€ et paie de plus en plus tard.`}
               selected={choice === "late"}
               dimmed={choice !== "late"}
               onSelect={() => setChoice("late")}
@@ -330,7 +331,7 @@ function ShowcaseInner() {
         <div style={{ maxWidth: 420, display: "grid", gap: 12 }}>
           <FindingCard
             findingType="fact"
-            title="Seuil de rentabilité : 2 170 € par jour"
+            title={`Seuil de rentabilité : 2${NNBSP}170${NBSP}€ par jour`}
             topicLabel="Finances"
             createdAt="2026-12-15T07:00:00"
             today="2026-12-16"
@@ -350,7 +351,7 @@ function ShowcaseInner() {
           <FindingCard
             variant="expanded"
             findingType="fact"
-            title="9 600 € attendus du Comptoir des Halles"
+            title={`9${NNBSP}600${NBSP}€ attendus du Comptoir des Halles`}
             topicLabel="Clients"
             createdAt="2026-12-16T08:00:00"
             today="2026-12-16"

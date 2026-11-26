@@ -11,6 +11,10 @@ type MemoryState = Memory & {
   patchFinding: (id: string, patch: Partial<Memory["findings"][number]>) => void;
   /** Met à jour les étapes d'un plan (dates, ordre) depuis le bloc editable. */
   patchPlanSteps: (planId: string, steps: Memory["plans"][number]["steps"]) => void;
+  /** Coche une étape (live) : faite, prochaine en cours, attention liée retirée. */
+  completePlanStep: (planId: string, stepId: string) => void;
+  /** Change l'état d'une source (déconnexion / reconnexion). */
+  setSourceStatus: (sourceId: string, status: Memory["sources"][number]["status"], patch?: Partial<Memory["sources"][number]>) => void;
 };
 
 const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v));
@@ -67,6 +71,46 @@ export const useMemory = create<MemoryState>()(
       patchFinding: (id, patch) => set((s) => ({ findings: s.findings.map((f) => (f.id === id ? { ...f, ...patch } : f)) })),
       patchPlanSteps: (planId, steps) =>
         set((s) => ({ plans: s.plans.map((p) => (p.id === planId ? { ...p, steps } : p)) })),
+      completePlanStep: (planId, stepId) =>
+        set((s) => {
+          const plans = s.plans.map((p) => {
+            if (p.id !== planId) return p;
+            let found = false;
+            let nextPromoted = false;
+            const steps = p.steps.map((step) => {
+              if (step.id === stepId) {
+                found = true;
+                return { ...step, status: "done" as const };
+              }
+              if (found && !nextPromoted && (step.status === "todo" || step.status === "doing")) {
+                nextPromoted = true;
+                return { ...step, status: "doing" as const };
+              }
+              return step;
+            });
+            const allDone = steps.every((st) => st.status === "done");
+            return {
+              ...p,
+              steps,
+              status: allDone ? ("done" as const) : p.status === "waiting" ? ("active" as const) : p.status,
+            };
+          });
+          const attention = s.attention.filter((a) => !(a.kind === "plan-step" && a.planId === planId && a.stepId === stepId));
+          return { plans, attention };
+        }),
+      setSourceStatus: (sourceId, status, patch) =>
+        set((s) => ({
+          sources: s.sources.map((src) =>
+            src.id === sourceId
+              ? {
+                  ...src,
+                  ...patch,
+                  status,
+                  lastSync: status === "connected" ? patch?.lastSync ?? new Date().toISOString().slice(0, 19) : src.lastSync,
+                }
+              : src,
+          ),
+        })),
     }),
     { name: "elea-memory", version: 1 },
   ),

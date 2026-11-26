@@ -1,11 +1,13 @@
 import { useEffect } from "react";
-import { BrowserRouter, Navigate, Route, Routes, useParams } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { MotionConfig } from "motion/react";
 import { ToastProvider } from "@elea/ds";
 import { Home } from "../screens/Home";
 import { Company } from "../screens/Company";
 import { Topic } from "../screens/Topic";
 import { FindingPage } from "../screens/FindingPage";
+import { Plans } from "../screens/Plans";
+import { PlanDetail } from "../screens/PlanDetail";
 import { NeedView } from "../screens/NeedView";
 import { DemoPanel } from "../demo/DemoPanel";
 import { DeviceStage } from "../demo/DeviceStage";
@@ -21,20 +23,8 @@ import { Shell } from "../shell/Shell";
 import { PlaceholderScreen } from "../shell/PlaceholderScreen";
 import { DESTINATIONS } from "../shell/destinations";
 
-function PlanPlaceholder() {
-  const { planId } = useParams();
-  return (
-    <PlaceholderScreen
-      title={planId ? "Détail du plan" : "Plans"}
-      ticketId={27}
-      ticketName="Plans et sources"
-    />
-  );
-}
-
 function PrototypeRoutes() {
   useDemoBridge();
-  const plans = DESTINATIONS.find((d) => d.id === "plans")!;
   const search = DESTINATIONS.find((d) => d.id === "search")!;
 
   return (
@@ -43,11 +33,8 @@ function PrototypeRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/entreprise" element={<Company />} />
         <Route path="/entreprise/:topicId" element={<Topic />} />
-        <Route
-          path="/plans"
-          element={<PlaceholderScreen title={plans.label} ticketId={plans.ticket!.id} ticketName={plans.ticket!.name} />}
-        />
-        <Route path="/plans/:planId" element={<PlanPlaceholder />} />
+        <Route path="/plans" element={<Plans />} />
+        <Route path="/plans/:planId" element={<PlanDetail />} />
         <Route
           path="/recherche"
           element={<PlaceholderScreen title={search.label} ticketId={22} ticketName="Retrouver une information" />}

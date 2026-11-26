@@ -1,37 +1,42 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { AnimatePresence, motion, useSpring, useTransform } from "motion/react";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { AnimatePresence, animate, motion } from "motion/react";
 import { ChevronRight } from "lucide-react";
-import { DimensionCard, ProviderLogo, blockItem, blockList, formatDate, type ProviderId } from "@elea/ds";
+import { DimensionCard, blockItem, blockList, formatDate } from "@elea/ds";
 import { Icon } from "../blocks/icons";
 import { useMemory } from "../memory/store";
+import { CompanySources } from "./CompanySources";
 import { latestFindingDate } from "./findings";
 import styles from "./Company.module.css";
 
-const PROVIDER_MAP: Record<string, ProviderId> = {
-  gmail: "gmail",
-  outlook: "outlook",
-  drive: "drive",
-};
-
 function AnimatedCount({ value }: { value: number }) {
-  const springValue = useSpring(0, { stiffness: 320, damping: 28 });
-  const display = useTransform(springValue, (v) => Math.round(v));
+  const [shown, setShown] = useState(value);
   useEffect(() => {
-    springValue.set(value);
-  }, [springValue, value]);
-  return <motion.span>{display}</motion.span>;
+    const ctrl = animate(shown, value, {
+      type: "spring",
+      stiffness: 320,
+      damping: 28,
+      onUpdate: (v) => setShown(Math.round(v)),
+    });
+    return () => ctrl.stop();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- animate from the last painted value
+  }, [value]);
+  return <span>{shown}</span>;
 }
 
 /** Écran Mon entreprise : dimensions, sujets, résumé des sources. */
 export function Company() {
   const navigate = useNavigate();
+  const location = useLocation();
   const company = useMemory((s) => s.company);
+
+  useEffect(() => {
+    if (location.hash !== "#sources") return;
+    document.getElementById("sources")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [location.hash]);
   const dimensions = useMemory((s) => s.dimensions);
   const topics = useMemory((s) => s.topics);
   const findings = useMemory((s) => s.findings);
-  const sources = useMemory((s) => s.sources);
-  const connected = sources.filter((s) => s.status === "connected");
 
   return (
     <motion.main className={styles.page} variants={blockList} initial="hidden" animate="shown">
@@ -40,10 +45,18 @@ export function Company() {
         <h1 className={["voice", styles.title].join(" ")}>{company.name}</h1>
         <p className={styles.meta}>
           {company.sector}
-          <span aria-hidden>·</span>
-          {company.city}
-          <span aria-hidden>·</span>
-          {company.employees} salariés
+          {company.city ? (
+            <>
+              <span aria-hidden>·</span>
+              {company.city}
+            </>
+          ) : null}
+          {company.employees != null ? (
+            <>
+              <span aria-hidden>·</span>
+              {company.employees} salariés
+            </>
+          ) : null}
         </p>
       </motion.header>
 
@@ -104,33 +117,9 @@ export function Company() {
         </ul>
       </motion.section>
 
-      <motion.section variants={blockItem} id="sources" aria-labelledby="sources-title">
-        <h2 id="sources-title" className={styles.sectionTitle}>
-          Sources connectées
-        </h2>
-        <ul className={styles.sourceList}>
-          {connected.length === 0 ? (
-            <li className={styles.sourceEmpty}>Aucune source connectée pour l'instant.</li>
-          ) : (
-            connected.map((s) => (
-              <li key={s.id} className={styles.sourceRow}>
-                {PROVIDER_MAP[s.provider] ? (
-                  <ProviderLogo provider={PROVIDER_MAP[s.provider]} size={28} />
-                ) : (
-                  <span className={styles.sourceFallback} aria-hidden />
-                )}
-                <span className={styles.sourceBody}>
-                  <strong>{s.label}</strong>
-                  <span>
-                    {s.detail ?? "Connectée"}
-                    {s.lastSync ? ` · sync. ${formatDate(s.lastSync, "short")}` : ""}
-                  </span>
-                </span>
-              </li>
-            ))
-          )}
-        </ul>
-      </motion.section>
+      <motion.div variants={blockItem}>
+        <CompanySources />
+      </motion.div>
     </motion.main>
   );
 }

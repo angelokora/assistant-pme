@@ -18,6 +18,7 @@ export function PlanBlockView({ block, active }: BlockProps<PlanBlockType>) {
   const resolution = usePlayer((s) => s.resolutions[block.id]);
   const plan = useMemory((s) => s.plans.find((p) => p.id === block.planId));
   const patchPlanSteps = useMemory((s) => s.patchPlanSteps);
+  const completePlanStep = useMemory((s) => s.completePlanStep);
   const [celebrating, setCelebrating] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
   const canAct =
@@ -102,11 +103,37 @@ export function PlanBlockView({ block, active }: BlockProps<PlanBlockType>) {
   }
 
   if (block.mode === "live") {
+    const done = plan.steps.filter((s) => s.status === "done").length;
+    const total = plan.steps.length;
     return (
       <section className={styles.plan}>
-        <h2 className="voice">{plan.title}</h2>
-        <p className={styles.planGoal}>{plan.goal}</p>
-        <p className="muted">Mode live : prévu au ticket #27.</p>
+        <header className={styles.planHeader}>
+          <h2 className="voice">{plan.title}</h2>
+          <p className={styles.planGoal}>{plan.goal}</p>
+          <div className={styles.planProgress} aria-label={`${done} sur ${total} étapes`}>
+            <div className={styles.planProgressTrack}>
+              <motion.div
+                className={styles.planProgressFill}
+                initial={false}
+                animate={{ width: `${total ? (done / total) * 100 : 0}%` }}
+                transition={spring.gentle}
+              />
+            </div>
+            <span className={styles.planProgressLabel}>
+              {done}/{total}
+            </span>
+          </div>
+        </header>
+        <StepList
+          steps={plan.steps.map((s) => ({
+            id: s.id,
+            label: s.title,
+            detail: s.detail,
+            due: formatDate(s.due, "weekday"),
+            status: s.status === "done" ? "done" : s.status === "doing" ? "active" : "pending",
+          }))}
+          onStepComplete={(stepId) => completePlanStep(plan.id, stepId)}
+        />
       </section>
     );
   }

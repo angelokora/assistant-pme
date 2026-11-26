@@ -98,7 +98,21 @@
       "createdAt": "2026-12-03T20:05:00",
       "origin": "conversation",
       "confidence": "confirmed",
-      "scenarioId": "onboarding"
+      "scenarioId": "onboarding",
+      "body": [
+        {
+          "id": "fb-lead",
+          "type": "lead",
+          "text": "Voici comment j'ai calculé votre seuil."
+        },
+        {
+          "id": "fb-callout",
+          "type": "callout",
+          "tone": "info",
+          "title": "2 170 € par jour",
+          "text": "Charges fixes 47 000 € ÷ 26 jours d'ouverture, plus 17 % de matières sur les ventes."
+        }
+      ]
     },
     {
       "id": "f-week-50",
@@ -170,7 +184,21 @@
       "summary": "Loyer indexé sur l'ILC. Hausse attendue d'environ 3 %, soit près de 100 € par mois.",
       "createdAt": "2026-11-28T08:40:00",
       "origin": "drive",
-      "confidence": "estimated"
+      "confidence": "estimated",
+      "body": [
+        {
+          "id": "fl-lead",
+          "type": "lead",
+          "text": "J'ai lu la clause d'indexation dans votre bail Drive."
+        },
+        {
+          "id": "fl-callout",
+          "type": "callout",
+          "tone": "warning",
+          "title": "Révision au 1er mars 2027",
+          "text": "Hausse estimée d'environ 3 % sur le loyer actuel, soit près de 100 € par mois."
+        }
+      ]
     }
   ],
   "sources": [

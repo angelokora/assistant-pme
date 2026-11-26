@@ -88,6 +88,33 @@ function enrichPlanVars(vars: StepVars): StepVars {
   return { ...vars, ...varsFromPlan(vars.planId) };
 }
 
+/**
+ * Dernière étape du chemin principal (pour rouvrir un besoin au bout du fil).
+ * Ignore les étapes auth déjà satisfaites, comme `jumpTo`.
+ */
+export function lastMainStepId(scenario: Scenario): string {
+  let cursor: string | undefined = scenario.start;
+  let last = scenario.start;
+  const seen = new Set<string>();
+  let vars: StepVars = {};
+  while (cursor) {
+    if (seen.has(cursor)) break;
+    seen.add(cursor);
+    last = cursor;
+    const step: Step | undefined = scenario.steps[cursor];
+    if (!step) break;
+    if (step.await?.kind === "auth" && useMemory.getState().account.created) {
+      cursor = step.await.next;
+      continue;
+    }
+    const progressed = mainPathNext(step, vars);
+    vars = progressed.vars;
+    if (!progressed.next) break;
+    cursor = progressed.next;
+  }
+  return last;
+}
+
 /** Suit la route « principale » d'une étape (recommandée / première) pour le saut démo. */
 function mainPathNext(step: Step, vars: StepVars): { next?: string; vars: StepVars } {
   const a = step.await;
@@ -234,6 +261,8 @@ export const usePlayer = create<PlayerState>((set, get) => {
       let cursor: string | undefined = scenario.start;
       let vars: StepVars = {};
       const seen = new Set<string>();
+      const pastTurns: Turn[] = [];
+      const resolutions: Record<string, BlockResolution> = {};
       while (cursor && cursor !== stepId) {
         if (seen.has(cursor)) {
           console.warn(`[engine] boucle sur le chemin principal avant ${stepId}`);
@@ -248,19 +277,28 @@ export const usePlayer = create<PlayerState>((set, get) => {
           continue;
         }
         applyStepEffects(step, vars);
+        const stepVars = enrichPlanVars(vars);
+        const blocks = interpolateVars(step.blocks, stepVars);
+        pastTurns.push({ id: `past-${cursor}`, from: "elea", stepId: cursor, blocks });
+        for (const b of blocks) {
+          if (b.type === "choice" || b.type === "connector" || b.type === "auth" || b.type === "upload" || b.type === "plan") {
+            resolutions[b.id] = { summary: "Fait" };
+          }
+        }
         const progressed = mainPathNext(step, vars);
         vars = progressed.vars;
         cursor = progressed.next;
       }
 
       const utterance = scenario.userUtterance;
+      const turns: Turn[] = utterance ? [{ id: "utterance", from: "user", text: utterance, mode: "text" }, ...pastTurns] : pastTurns;
       set({
         scenario,
         done: false,
         awaiting: null,
         vars,
-        resolutions: {},
-        turns: utterance ? [{ id: "utterance", from: "user", text: utterance, mode: "text" }] : [],
+        resolutions,
+        turns,
         currentStep: stepId,
       });
       void goTo(stepId, token);

@@ -1,12 +1,16 @@
+import { useNavigate, useLocation } from "react-router-dom";
 import { X } from "lucide-react";
 import { IconButton, Sheet, formatDate } from "@elea/ds";
 import { useMediaQuery } from "../composer/useMediaQuery";
 import { useMemory } from "../memory/store";
+import { FindingDetail } from "../screens/FindingDetail";
 import { useDetail } from "./detailStore";
 import styles from "./DetailPanel.module.css";
 
-/** Panneau de détail : colonne droite (≥1024) ou feuille latérale (tablette). */
+/** Panneau de détail : colonne droite (≥1024) ou feuille (tablette / mobile). */
 export function DetailPanel() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { kind, id, close } = useDetail();
   const desktop = useMediaQuery("(min-width: 1024px)");
   const finding = useMemory((s) => s.findings.find((f) => f.id === id));
@@ -20,16 +24,24 @@ export function DetailPanel() {
   const connected = sources.filter((s) => s.status === "connected");
   const hasIdleContext = !!activePlan || connected.length > 0;
 
+  function handleClose() {
+    close();
+    if (location.pathname.startsWith("/finding/")) {
+      const topicId = finding?.topicId;
+      navigate(topicId ? `/entreprise/${topicId}` : "/entreprise");
+    }
+  }
+
   const title =
     kind === "finding"
-      ? (finding?.title ?? "Finding")
+      ? (finding?.title ?? "Constat")
       : kind === "plan"
         ? (plan?.title ?? "Plan")
         : (attention?.title ?? "Détail");
 
   const body =
-    kind === "finding" ? (
-      <p className={styles.text}>{finding?.summary}</p>
+    kind === "finding" && finding ? (
+      <FindingDetail finding={finding} showTitle={false} />
     ) : kind === "plan" ? (
       <div className={styles.stack}>
         <p className={styles.text}>{plan?.goal}</p>
@@ -91,7 +103,7 @@ export function DetailPanel() {
       <aside className={styles.panel} aria-label="Détail">
         <header className={styles.head}>
           <h2 className={styles.title}>{title}</h2>
-          <IconButton label="Fermer le détail" size="sm" variant="soft" onClick={close}>
+          <IconButton label="Fermer le détail" size="sm" variant="soft" onClick={handleClose}>
             <X size={18} />
           </IconButton>
         </header>
@@ -101,7 +113,7 @@ export function DetailPanel() {
   }
 
   return (
-    <Sheet open={open} onClose={close} title={title}>
+    <Sheet open={open} onClose={handleClose} title={title}>
       {body}
     </Sheet>
   );

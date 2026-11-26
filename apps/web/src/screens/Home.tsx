@@ -202,7 +202,10 @@ export function Home() {
             findings={recentFindings}
             topicLabel={topicLabel}
             today={today}
-            onOpen={(id) => openDetail("finding", id)}
+            onOpen={(id) => {
+              openDetail("finding", id);
+              navigate(`/finding/${id}`);
+            }}
           />
         </Sheet>
       </motion.main>
@@ -296,7 +299,10 @@ export function Home() {
           findings={recentFindings}
           topicLabel={topicLabel}
           today={today}
-          onOpen={(id) => openDetail("finding", id)}
+          onOpen={(id) => {
+            openDetail("finding", id);
+            navigate(`/finding/${id}`);
+          }}
         />
       </motion.section>
 

@@ -1,43 +1,40 @@
 {
   "id": "inform-payment",
   "intent": "inform",
-  "title": "Paiement du Comptoir des Halles",
+  "title": "Paiement de la mairie de Rezé",
   "start": "noted",
-  "userUtterance": "Le Comptoir des Halles m'a enfin réglé la facture d'octobre, 4 800 €.",
+  "userUtterance": "La mairie de Rezé a enfin payé la situation n° 3 de l'école Jean-Jaurès, 18 400 €.",
   "steps": {
     "noted": {
       "delayMs": 700,
       "effects": [
         {
           "kind": "update-finding",
-          "findingId": "f-comptoir",
+          "findingId": "f-reze",
           "patch": {
-            "title": "Le Comptoir des Halles : novembre en attente",
-            "summary": "Facture d'octobre (4 800 €) réglée le 16 décembre, 16 jours après l'échéance. Facture de novembre (4 800 €) à échéance le 30 décembre."
+            "title": "Mairie de Rezé : situation n° 3 réglée",
+            "summary": "18 400 € reçus le 16 décembre pour la situation n° 3 de l'école Jean-Jaurès, 38 jours après l'échéance du 8 novembre.",
+            "scenarioId": "inform-payment"
           }
         },
         {
-          "kind": "finding",
-          "finding": {
-            "id": "f-payment-oct",
-            "type": "fact",
-            "title": "Comptoir des Halles : octobre réglé",
-            "summary": "4 800 € reçus le 16 décembre, 16 jours après l'échéance.",
-            "createdAt": "2026-12-16T11:10:00",
-            "origin": "conversation",
-            "confidence": "confirmed",
-            "scenarioId": "inform-payment",
-            "dimensionId": "finances",
-            "subjectId": "comptoir-late"
+          "kind": "update-finding",
+          "findingId": "f-collectivites-dues",
+          "patch": {
+            "title": "26 100 € encore dus par des collectivités",
+            "summary": "Saint-Herblain 14 200 €, Couëron 11 900 €. La mairie de Rezé a réglé ses 18 400 € le 16 décembre."
           }
         },
         {
-          "kind": "update-attention",
-          "attentionId": "a2",
+          "kind": "update-finding",
+          "findingId": "f-delai-collectivites",
           "patch": {
-            "title": "4 800 € encore attendus du Comptoir des Halles",
-            "text": "Facture de novembre à échéance le 30 décembre. Leur délai réel est passé de 30 à 46 jours."
+            "summary": "Il était de 45 jours en juin. Le paiement de Rezé est arrivé 38 jours après l'échéance."
           }
+        },
+        {
+          "kind": "remove-attention",
+          "attentionId": "a2"
         }
       ],
       "blocks": [
@@ -49,18 +46,18 @@
             "id": "finances",
             "label": "Mes finances"
           },
-          "text": "Comptoir des Halles : octobre réglé, 4 800 €",
+          "text": "Mairie de Rezé : situation n° 3 réglée, 18 400 €",
           "confidence": "confirmed",
           "editable": true,
-          "findingId": "f-payment-oct",
-          "subjectId": "comptoir-late"
+          "findingId": "f-reze",
+          "subjectId": "retards-collectivites"
         },
         {
           "id": "ip-callout",
           "type": "callout",
           "tone": "memory",
-          "title": "Il reste novembre",
-          "text": "La facture de novembre (4 800 €) arrive à échéance le 30 décembre. Leur délai réel est passé de 30 à 46 jours depuis l'été."
+          "title": "Il reste 26 100 € à encaisser",
+          "text": "Des collectivités vous doivent encore 26 100 €. Leur délai moyen de paiement est passé de 45 à 61 jours depuis juin."
         },
         {
           "id": "ip-suggestions",
@@ -68,7 +65,7 @@
           "items": [
             {
               "id": "remind",
-              "label": "Prévoir une relance le 2 janvier",
+              "label": "Prévoir une relance pour Saint-Herblain",
               "action": {
                 "kind": "route",
                 "target": "/plans"
@@ -76,10 +73,10 @@
             },
             {
               "id": "see",
-              "label": "Voir le suivi de ce client",
+              "label": "Voir le suivi des collectivités",
               "action": {
                 "kind": "route",
-                "target": "/entreprise/comptoir-late"
+                "target": "/entreprise/retards-collectivites"
               }
             }
           ]

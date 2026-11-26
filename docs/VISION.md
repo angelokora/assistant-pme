@@ -9,8 +9,8 @@ Le nom vient de l'éléphant : la sagesse et la mémoire.
 ## 2. La cible
 
 - Dirigeants de PME françaises de **10 à 49 salariés**. En dessous, l'entreprise n'investit pas ; au-dessus, elle a déjà des fonctions de gestion internes.
-- Le secteur phare n'est pas encore tranché (voir le rapport de ciblage) : services aux entreprises en mode projet, bureaux d'études, restauration, sous-traitance industrielle, boulangeries-pâtisseries.
-- **Le prototype joue un seul persona de bout en bout : une pâtisserie-boulangerie** (voir `AGENTS.md`). Il doit montrer que les mêmes composants servent à tous les besoins.
+- Le secteur phare retenu pour le prototype est un **bureau d'études** (voir ciblage et `AGENTS.md`). D'autres secteurs restent envisageables plus tard.
+- **Le prototype joue un seul persona de bout en bout : Morel Ingénierie** (voir `AGENTS.md`). Il doit montrer que les mêmes composants servent à tous les besoins.
 
 ## 3. Les quatre raisons de venir dans l'app
 
@@ -20,8 +20,8 @@ Une seule porte d'entrée, mais quatre intentions, qui aboutissent à des résul
 | --- | --- | --- |
 | **Résoudre un problème** | « Je n'arrive pas à me payer » | Analyse, choix d'une priorité, plan d'action à étapes |
 | **Poser une question** | « CDD ou CDI pour ma vendeuse du week-end ? » | Réponse claire, rangée dans un sujet, retrouvable |
-| **Donner une information** | « Le restaurant voisin a enfin payé octobre » | Information notée, mémoire et plans mis à jour |
-| **Retrouver une information** | « Qu'avait-on dit sur le prix des bûches ? » | Le finding retrouvé, avec son contexte |
+| **Donner une information** | « La mairie de Rezé a enfin payé la situation n° 3 » | Information notée, mémoire et plans mis à jour |
+| **Retrouver une information** | « Qu'est-ce qu'on avait dit sur notre taux horaire pour les marchés publics ? » | Le finding retrouvé, avec son contexte |
 
 À cela s'ajoute **le premier contact** (onboarding) : faire connaissance, connecter des sources, identifier les priorités.
 

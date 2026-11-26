@@ -4,34 +4,34 @@
     "text": "Reformulez, ou choisissez l'un de ces trois exemples.",
     "examples": [
       {
-        "id": "ex-contract",
-        "label": "CDD ou CDI pour une vendeuse ?",
-        "utterance": "Je veux embaucher une vendeuse pour les week-ends. Je fais un CDD ou un CDI ?"
+        "id": "ex-subcontract",
+        "label": "Sous-traiter ou embaucher en structure ?",
+        "utterance": "Pour le calcul structure de l'affaire Bouguenais, je sous-traite ou j'embauche un ingénieur structure ?"
       },
       {
         "id": "ex-payment",
-        "label": "Le Comptoir a réglé la facture d'octobre",
-        "utterance": "Le Comptoir des Halles a réglé la facture d'octobre."
+        "label": "La mairie de Rezé a payé la situation n° 3",
+        "utterance": "La mairie de Rezé a enfin payé la situation n° 3 de l'école Jean-Jaurès, 18 400 €."
       },
       {
-        "id": "ex-buches",
-        "label": "Qu'est-ce qu'on avait dit pour les bûches ?",
-        "utterance": "Qu'est-ce qu'on avait dit pour le prix des bûches ?"
+        "id": "ex-hourly-rate",
+        "label": "Qu'est-ce qu'on avait dit sur le taux horaire ?",
+        "utterance": "Qu'est-ce qu'on avait dit sur notre taux horaire pour les marchés publics ?"
       }
     ]
   },
   "routes": [
     {
-      "scenarioId": "ask-contract",
-      "keywords": ["cdd", "cdi", "contrat", "vendeuse", "embauch", "recrut"]
+      "scenarioId": "ask-subcontract",
+      "keywords": ["sous-trait", "recrut", "embauch", "structure", "ingenieur"]
     },
     {
       "scenarioId": "inform-payment",
-      "keywords": ["regle", "paye", "facture", "verse", "encaiss", "comptoir", "relancer"]
+      "keywords": ["paye", "regle", "situation", "mairie", "collectivit", "verse", "encaiss", "relancer"]
     },
     {
-      "scenarioId": "find-buches",
-      "keywords": ["qu'est-ce qu'on avait dit", "on avait dit", "retrouver", "buche", "rappelle"]
+      "scenarioId": "find-hourly-rate",
+      "keywords": ["qu'est-ce qu'on avait dit", "on avait dit", "retrouver", "taux horaire", "marches publics", "rappelle"]
     }
   ]
 }

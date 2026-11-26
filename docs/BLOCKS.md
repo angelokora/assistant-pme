@@ -251,7 +251,7 @@ Rappel de ce que le compte permet de garder (récapitulatif du plan), puis Googl
 type AuthBlock = BaseBlock & {
   type: "auth";
   eyebrow?: string;                 // « Dernière étape »
-  title: string;                    // « Gardez votre plan, Sophie. »
+  title: string;                    // « Gardez votre plan, Thomas. »
   text: string;
   recap?: { label: string; value: string; highlight?: string };
   keepsTitle?: string;              // « Avec votre compte, vous gardez »

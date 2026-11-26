@@ -125,7 +125,7 @@ export function Home() {
     );
   }
 
-  const hello = greeting(owner.firstName || "Sophie");
+  const hello = greeting(owner.firstName || "Thomas");
   const dateLabel = formatDate(today, "weekday");
 
   const composer = (

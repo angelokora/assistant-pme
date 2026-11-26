@@ -1,38 +1,38 @@
 {
-  "id": "find-buches",
+  "id": "find-hourly-rate",
   "intent": "find",
-  "title": "Le prix des bûches",
+  "title": "Le taux horaire des marchés publics",
   "start": "results",
-  "userUtterance": "Qu'est-ce qu'on avait dit sur le prix des bûches ?",
+  "userUtterance": "Qu'est-ce qu'on avait dit sur notre taux horaire pour les marchés publics ?",
   "steps": {
     "results": {
       "delayMs": 900,
       "blocks": [
         {
-          "id": "fb-lead",
+          "id": "fh-lead",
           "type": "lead",
           "text": "Nous en avons parlé le 4 novembre. Voici ce que j'ai gardé."
         },
         {
-          "id": "fb-ref-1",
+          "id": "fh-ref-1",
           "type": "finding-ref",
-          "findingId": "f-buche-price",
+          "findingId": "f-taux-vente",
           "reason": "La décision prise"
         },
         {
-          "id": "fb-ref-2",
+          "id": "fh-ref-2",
           "type": "finding-ref",
-          "findingId": "f-buche-cost",
+          "findingId": "f-taux-revient",
           "reason": "Le calcul qui l'a justifiée"
         },
         {
-          "id": "fb-callout",
+          "id": "fh-callout",
           "type": "callout",
           "tone": "info",
-          "text": "Le beurre a augmenté de 18 % depuis. Votre marge sur la bûche passe de 64 % à 61 %."
+          "text": "Depuis, deux embauches : votre taux de revient passe à 61 € de l'heure. Votre marge sur les marchés publics descend à 15 %."
         },
         {
-          "id": "fb-suggestions",
+          "id": "fh-suggestions",
           "type": "suggestions",
           "items": [
             {
@@ -44,11 +44,11 @@
               }
             },
             {
-              "id": "topic",
-              "label": "Ouvrir Production et prix",
+              "id": "subject",
+              "label": "Ouvrir « Taux horaire des marchés publics »",
               "action": {
                 "kind": "route",
-                "target": "/entreprise/buches"
+                "target": "/entreprise/taux-horaire-publics"
               }
             }
           ]

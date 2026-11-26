@@ -12,7 +12,7 @@ import { useComposerContext } from "../shell/composerContext";
 import styles from "./HomeComposer.module.css";
 
 const FALLBACK_SIMULATED = ROUTES.unknown.examples[0]?.utterance
-  ?? "Je veux embaucher une vendeuse pour les week-ends. Je fais un CDD ou un CDI ?";
+  ?? "Pour le calcul structure de l'affaire Bouguenais, je sous-traite ou j'embauche un ingénieur structure ?";
 
 export type HomeComposerHandle = {
   listen: () => void;

@@ -9,7 +9,7 @@
         {
           "id": "welcome-lead",
           "type": "lead",
-          "text": "Bonjour Sophie, je suis Éléa."
+          "text": "Bonjour Thomas, je suis Éléa."
         },
         {
           "id": "welcome-q",
@@ -24,7 +24,7 @@
       ],
       "await": {
         "kind": "input",
-        "simulated": "J'ai repris la pâtisserie il y a huit mois. Ça tourne, on est douze, mais je ne sais jamais si je gagne vraiment de l'argent. Et le restaurant d'à côté me paie de plus en plus tard.",
+        "simulated": "J'ai monté le bureau d'études il y a neuf ans. On est dix-huit, on a du boulot par-dessus la tête, mais je ne sais pas quelles affaires me font vraiment gagner de l'argent. Et les mairies me paient de plus en plus tard.",
         "next": "first-notes"
       }
     },
@@ -36,7 +36,7 @@
           "dimensionId": "activity",
           "to": 0.4,
           "status": "active",
-          "summary": "Pâtisserie-boulangerie à Lyon, reprise il y a 8 mois, 12 salariés"
+          "summary": "Bureau d'études fluides et thermique, 18 salariés, Nantes"
         },
         {
           "kind": "progress",
@@ -55,7 +55,7 @@
             "id": "activity",
             "label": "Mon activité"
           },
-          "text": "Pâtisserie-boulangerie, reprise il y a 8 mois, 12 salariés",
+          "text": "Bureau d'études fluides et thermique, 18 salariés, Nantes",
           "editable": true
         },
         {
@@ -66,7 +66,7 @@
             "id": "priorities",
             "label": "Mes priorités"
           },
-          "text": "Savoir si vous gagnez de l'argent ; être payée à temps par le restaurant voisin",
+          "text": "Savoir quelles affaires sont rentables ; être payé plus vite par les collectivités",
           "editable": true
         },
         {
@@ -96,7 +96,7 @@
           "id": "cn-connector",
           "type": "connector",
           "title": "Je peux retrouver vos factures dans vos mails",
-          "why": "J'en tire vos charges et vos ventes sans vous poser de questions. Vous gagnez une dizaine de minutes.",
+          "why": "J'en tire vos charges et vos heures sans vous poser de questions. Vous gagnez une dizaine de minutes.",
           "providers": [
             "gmail",
             "outlook",
@@ -132,7 +132,7 @@
           "id": "acc-c-auth",
           "type": "auth",
           "eyebrow": "Avant de connecter {{providerLabel}}",
-          "title": "Créons votre espace, Sophie.",
+          "title": "Créons votre espace, Thomas.",
           "text": "Pour me connecter à {{providerLabel}} en toute sécurité, j'ai besoin d'un compte à votre nom.",
           "keeps": [
             "Ce que vous m'avez déjà dit",
@@ -165,7 +165,7 @@
             "provider": "{{provider}}",
             "label": "{{providerLabel}}",
             "status": "connected",
-            "detail": "sophie@maisonmartin.fr",
+            "detail": "thomas@morel-ingenierie.fr",
             "lastSync": "2026-11-25T10:42:00"
           }
         }
@@ -210,8 +210,8 @@
           ],
           "examples": [
             "Loyer",
-            "Électricité",
-            "Fournisseurs",
+            "Licences logicielles",
+            "Assurance RC pro",
             "Bulletins de paie"
           ],
           "skipLabel": "Je préfère répondre de tête"
@@ -267,21 +267,21 @@
           "dimensionId": "finances",
           "to": 0.7,
           "status": "active",
-          "summary": "Charges connues, ventes à préciser"
+          "summary": "Charges connues, heures à préciser"
         },
         {
           "kind": "finding",
           "finding": {
             "id": "f-charges",
             "type": "fact",
-            "title": "Charges mensuelles : environ 58 000 €",
-            "summary": "Masse salariale 38 000 €, matières premières 11 000 €, loyer 3 200 €, énergie 2 600 €, assurances et divers 3 200 €.",
+            "title": "Charges mensuelles : 115 000 €",
+            "summary": "Salaires chargés 99 000 €, loyer 4 800 €, licences logicielles 3 200 €, véhicules 2 400 €, assurance RC pro et divers 5 600 €.",
             "createdAt": "2026-11-25T10:43:00",
             "origin": "{{provider}}",
             "confidence": "estimated",
             "scenarioId": "onboarding",
             "dimensionId": "finances",
-            "subjectId": "breakeven"
+            "subjectId": "rentabilite-affaire"
           }
         }
       ],
@@ -289,47 +289,47 @@
         {
           "id": "exm-extraction",
           "type": "extraction",
-          "title": "J'ai trouvé 7 factures et 3 relevés",
+          "title": "J'ai trouvé 9 factures et 3 relevés",
           "items": [
             {
               "id": "ex-1",
-              "label": "Masse salariale",
-              "value": "38 000 € / mois",
+              "label": "Salaires chargés",
+              "value": "99 000 € / mois",
               "source": "Bulletins et charges sociales, oct. 2026",
               "confidence": "confirmed"
             },
             {
               "id": "ex-2",
-              "label": "Matières premières",
-              "value": "11 000 € / mois",
-              "source": "Factures Moulins Bourgeois et Sodiaal, 3 mois",
-              "confidence": "estimated"
-            },
-            {
-              "id": "ex-3",
               "label": "Loyer",
-              "value": "3 200 € / mois",
-              "source": "Facture SCI Bellecour, nov. 2026",
+              "value": "4 800 € / mois",
+              "source": "Bail bureaux quai de la Fosse, nov. 2026",
               "confidence": "confirmed"
             },
             {
+              "id": "ex-3",
+              "label": "Licences logicielles",
+              "value": "3 200 € / mois",
+              "source": "Abonnements de calcul et de dessin, moyenne 3 mois",
+              "confidence": "estimated"
+            },
+            {
               "id": "ex-4",
-              "label": "Énergie",
-              "value": "2 600 € / mois",
-              "source": "Factures EDF Pro, moyenne 3 mois",
+              "label": "Véhicules",
+              "value": "2 400 € / mois",
+              "source": "Leasing et carburant, relevés bancaires",
               "confidence": "estimated"
             },
             {
               "id": "ex-5",
-              "label": "Assurances et divers",
-              "value": "3 200 € / mois",
+              "label": "Assurance RC pro et divers",
+              "value": "5 600 € / mois",
               "source": "Relevés bancaires",
               "confidence": "to-check"
             }
           ],
           "total": {
             "label": "Charges mensuelles",
-            "value": "environ 58 000 €"
+            "value": "115 000 €"
           }
         },
         {
@@ -340,12 +340,12 @@
             "id": "finances",
             "label": "Mes finances"
           },
-          "text": "Charges : environ 58 000 € par mois",
+          "text": "Charges : 115 000 € par mois",
           "confidence": "estimated",
           "editable": true
         }
       ],
-      "next": "restaurant-question"
+      "next": "hours-question"
     },
     "extraction-upload": {
       "delayMs": 300,
@@ -355,21 +355,21 @@
           "dimensionId": "finances",
           "to": 0.7,
           "status": "active",
-          "summary": "Charges connues, ventes à préciser"
+          "summary": "Charges connues, heures à préciser"
         },
         {
           "kind": "finding",
           "finding": {
             "id": "f-charges",
             "type": "fact",
-            "title": "Charges mensuelles : environ 58 000 €",
-            "summary": "Masse salariale 38 000 €, matières premières 11 000 €, loyer 3 200 €, énergie 2 600 €, assurances et divers 3 200 €. Lues dans {{fileCountLabel}}.",
+            "title": "Charges mensuelles : 115 000 €",
+            "summary": "Salaires chargés 99 000 €, loyer 4 800 €, licences logicielles 3 200 €, véhicules 2 400 €, assurance RC pro et divers 5 600 €. Lues dans {{fileCountLabel}}.",
             "createdAt": "2026-11-25T10:43:00",
             "origin": "upload",
             "confidence": "estimated",
             "scenarioId": "onboarding",
             "dimensionId": "finances",
-            "subjectId": "breakeven"
+            "subjectId": "rentabilite-affaire"
           }
         }
       ],
@@ -381,43 +381,43 @@
           "items": [
             {
               "id": "ex-1",
-              "label": "Masse salariale",
-              "value": "38 000 € / mois",
+              "label": "Salaires chargés",
+              "value": "99 000 € / mois",
               "source": "Bulletins et charges sociales, oct. 2026",
               "confidence": "confirmed"
             },
             {
               "id": "ex-2",
-              "label": "Matières premières",
-              "value": "11 000 € / mois",
-              "source": "Factures Moulins Bourgeois et Sodiaal, 3 mois",
-              "confidence": "estimated"
-            },
-            {
-              "id": "ex-3",
               "label": "Loyer",
-              "value": "3 200 € / mois",
-              "source": "Facture SCI Bellecour, nov. 2026",
+              "value": "4 800 € / mois",
+              "source": "Bail bureaux quai de la Fosse, nov. 2026",
               "confidence": "confirmed"
             },
             {
+              "id": "ex-3",
+              "label": "Licences logicielles",
+              "value": "3 200 € / mois",
+              "source": "Abonnements de calcul et de dessin, moyenne 3 mois",
+              "confidence": "estimated"
+            },
+            {
               "id": "ex-4",
-              "label": "Énergie",
-              "value": "2 600 € / mois",
-              "source": "Factures EDF Pro, moyenne 3 mois",
+              "label": "Véhicules",
+              "value": "2 400 € / mois",
+              "source": "Leasing et carburant, relevés bancaires",
               "confidence": "estimated"
             },
             {
               "id": "ex-5",
-              "label": "Assurances et divers",
-              "value": "3 200 € / mois",
+              "label": "Assurance RC pro et divers",
+              "value": "5 600 € / mois",
               "source": "Relevés bancaires",
               "confidence": "to-check"
             }
           ],
           "total": {
             "label": "Charges mensuelles",
-            "value": "environ 58 000 €"
+            "value": "115 000 €"
           }
         },
         {
@@ -428,12 +428,12 @@
             "id": "finances",
             "label": "Mes finances"
           },
-          "text": "Charges : environ 58 000 € par mois",
+          "text": "Charges : 115 000 € par mois",
           "confidence": "estimated",
           "editable": true
         }
       ],
-      "next": "restaurant-question"
+      "next": "hours-question"
     },
     "charges-question": {
       "delayMs": 500,
@@ -446,7 +446,7 @@
         {
           "id": "cq-q",
           "type": "question",
-          "text": "Combien vous coûtent environ vos charges chaque mois : salaires, loyer, matières, énergie ?",
+          "text": "Combien vous coûte le bureau chaque mois : salaires, loyer, logiciels, véhicules ?",
           "hint": "Un ordre de grandeur suffit.",
           "quickReplies": [
             {
@@ -466,7 +466,7 @@
       ],
       "await": {
         "kind": "input",
-        "simulated": "Les salaires avec les charges, autour de 38 000. Le loyer 3 200, les matières une dizaine de milliers, l'électricité 2 600… je dirais 58 000 en tout.",
+        "simulated": "Les salaires chargés, autour de 99 000. Le loyer 4 800, les licences à peu près 3 200, les véhicules 2 400, plus l'assurance et le reste… je dirais 115 000 en tout.",
         "next": "charges-noted"
       }
     },
@@ -478,21 +478,21 @@
           "dimensionId": "finances",
           "to": 0.6,
           "status": "active",
-          "summary": "Charges connues, ventes à préciser"
+          "summary": "Charges connues, heures à préciser"
         },
         {
           "kind": "finding",
           "finding": {
             "id": "f-charges",
             "type": "fact",
-            "title": "Charges mensuelles : environ 58 000 €",
-            "summary": "Masse salariale 38 000 €, matières environ 10 000 €, loyer 3 200 €, énergie 2 600 €. Estimation de Sophie, à confirmer avec les factures.",
+            "title": "Charges mensuelles : 115 000 €",
+            "summary": "Salaires chargés 99 000 €, loyer 4 800 €, licences logicielles 3 200 €, véhicules 2 400 €, assurance RC pro et divers 5 600 €. Estimation de Thomas, à confirmer avec les factures.",
             "createdAt": "2026-11-25T10:43:00",
             "origin": "conversation",
             "confidence": "estimated",
             "scenarioId": "onboarding",
             "dimensionId": "finances",
-            "subjectId": "breakeven"
+            "subjectId": "rentabilite-affaire"
           }
         }
       ],
@@ -505,20 +505,20 @@
             "id": "finances",
             "label": "Mes finances"
           },
-          "text": "Charges : environ 58 000 € par mois",
+          "text": "Charges : 115 000 € par mois",
           "confidence": "estimated",
           "editable": true
         }
       ],
-      "next": "restaurant-question"
+      "next": "hours-question"
     },
-    "restaurant-question": {
+    "hours-question": {
       "delayMs": 600,
       "blocks": [
         {
-          "id": "rq-q",
+          "id": "hq-q",
           "type": "question",
-          "text": "Combien vous rapporte le restaurant voisin chaque mois, et où en sont ses paiements ?",
+          "text": "Combien d'heures vos équipes peuvent-elles facturer chaque mois, à peu près ?",
           "hint": "Un ordre de grandeur suffit.",
           "quickReplies": [
             {
@@ -530,14 +530,14 @@
       ],
       "await": {
         "kind": "input",
-        "simulated": "À peu près 4 800 € par mois. Normalement il paie à 30 jours, mais il traîne de plus en plus : là, il me doit octobre et novembre.",
-        "next": "restaurant-noted",
+        "simulated": "On a quatorze personnes en production, disons 140 heures facturables chacune.",
+        "next": "hours-noted",
         "quickRoutes": {
-          "dont-know": "restaurant-unknown"
+          "dont-know": "hours-unknown"
         }
       }
     },
-    "restaurant-noted": {
+    "hours-noted": {
       "delayMs": 700,
       "effects": [
         {
@@ -557,35 +557,35 @@
         {
           "kind": "finding",
           "finding": {
-            "id": "f-comptoir",
+            "id": "f-heures",
             "type": "fact",
-            "title": "Le Comptoir des Halles paie de plus en plus tard",
-            "summary": "Environ 4 800 € de livraisons par mois. Factures d'octobre et de novembre en attente, soit 9 600 €. Délai réel passé de 30 à 46 jours depuis l'été.",
+            "title": "Heures facturables : 1 960 h par mois",
+            "summary": "14 personnes en production × 140 h facturables chacune.",
             "createdAt": "2026-11-25T10:46:00",
             "origin": "conversation",
             "confidence": "confirmed",
             "scenarioId": "onboarding",
-            "dimensionId": "finances",
-            "subjectId": "comptoir-late"
+            "dimensionId": "activity",
+            "subjectId": "rentabilite-affaire"
           }
         }
       ],
       "blocks": [
         {
-          "id": "rn-noted",
+          "id": "hn-noted",
           "type": "noted",
           "target": {
             "kind": "dimension",
-            "id": "finances",
-            "label": "Mes finances"
+            "id": "activity",
+            "label": "Mon activité"
           },
-          "text": "Restaurant voisin : 4 800 € par mois, 9 600 € en attente",
+          "text": "Heures facturables : 1 960 h par mois (14 × 140 h)",
           "editable": true
         }
       ],
       "next": "profile-question"
     },
-    "restaurant-unknown": {
+    "hours-unknown": {
       "delayMs": 500,
       "effects": [
         {
@@ -605,29 +605,29 @@
         {
           "kind": "finding",
           "finding": {
-            "id": "f-comptoir",
+            "id": "f-heures",
             "type": "fact",
-            "title": "Restaurant voisin : à vérifier",
-            "summary": "Montant des livraisons et délais de paiement à confirmer avec Sophie.",
+            "title": "Heures facturables : à vérifier",
+            "summary": "Nombre d'heures facturables par mois à confirmer avec Thomas.",
             "createdAt": "2026-11-25T10:46:00",
             "origin": "conversation",
             "confidence": "to-check",
             "scenarioId": "onboarding",
-            "dimensionId": "finances",
-            "subjectId": "comptoir-late"
+            "dimensionId": "activity",
+            "subjectId": "rentabilite-affaire"
           }
         }
       ],
       "blocks": [
         {
-          "id": "ru-noted",
+          "id": "hu-noted",
           "type": "noted",
           "target": {
             "kind": "dimension",
-            "id": "finances",
-            "label": "Mes finances"
+            "id": "activity",
+            "label": "Mon activité"
           },
-          "text": "Restaurant voisin : à vérifier",
+          "text": "Heures facturables : à vérifier",
           "confidence": "to-check",
           "editable": true
         }
@@ -645,7 +645,7 @@
         {
           "id": "pq-q",
           "type": "question",
-          "text": "Comment s'organisent vos journées entre la production, la vente et le reste ?",
+          "text": "Comment se partagent vos journées entre la production, les clients et la gestion ?",
           "quickReplies": [
             {
               "id": "dont-know",
@@ -660,7 +660,7 @@
       ],
       "await": {
         "kind": "input",
-        "simulated": "Je suis au laboratoire dès quatre heures, je donne un coup de main à la vente le midi, et je fais la gestion le soir quand j'ai encore de l'énergie.",
+        "simulated": "Je fais encore des études le matin, l'après-midi ce sont les réunions de chantier et les offres, la gestion c'est le soir.",
         "next": "profile-noted",
         "quickRoutes": {
           "dont-know": "profile-unknown",
@@ -676,7 +676,7 @@
           "dimensionId": "profile",
           "to": 0.5,
           "status": "enough",
-          "summary": "Production le matin, gestion le soir"
+          "summary": "Études le matin, gestion le soir"
         },
         {
           "kind": "progress",
@@ -694,7 +694,7 @@
             "id": "profile",
             "label": "Mon profil"
           },
-          "text": "Production dès 4 h, gestion le soir, peu de temps disponible",
+          "text": "Études le matin, réunions l'après-midi, gestion le soir",
           "editable": true
         }
       ],
@@ -722,7 +722,7 @@
             "id": "f-profile-day",
             "type": "fact",
             "title": "Organisation des journées : à vérifier",
-            "summary": "Répartition production / vente / gestion à confirmer avec Sophie.",
+            "summary": "Répartition production / clients / gestion à confirmer avec Thomas.",
             "createdAt": "2026-11-25T10:48:00",
             "origin": "conversation",
             "confidence": "to-check",
@@ -815,146 +815,153 @@
           "doneLabel": "Priorité retenue",
           "options": [
             {
-              "id": "breakeven",
-              "title": "Savoir combien vendre chaque jour pour couvrir vos charges",
-              "body": "Vous vendez autour de 2 400 € par jour pour environ 58 000 € de charges par mois, sans savoir où se situe l'équilibre.",
+              "id": "rentabilite",
+              "title": "Savoir quelles affaires sont rentables",
+              "body": "Vous facturez environ 1 960 h par mois pour 115 000 € de charges, sans savoir quelles affaires gagnent de l'argent.",
               "recommended": true
             },
             {
-              "id": "late-payment",
-              "title": "Être payée à temps par le restaurant voisin",
-              "body": "Il vous doit 9 600 € et paie de plus en plus tard. Cet argent manque en fin de mois."
+              "id": "delais",
+              "title": "Être payé plus vite par les collectivités",
+              "body": "Le délai moyen est passé de 45 à 61 jours depuis juin. Cet argent manque en fin de mois."
             }
           ],
           "confirmLabel": "Commencer par celle-ci",
           "allowFreeInput": true,
           "freeInputHint": "Ou dites-moi ce que vous aimeriez traiter",
-          "freeSimulated": "Commençons par le seuil de rentabilité, je veux savoir combien vendre chaque jour."
+          "freeSimulated": "Commençons par la rentabilité des affaires, je veux savoir lesquelles me font gagner de l'argent."
         }
       ],
       "await": {
         "kind": "choice",
         "blockId": "pr-choice",
         "routes": {
-          "breakeven": "plans-breakeven",
-          "late-payment": "plans-late-payment"
+          "rentabilite": "plans-rentabilite",
+          "delais": "plans-delais"
         }
       }
     },
-    "plans-breakeven": {
+    "plans-rentabilite": {
       "delayMs": 900,
       "effects": [
         {
           "kind": "plan",
           "plan": {
-            "id": "p-breakeven",
-            "title": "Connaître et suivre votre seuil de rentabilité",
-            "goal": "Savoir chaque matin combien vendre pour couvrir vos charges, et suivre l'écart chaque semaine.",
+            "id": "p-rentabilite",
+            "title": "Connaître la rentabilité de chaque affaire",
+            "goal": "Savoir quelles affaires font vraiment gagner de l'argent, et recevoir chaque lundi la marge par affaire.",
             "status": "draft",
             "steps": [
               {
                 "id": "s1",
-                "title": "Vérifier vos charges du mois",
-                "detail": "Je vous montre les 5 postes trouvés ; vous corrigez ce qui ne va pas. 10 minutes.",
+                "title": "Lister vos affaires en cours et leurs honoraires",
+                "detail": "Je pars de votre dossier « Affaires 2026 » ; vous corrigez ce qui ne va pas. 10 minutes.",
                 "due": "2026-11-27",
                 "status": "todo"
               },
               {
                 "id": "s2",
-                "title": "Séparer charges fixes et variables",
-                "detail": "Ensemble, on classe chaque poste. Je vous propose un premier classement.",
+                "title": "Récupérer les heures passées par affaire",
+                "detail": "Depuis votre tableau des heures : je rattache chaque heure à son affaire.",
                 "due": "2026-12-01",
                 "status": "todo"
               },
               {
                 "id": "s3",
-                "title": "Fixer votre seuil journalier",
-                "detail": "Je calcule le montant de ventes qui couvre vos charges, jour par jour.",
+                "title": "Calculer votre taux horaire de revient",
+                "detail": "Vos charges divisées par vos heures facturables : le prix de revient d'une heure.",
                 "due": "2026-12-03",
                 "status": "todo"
               },
               {
                 "id": "s4",
-                "title": "Recevoir votre point du lundi",
-                "detail": "Chaque lundi, l'écart entre vos ventes et votre seuil, en une phrase.",
-                "due": "2026-12-08",
+                "title": "Repérer les affaires déficitaires",
+                "detail": "Celles où les heures passées dépassent ce que les honoraires couvrent.",
+                "due": "2026-12-14",
                 "status": "todo"
               },
               {
                 "id": "s5",
-                "title": "Choisir quoi faire les jours faibles",
-                "detail": "Quand une journée passe sous le seuil : on regarde ensemble les options.",
-                "due": "2026-12-18",
+                "title": "Recevoir votre point du lundi (marge par affaire)",
+                "detail": "Chaque lundi, la marge de vos affaires en cours, en une phrase.",
+                "due": "2026-12-21",
                 "status": "todo"
               }
             ],
-            "subjectId": "breakeven"
+            "subjectId": "rentabilite-affaire"
           }
         },
         {
           "kind": "plan",
           "plan": {
-            "id": "p-prices",
-            "title": "Revoir le prix de vos 5 produits phares",
-            "goal": "Aligner coût de revient et prix de vente sur ce que vous vendez le plus.",
+            "id": "p-taux-horaire",
+            "title": "Revoir votre taux horaire de vente",
+            "goal": "Aligner vos taux vendus sur votre taux de revient, surtout sur les marchés publics.",
             "status": "draft",
             "steps": [
               {
-                "id": "pr1",
-                "title": "Lister vos 5 produits phares",
-                "detail": "Ceux qui font le plus de volume en boutique.",
+                "id": "t1",
+                "title": "Calculer votre taux de revient",
+                "detail": "Charges mensuelles divisées par les heures facturables.",
                 "due": "2026-11-28",
                 "status": "todo"
               },
               {
-                "id": "pr2",
-                "title": "Calculer le coût de revient",
-                "detail": "Matières, énergie et main-d'œuvre par produit.",
+                "id": "t2",
+                "title": "Comparer avec vos taux vendus",
+                "detail": "Marchés publics, promoteurs, architectes : où êtes-vous sous le revient ?",
                 "due": "2026-12-02",
                 "status": "todo"
               },
               {
-                "id": "pr3",
-                "title": "Ajuster les prix affichés",
-                "detail": "Je vous propose une fourchette ; vous validez.",
+                "id": "t3",
+                "title": "Ajuster vos prochaines offres",
+                "detail": "Je vous propose une fourchette par type de client ; vous validez.",
                 "due": "2026-12-05",
                 "status": "todo"
               }
             ],
-            "subjectId": "breakeven"
+            "subjectId": "taux-horaire-publics"
           }
         },
         {
           "kind": "plan",
           "plan": {
-            "id": "p-costs",
-            "title": "Réduire vos charges variables",
-            "goal": "Trouver des écarts sur les matières et l'énergie, et des marges de négociation.",
+            "id": "p-delais-paiement",
+            "title": "Réduire vos délais de paiement",
+            "goal": "Ramener le délai moyen des collectivités vers 45 jours et récupérer les situations échues.",
             "status": "draft",
             "steps": [
               {
-                "id": "c1",
-                "title": "Comparer trois mois de matières",
-                "detail": "Je mets en évidence les hausses inhabituelles.",
-                "due": "2026-11-29",
+                "id": "d1",
+                "title": "Lister les situations échues",
+                "detail": "Je prépare la liste par collectivité.",
+                "due": "2026-11-28",
                 "status": "todo"
               },
               {
-                "id": "c2",
-                "title": "Relire vos contrats énergie",
-                "detail": "Puissance souscrite et options tarifaires.",
-                "due": "2026-12-06",
+                "id": "d2",
+                "title": "Préparer une relance courtoise",
+                "detail": "Je rédige, vous relisez.",
+                "due": "2026-12-02",
                 "status": "todo"
               },
               {
-                "id": "c3",
-                "title": "Préparer deux demandes fournisseurs",
-                "detail": "Messages prêts à envoyer, avec les chiffres.",
-                "due": "2026-12-13",
+                "id": "d3",
+                "title": "Facturer plus tôt",
+                "detail": "Émettre vos situations dès validation du maître d'œuvre.",
+                "due": "2026-12-15",
+                "status": "todo"
+              },
+              {
+                "id": "d4",
+                "title": "Suivre le délai chaque mois",
+                "detail": "Un point mensuel sur le délai moyen de paiement.",
+                "due": "2026-12-31",
                 "status": "todo"
               }
             ],
-            "subjectId": "breakeven"
+            "subjectId": "retards-collectivites"
           }
         }
       ],
@@ -971,29 +978,29 @@
           "doneLabel": "Plan retenu",
           "options": [
             {
-              "id": "p-breakeven",
-              "title": "Connaître et suivre votre seuil de rentabilité",
-              "body": "On établit le montant de ventes qui couvre vos charges, puis je vous alerte chaque semaine.",
+              "id": "p-rentabilite",
+              "title": "Connaître la rentabilité de chaque affaire",
+              "body": "On rattache heures et honoraires à chaque affaire, puis je vous envoie la marge chaque lundi.",
               "meta": "5 étapes · 3 semaines",
               "recommended": true
             },
             {
-              "id": "p-prices",
-              "title": "Revoir le prix de vos 5 produits phares",
-              "body": "On compare coût de revient et prix de vente sur ce que vous vendez le plus.",
+              "id": "p-taux-horaire",
+              "title": "Revoir votre taux horaire de vente",
+              "body": "On compare votre taux de revient et vos taux vendus, surtout sur les marchés publics.",
               "meta": "3 étapes · 10 jours"
             },
             {
-              "id": "p-costs",
-              "title": "Réduire vos charges variables",
-              "body": "Matières et énergie : on cherche les écarts et les marges de négociation.",
-              "meta": "3 étapes · 3 semaines"
+              "id": "p-delais-paiement",
+              "title": "Réduire vos délais de paiement",
+              "body": "Situations échues, relances, facturation plus tôt : on fait baisser le délai moyen.",
+              "meta": "4 étapes · 3 semaines"
             }
           ],
           "confirmLabel": "Voir ce plan",
           "allowFreeInput": true,
           "freeInputHint": "Ou dites-moi comment vous voulez procéder",
-          "freeSimulated": "Le plan sur le seuil de rentabilité, celui que vous recommandez.",
+          "freeSimulated": "Le plan sur la rentabilité des affaires, celui que vous recommandez.",
           "sideDetail": "plan"
         }
       ],
@@ -1001,13 +1008,13 @@
         "kind": "choice",
         "blockId": "pb-choice",
         "routes": {
-          "p-breakeven": "plan-preview",
-          "p-prices": "plan-preview",
-          "p-costs": "plan-preview"
+          "p-rentabilite": "plan-preview",
+          "p-taux-horaire": "plan-preview",
+          "p-delais-paiement": "plan-preview"
         }
       }
     },
-    "plans-late-payment": {
+    "plans-delais": {
       "delayMs": 900,
       "blocks": [
         {
@@ -1015,16 +1022,16 @@
           "type": "callout",
           "tone": "info",
           "title": "Bientôt disponible dans le prototype",
-          "text": "Ce chemin n'est pas encore écrit. Pour la démonstration, je vous propose de commencer par le seuil de rentabilité."
+          "text": "Ce chemin n'est pas encore écrit. Pour la démonstration, je vous propose de commencer par la rentabilité des affaires."
         },
         {
           "id": "pl-choice",
           "type": "choice",
-          "title": "On commence par le seuil ?",
+          "title": "On commence par la rentabilité ?",
           "options": [
             {
-              "id": "breakeven",
-              "title": "Savoir combien vendre chaque jour pour couvrir vos charges",
+              "id": "rentabilite",
+              "title": "Savoir quelles affaires sont rentables",
               "recommended": true
             }
           ],
@@ -1035,7 +1042,7 @@
         "kind": "choice",
         "blockId": "pl-choice",
         "routes": {
-          "breakeven": "plans-breakeven"
+          "rentabilite": "plans-rentabilite"
         }
       }
     },
@@ -1063,7 +1070,7 @@
           "id": "ap-auth",
           "type": "auth",
           "eyebrow": "Dernière étape",
-          "title": "Gardez votre plan, Sophie.",
+          "title": "Gardez votre plan, Thomas.",
           "text": "Créez votre compte pour enregistrer votre synthèse et suivre votre plan.",
           "recap": {
             "label": "Votre plan",
@@ -1074,7 +1081,7 @@
           "keeps": [
             "Votre synthèse",
             "Votre plan et ses {{planStepCountLabel}}",
-            "Ce que vous m'avez appris sur Maison Martin"
+            "Ce que vous m'avez appris sur Morel Ingénierie"
           ]
         }
       ],
@@ -1129,13 +1136,13 @@
             "id": "f-decision-{{planId}}",
             "type": "decision",
             "title": "Priorité : {{planTitle}}",
-            "summary": "Sophie choisit de traiter d'abord : {{planTitle}}. Première étape : {{planFirstStep}}.",
+            "summary": "Thomas choisit de traiter d'abord : {{planTitle}}. Première étape : {{planFirstStep}}.",
             "createdAt": "2026-11-25T10:52:00",
             "origin": "conversation",
             "confidence": "confirmed",
             "scenarioId": "onboarding",
             "dimensionId": "priorities",
-            "subjectId": "breakeven"
+            "subjectId": "rentabilite-affaire"
           }
         }
       ],

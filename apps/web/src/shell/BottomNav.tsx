@@ -54,8 +54,14 @@ function NavItem({
   icon: (typeof DESTINATIONS)[number]["icon"];
   active: boolean;
 }) {
+  const topicFallback = to === "/entreprise";
   return (
-    <NavLink to={to} className={[styles.item, active && styles.itemActive].filter(Boolean).join(" ")} end={to === "/"}>
+    <NavLink
+      to={to}
+      data-topic-fallback={topicFallback ? "" : undefined}
+      className={[styles.item, active && styles.itemActive].filter(Boolean).join(" ")}
+      end={to === "/"}
+    >
       <span className={styles.iconWrap}>
         {active && <motion.span layoutId="nav-active" className={styles.activePip} transition={spring.snappy} />}
         <Icon size={22} strokeWidth={1.75} aria-hidden />

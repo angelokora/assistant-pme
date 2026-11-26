@@ -59,6 +59,7 @@ export function DesktopNav({ active }: Props) {
               <li key={t.id}>
                 <NavLink
                   to={`/entreprise/${t.id}`}
+                  data-topic-target={t.id}
                   className={[styles.topic, topicActive && styles.topicActive].filter(Boolean).join(" ")}
                   aria-current={topicActive ? "page" : undefined}
                 >

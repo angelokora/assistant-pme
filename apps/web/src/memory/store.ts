@@ -65,6 +65,13 @@ function reduce(m: Memory, e: Effect): Memory {
       };
     case "account":
       return { ...m, account: { created: true, method: e.method } };
+    case "update-attention":
+      return {
+        ...m,
+        attention: m.attention.map((a) => (a.id === e.attentionId ? { ...a, ...e.patch } : a)),
+      };
+    case "remove-attention":
+      return { ...m, attention: m.attention.filter((a) => a.id !== e.attentionId) };
   }
 }
 

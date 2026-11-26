@@ -308,7 +308,9 @@ type Effect =
   | { kind: "plan"; plan: Plan }
   | { kind: "update-plan"; planId: string; patch: Partial<Plan> }
   | { kind: "plan-step"; planId: string; stepId: string; status: "todo" | "doing" | "done" }
-  | { kind: "account"; method: "google" | "apple" | "email" };
+  | { kind: "account"; method: "google" | "apple" | "email" }
+  | { kind: "update-attention"; attentionId: string; patch: Partial<Attention> }
+  | { kind: "remove-attention"; attentionId: string };
 
 type Plan = {
   id: string;

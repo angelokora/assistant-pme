@@ -194,7 +194,9 @@ export type Effect =
   | { kind: "plan"; plan: Plan }
   | { kind: "update-plan"; planId: string; patch: Partial<Plan> }
   | { kind: "plan-step"; planId: string; stepId: string; status: PlanStep["status"] }
-  | { kind: "account"; method: "google" | "apple" | "email" };
+  | { kind: "account"; method: "google" | "apple" | "email" }
+  | { kind: "update-attention"; attentionId: string; patch: Partial<Attention> }
+  | { kind: "remove-attention"; attentionId: string };
 
 // ---------- Scénario ----------
 export type Await =

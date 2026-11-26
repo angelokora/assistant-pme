@@ -1,25 +1,35 @@
 .track {
   position: relative;
-  height: 6px;
-  border-radius: var(--radius-full);
-  background: var(--ink-100);
+  display: flex;
+  gap: var(--gauge-gap);
+  height: 8px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
+
+.seg {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--color-bg-sunken);
+  box-shadow: inset 0 0 0 var(--gauge-seg-border) var(--color-border);
+  overflow: hidden;
+}
+
 .fill {
   position: absolute;
   inset: 0;
   transform-origin: left center;
-  border-radius: inherit;
   background: var(--color-action);
-  overflow: hidden;
   transition: background var(--dur-base) var(--ease-out);
 }
-.todo .fill { background: var(--ink-300); }
-.enough .fill { background: linear-gradient(90deg, var(--teal-500), #0a9aa8); }
-.glint {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 40%;
-  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.55), transparent);
+
+.todo .fill {
+  background: var(--ink-300);
+}
+
+.enough .fill {
+  background: var(--color-action);
 }

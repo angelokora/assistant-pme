@@ -49,5 +49,5 @@
 }
 
 .activeCard {
-  box-shadow: inset 0 0 0 1.5px var(--color-action), var(--shadow-1);
+  box-shadow: inset 0 0 0 var(--border-width-strong) var(--color-action), var(--shadow-1);
 }

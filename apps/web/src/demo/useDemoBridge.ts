@@ -4,6 +4,7 @@ import { useMemory } from "../memory/store";
 import { usePlayer } from "../engine/player";
 import { presetFor } from "../engine/scenarios";
 import { useDemo } from "./demo";
+import { useTheme } from "../theme/theme";
 import {
   applySafeInsets,
   initSafeInsetsFromUrl,
@@ -23,6 +24,7 @@ function applySyncState(
     setAnimations: (v: boolean) => void;
     setMailInterrupted: (v: boolean) => void;
     setShowVariantPill: (v: boolean) => void;
+    setTheme: (v: DemoSyncState["theme"]) => void;
   },
 ) {
   setters.setHomeVariant(state.homeVariant);
@@ -31,6 +33,7 @@ function applySyncState(
   setters.setAnimations(state.animations);
   setters.setMailInterrupted(state.mailInterrupted);
   setters.setShowVariantPill(false);
+  if (state.theme) setters.setTheme(state.theme);
   applySafeInsets(state.safeTop, state.safeBottom);
 }
 
@@ -47,6 +50,7 @@ export function useDemoBridge() {
   const setAnimations = useDemo((s) => s.setAnimations);
   const setMailInterrupted = useDemo((s) => s.setMailInterrupted);
   const setShowVariantPill = useDemo((s) => s.setShowVariantPill);
+  const setTheme = useTheme((s) => s.setTheme);
 
   useEffect(() => {
     if (!isFrameMode()) return;
@@ -70,6 +74,7 @@ export function useDemoBridge() {
       setAnimations,
       setMailInterrupted,
       setShowVariantPill,
+      setTheme,
     };
 
     return subscribeDemoCommands((cmd: DemoCommand) => {
@@ -112,6 +117,9 @@ export function useDemoBridge() {
         case "setAnimations":
           setAnimations(cmd.value);
           break;
+        case "setTheme":
+          setTheme(cmd.value);
+          break;
         case "setMailInterrupted":
           setMailInterrupted(cmd.value);
           break;
@@ -132,5 +140,6 @@ export function useDemoBridge() {
     setAnimations,
     setMailInterrupted,
     setShowVariantPill,
+    setTheme,
   ]);
 }

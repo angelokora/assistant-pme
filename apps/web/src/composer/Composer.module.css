@@ -53,7 +53,7 @@
   min-height: 44px;
   border-radius: var(--radius-full);
   background: var(--color-surface);
-  box-shadow: inset 0 0 0 1px var(--color-border);
+  box-shadow: inset 0 0 0 var(--border-width) var(--color-border);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
 }
@@ -65,9 +65,9 @@
   padding: var(--space-4);
   border-radius: var(--radius-lg);
   background: color-mix(in oklab, var(--color-presence-wash) 70%, var(--color-surface));
-  box-shadow: inset 0 0 0 1px var(--color-presence-soft), var(--shadow-3);
+  box-shadow: inset 0 0 0 var(--border-width) var(--color-presence-soft), var(--shadow-3);
 }
-.textPanel { background: var(--color-surface); box-shadow: inset 0 0 0 1px var(--color-border), var(--shadow-3); }
+.textPanel { background: var(--color-surface); box-shadow: inset 0 0 0 var(--border-width) var(--color-border), var(--shadow-3); }
 .panelHead { display: flex; align-items: center; gap: var(--space-3); }
 .listenLabel { flex: 1; display: grid; gap: 2px; min-width: 0; }
 .transcript { color: var(--ink-700); }
@@ -96,7 +96,7 @@
   padding: 6px 6px 6px var(--space-4);
   border-radius: var(--radius-full);
   background: var(--color-surface);
-  box-shadow: inset 0 0 0 1px var(--color-border), var(--shadow-2);
+  box-shadow: inset 0 0 0 var(--border-width) var(--color-border), var(--shadow-2);
 }
 
 .compactInput {
@@ -130,5 +130,5 @@
 }
 
 @media (max-width: 639px) { .tip { visibility: hidden; } }
-.cancel { position: absolute; top: -12px; right: -8px; width: 32px; height: 32px; box-shadow: inset 0 0 0 1px var(--color-border), var(--shadow-2); }
+.cancel { position: absolute; top: -12px; right: -8px; width: 32px; height: 32px; box-shadow: inset 0 0 0 var(--border-width) var(--color-border), var(--shadow-2); }
 .listenLabel > div { overflow: hidden; }

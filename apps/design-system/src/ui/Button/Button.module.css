@@ -22,16 +22,24 @@
 .primary {
   background: var(--color-action);
   color: var(--color-text-on-action);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.16), 0 1px 2px rgb(1 22 39 / 0.18), 0 6px 16px -8px rgb(8 126 139 / 0.6);
+  box-shadow: var(--shadow-button);
 }
 .primary:hover:not(:disabled) { background: var(--color-action-hover); }
+.primary:active:not(:disabled) {
+  transform: translate(var(--press-shift), var(--press-shift));
+  box-shadow: var(--press-shadow);
+}
 
 .secondary {
   background: var(--color-surface);
   color: var(--color-text);
-  box-shadow: inset 0 0 0 1px var(--color-border), var(--shadow-1);
+  box-shadow: inset 0 0 0 var(--border-width) var(--color-border), var(--shadow-1);
 }
-.secondary:hover:not(:disabled) { box-shadow: inset 0 0 0 1px var(--color-border-strong), var(--shadow-1); }
+.secondary:hover:not(:disabled) { box-shadow: inset 0 0 0 var(--border-width) var(--color-border-strong), var(--shadow-1); }
+.secondary:active:not(:disabled) {
+  transform: translate(var(--press-shift), var(--press-shift));
+  box-shadow: inset 0 0 0 var(--border-width) var(--color-border), var(--press-shadow);
+}
 
 .ghost { color: var(--color-text); }
 .ghost:hover:not(:disabled) { background: var(--color-bg-sunken); }
@@ -60,6 +68,6 @@
 .icon-md { width: var(--tap-min); height: var(--tap-min); }
 .icon-sm { width: 36px; height: 36px; }
 .icon-plain:hover { background: var(--color-bg-sunken); }
-.icon-soft { background: var(--color-surface); box-shadow: inset 0 0 0 1px var(--color-border); }
+.icon-soft { background: var(--color-surface); box-shadow: inset 0 0 0 var(--border-width) var(--color-border); }
 .icon-soft:hover { background: var(--color-bg-sunken); }
 .icon-inverse { background: var(--color-surface-inverse); color: var(--color-text-inverse); }

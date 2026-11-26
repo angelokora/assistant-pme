@@ -40,6 +40,11 @@ export function Showcase() {
 
 function ShowcaseInner() {
   const toast = useToast();
+  const [theme, setTheme] = useState<"vivant" | "classic">(() =>
+    typeof document !== "undefined" && document.documentElement.dataset.theme === "classic"
+      ? "classic"
+      : "vivant",
+  );
   const [orb, setOrb] = useState<OrbState>("idle");
   const [level, setLevel] = useState(0.4);
   const [progress, setProgress] = useState(0.35);
@@ -52,6 +57,10 @@ function ShowcaseInner() {
   const [dropReject, setDropReject] = useState<string | null>(null);
   const [choice, setChoice] = useState("breakeven");
   const [due, setDue] = useState("2026-11-27");
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
 
   useEffect(() => {
     if (orb !== "listening") return;
@@ -72,6 +81,18 @@ function ShowcaseInner() {
         <div>
           <p className="eyebrow">Design system</p>
           <h1 className="voice">Éléa, l'atelier vivant</h1>
+          <div className={styles.themeSwitch} role="group" aria-label="Thème">
+            {(
+              [
+                { id: "vivant" as const, label: "Vivant" },
+                { id: "classic" as const, label: "Classique" },
+              ]
+            ).map((opt) => (
+              <Chip key={opt.id} selected={theme === opt.id} onClick={() => setTheme(opt.id)}>
+                {opt.label}
+              </Chip>
+            ))}
+          </div>
         </div>
       </header>
 

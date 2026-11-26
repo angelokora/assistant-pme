@@ -7,7 +7,7 @@
   display: grid;
   align-content: start;
   gap: var(--space-6);
-  border-right: 1px solid var(--color-border);
+  border-right: var(--border-width) solid var(--color-border);
   background: var(--color-bg);
   overflow: auto;
 }

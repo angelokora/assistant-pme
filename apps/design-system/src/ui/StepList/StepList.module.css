@@ -82,7 +82,7 @@ button.row:focus-visible {
   width: 10px;
   height: 10px;
   border-radius: var(--radius-full);
-  box-shadow: inset 0 0 0 1.5px var(--color-border-strong);
+  box-shadow: inset 0 0 0 var(--border-width-strong) var(--color-border-strong);
   background: transparent;
 }
 

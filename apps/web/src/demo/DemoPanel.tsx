@@ -8,6 +8,7 @@ import { useMemory } from "../memory/store";
 import { usePlayer } from "../engine/player";
 import { useMediaQuery } from "../composer/useMediaQuery";
 import { SCENARIO_INDEX, SCENARIOS, presetFor } from "../engine/scenarios";
+import { useTheme, type ThemeId } from "../theme/theme";
 import styles from "./DemoPanel.module.css";
 
 type Props = {
@@ -38,6 +39,8 @@ export function DemoPanel({ host = false }: Props) {
     orientation,
     setOrientation,
   } = useDemo();
+  const theme = useTheme((s) => s.theme);
+  const setTheme = useTheme((s) => s.setTheme);
   const reset = useMemory((s) => s.reset);
   const stop = usePlayer((s) => s.stop);
   const start = usePlayer((s) => s.start);
@@ -288,6 +291,30 @@ export function DemoPanel({ host = false }: Props) {
             Réinitialiser : trois semaines plus tard
           </button>
 
+          <div className={styles.row} role="group" aria-label="Apparence">
+            <span className={styles.rowLabel}>Apparence</span>
+            <div className={styles.pills}>
+              {(
+                [
+                  { id: "vivant", label: "Vivant" },
+                  { id: "classic", label: "Classique" },
+                ] as { id: ThemeId; label: string }[]
+              ).map((opt) => (
+                <button
+                  key={opt.id}
+                  type="button"
+                  className={theme === opt.id ? styles.pillActive : styles.pill}
+                  aria-pressed={theme === opt.id}
+                  onClick={() => {
+                    setTheme(opt.id);
+                    if (host) postDemoCommand({ type: "setTheme", value: opt.id });
+                  }}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
           <label className={styles.toggle}>
             <input
               type="checkbox"

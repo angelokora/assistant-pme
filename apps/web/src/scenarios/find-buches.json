@@ -16,7 +16,7 @@
           "id": "fb-suggestions",
           "type": "suggestions",
           "items": [
-            { "id": "recompute", "label": "Recalculer avec le nouveau prix du beurre", "action": { "kind": "scenario", "target": "find-buches" } },
+            { "id": "search", "label": "Chercher dans la mémoire", "action": { "kind": "route", "target": "/recherche?find=a" } },
             { "id": "topic", "label": "Ouvrir Production et prix", "action": { "kind": "route", "target": "/entreprise/production" } }
           ]
         }

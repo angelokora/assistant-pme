@@ -20,12 +20,10 @@ clearLegacyFrameKeys();
 
 import { FlightLayer } from "../blocks/flight/FlightLayer";
 import { Shell } from "../shell/Shell";
-import { PlaceholderScreen } from "../shell/PlaceholderScreen";
-import { DESTINATIONS } from "../shell/destinations";
+import { Search } from "../screens/Search";
 
 function PrototypeRoutes() {
   useDemoBridge();
-  const search = DESTINATIONS.find((d) => d.id === "search")!;
 
   return (
     <Routes>
@@ -35,10 +33,7 @@ function PrototypeRoutes() {
         <Route path="/entreprise/:topicId" element={<Topic />} />
         <Route path="/plans" element={<Plans />} />
         <Route path="/plans/:planId" element={<PlanDetail />} />
-        <Route
-          path="/recherche"
-          element={<PlaceholderScreen title={search.label} ticketId={22} ticketName="Retrouver une information" />}
-        />
+        <Route path="/recherche" element={<Search />} />
         <Route path="/finding/:findingId" element={<FindingPage />} />
         <Route path="/besoin/:scenarioId" element={<NeedView />} />
         <Route path="*" element={<Navigate to="/" replace />} />

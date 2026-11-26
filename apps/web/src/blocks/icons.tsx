@@ -1,4 +1,4 @@
-import { Briefcase, Croissant, Handshake, Scale, Target, User, Users, Wallet, type LucideIcon } from "lucide-react";
+import { Briefcase, Clock, Handshake, Scale, Target, User, Users, Wallet, type LucideIcon } from "lucide-react";
 
 /** Noms d'icônes utilisés dans les JSON (mémoire, scénarios) vers les icônes lucide. */
 const MAP: Record<string, LucideIcon> = {
@@ -8,7 +8,7 @@ const MAP: Record<string, LucideIcon> = {
   target: Target,
   handshake: Handshake,
   users: Users,
-  croissant: Croissant,
+  clock: Clock,
   scale: Scale,
 };
 

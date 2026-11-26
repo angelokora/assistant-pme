@@ -1,16 +1,16 @@
 {
-  "note": "État de la mémoire trois semaines après l'onboarding (16 décembre 2026). Sert à l'accueil quotidien, à Mon entreprise et à la recherche.",
+  "note": "État de la mémoire trois semaines après l'onboarding (16 décembre 2026). Sert à l'accueil quotidien, à Mon entreprise et à la recherche. Source unique des chiffres : charges 115 000 €, 1 960 h facturables, revient 58 €/h, marchés publics 72 €/h.",
   "today": "2026-12-16",
   "company": {
-    "name": "Maison Martin",
-    "sector": "Pâtisserie-boulangerie",
-    "city": "Lyon",
-    "employees": 12,
-    "since": "2026-03"
+    "name": "Morel Ingénierie",
+    "sector": "Bureau d'études fluides et thermique",
+    "city": "Nantes",
+    "employees": 18,
+    "since": "2017-11"
   },
   "owner": {
-    "firstName": "Sophie",
-    "lastName": "Martin"
+    "firstName": "Thomas",
+    "lastName": "Morel"
   },
   "dimensions": [
     {
@@ -20,7 +20,7 @@
       "tone": "icy",
       "progress": 0.75,
       "status": "enough",
-      "summary": "Pâtisserie-boulangerie, 12 salariés, 2 canaux de vente"
+      "summary": "Bureau d'études fluides et thermique, 18 salariés, Nantes"
     },
     {
       "id": "finances",
@@ -29,7 +29,7 @@
       "tone": "teal",
       "progress": 0.9,
       "status": "enough",
-      "summary": "Seuil connu : 2 170 € par jour"
+      "summary": "Revient connu : 58 € de l'heure"
     },
     {
       "id": "profile",
@@ -38,7 +38,7 @@
       "tone": "cherry",
       "progress": 0.55,
       "status": "active",
-      "summary": "Production le matin, gestion le soir"
+      "summary": "Études le matin, gestion le soir"
     },
     {
       "id": "priorities",
@@ -54,131 +54,186 @@
     {
       "id": "f-charges",
       "type": "fact",
-      "title": "Charges mensuelles : 57 400 €",
-      "summary": "Masse salariale 38 000 €, matières 10 400 €, loyer 3 200 €, énergie 2 600 €, assurances et divers 3 200 €. Vérifié le 27 novembre.",
+      "title": "Charges mensuelles : 115 000 €",
+      "summary": "Salaires chargés 99 000 €, loyer 4 800 €, licences logicielles 3 200 €, véhicules 2 400 €, assurance RC pro et divers 5 600 €. Vérifié le 27 novembre.",
       "createdAt": "2026-11-27T19:20:00",
       "origin": "gmail",
       "confidence": "confirmed",
       "scenarioId": "onboarding",
       "dimensionId": "finances",
-      "subjectId": "breakeven"
+      "subjectId": "rentabilite-affaire"
     },
     {
-      "id": "f-breakeven",
+      "id": "f-heures",
       "type": "fact",
-      "title": "Seuil de rentabilité : 2 170 € de ventes par jour",
-      "summary": "Charges fixes de 47 000 € par mois, matières à 17 % des ventes, 26 jours d'ouverture. En dessous de 2 170 €, la journée ne couvre pas ses charges.",
-      "createdAt": "2026-12-03T20:05:00",
+      "title": "Heures facturables : 1 960 h par mois",
+      "summary": "14 personnes en production × 140 h facturables chacune. C'est la base du calcul de votre taux de revient.",
+      "createdAt": "2026-12-01T20:10:00",
       "origin": "conversation",
       "confidence": "confirmed",
       "scenarioId": "onboarding",
+      "dimensionId": "activity",
+      "subjectId": "rentabilite-affaire"
+    },
+    {
+      "id": "f-taux-revient",
+      "type": "fact",
+      "title": "Taux horaire de revient : 58 € de l'heure",
+      "summary": "115 000 € de charges ÷ 1 960 h facturables. Chaque heure vendue en dessous de 58 € fait perdre de l'argent.",
+      "createdAt": "2026-11-04T20:25:00",
+      "origin": "conversation",
+      "confidence": "confirmed",
       "body": [
         {
-          "id": "fb-lead",
+          "id": "ftr-lead",
           "type": "lead",
-          "text": "Voici comment j'ai calculé votre seuil."
+          "text": "Voici comment j'ai calculé votre taux de revient."
         },
         {
-          "id": "fb-callout",
+          "id": "ftr-callout",
           "type": "callout",
           "tone": "info",
-          "title": "2 170 € par jour",
-          "text": "Charges fixes 47 000 € ÷ 26 jours d'ouverture, plus 17 % de matières sur les ventes."
+          "title": "58 € de l'heure",
+          "text": "Charges mensuelles 115 000 € ÷ 1 960 h facturables (14 personnes × 140 h)."
         }
       ],
       "dimensionId": "finances",
-      "subjectId": "breakeven"
+      "subjectId": "taux-horaire-publics"
     },
     {
-      "id": "f-week-50",
-      "type": "fact",
-      "title": "Semaine du 8 décembre : 2 480 € par jour en moyenne",
-      "summary": "310 € au-dessus du seuil. Mardi et mercredi sous le seuil, samedi à 4 100 €.",
-      "createdAt": "2026-12-15T07:00:00",
+      "id": "f-taux-vente",
+      "type": "decision",
+      "title": "Taux vendu sur les marchés publics : 72 € de l'heure",
+      "summary": "Décision du 4 novembre, prise après le calcul du taux de revient (58 € de l'heure). Marge d'environ 19 % sur chaque heure vendue.",
+      "createdAt": "2026-11-04T20:30:00",
       "origin": "conversation",
       "confidence": "confirmed",
       "dimensionId": "finances",
-      "subjectId": "breakeven"
+      "subjectId": "taux-horaire-publics"
     },
     {
-      "id": "f-decision-breakeven",
-      "type": "decision",
-      "title": "Priorité : connaître le seuil de rentabilité",
-      "summary": "Sophie choisit de traiter d'abord le seuil de rentabilité. Les retards du restaurant voisin restent la deuxième priorité.",
-      "createdAt": "2026-11-25T10:52:00",
-      "origin": "conversation",
-      "confidence": "confirmed",
-      "scenarioId": "onboarding",
-      "dimensionId": "priorities",
-      "subjectId": "breakeven"
-    },
-    {
-      "id": "f-comptoir",
+      "id": "f-marge-moyenne",
       "type": "fact",
-      "title": "Le Comptoir des Halles paie de plus en plus tard",
-      "summary": "Environ 4 800 € de livraisons par mois. Factures d'octobre et de novembre en attente, soit 9 600 €. Délai réel passé de 30 à 46 jours depuis l'été.",
+      "title": "Marge moyenne par affaire : 19 %",
+      "summary": "Calculée sur les affaires en cours à partir des heures passées et du taux de revient de 58 € de l'heure. Plusieurs affaires sont très en dessous.",
+      "createdAt": "2026-12-09T07:00:00",
+      "origin": "conversation",
+      "confidence": "estimated",
+      "dimensionId": "finances",
+      "subjectId": "rentabilite-affaire"
+    },
+    {
+      "id": "f-bouguenais",
+      "type": "fact",
+      "title": "Affaire Bouguenais : déficitaire",
+      "summary": "372 h passées pour 310 h prévues, soit 120 % des heures. Au taux de revient de 58 € de l'heure, l'affaire coûte environ 21 600 € pour 18 500 € d'honoraires : près de 3 100 € de perte.",
+      "createdAt": "2026-12-15T07:00:00",
+      "origin": "conversation",
+      "confidence": "estimated",
+      "dimensionId": "activity",
+      "subjectId": "rentabilite-affaire"
+    },
+    {
+      "id": "f-delai-collectivites",
+      "type": "fact",
+      "title": "Délai moyen de paiement des collectivités : 61 jours",
+      "summary": "Il était de 45 jours en juin. Les collectivités représentent une part importante de votre trésorerie à recevoir.",
       "createdAt": "2026-11-25T10:46:00",
       "origin": "conversation",
       "confidence": "confirmed",
       "scenarioId": "onboarding",
       "dimensionId": "finances",
-      "subjectId": "comptoir-late"
+      "subjectId": "retards-collectivites"
     },
     {
-      "id": "f-team-planning",
+      "id": "f-reze",
       "type": "fact",
-      "title": "Équipe : 7 en production, 5 en vente",
-      "summary": "Deux apprentis en production. Une vendeuse à temps partiel en arrêt jusqu'au 5 janvier.",
+      "title": "Mairie de Rezé : 18 400 € attendus",
+      "summary": "Situation n° 3 de l'école Jean-Jaurès, échue depuis le 8 novembre.",
+      "createdAt": "2026-11-25T10:47:00",
+      "origin": "conversation",
+      "confidence": "confirmed",
+      "scenarioId": "onboarding",
+      "dimensionId": "finances",
+      "subjectId": "retards-collectivites"
+    },
+    {
+      "id": "f-collectivites-dues",
+      "type": "fact",
+      "title": "44 500 € dus par trois collectivités",
+      "summary": "Mairie de Rezé 18 400 €, Saint-Herblain 14 200 €, Couëron 11 900 €. Relevé bancaire de novembre rapproché des situations émises.",
+      "createdAt": "2026-12-01T20:30:00",
+      "origin": "drive",
+      "confidence": "estimated",
+      "dimensionId": "finances",
+      "subjectId": "retards-collectivites"
+    },
+    {
+      "id": "f-equipe",
+      "type": "fact",
+      "title": "Équipe : 14 en production, 4 en gestion et commercial",
+      "summary": "Ingénieurs et projeteurs en production. Aucun ingénieur structure en interne : le calcul de structure est sous-traité.",
       "createdAt": "2026-12-02T21:10:00",
       "origin": "conversation",
       "confidence": "confirmed",
       "dimensionId": "activity",
-      "subjectId": "weekend-hire"
+      "subjectId": "sous-traiter-structure"
     },
     {
-      "id": "f-buche-price",
-      "type": "decision",
-      "title": "Bûche 6 parts vendue 42 €",
-      "summary": "Prix fixé le 4 novembre après calcul du coût de revient. Objectif : 180 bûches pour les fêtes.",
-      "createdAt": "2026-11-04T20:30:00",
-      "origin": "conversation",
-      "confidence": "confirmed",
-      "dimensionId": "activity",
-      "subjectId": "buches"
-    },
-    {
-      "id": "f-buche-cost",
+      "id": "f-profil-journees",
       "type": "fact",
-      "title": "Coût de revient de la bûche : 15,10 €",
-      "summary": "Matières 11,40 €, emballage 1,20 €, main-d'œuvre 2,50 €. Marge de 64 % au prix de 42 €.",
-      "createdAt": "2026-11-04T20:25:00",
+      "title": "Journées : études le matin, réunions l'après-midi, gestion le soir",
+      "summary": "Thomas fait encore des études le matin. L'après-midi : réunions de chantier et offres. La gestion se fait le soir.",
+      "createdAt": "2026-11-25T10:48:00",
       "origin": "conversation",
       "confidence": "confirmed",
-      "dimensionId": "activity",
-      "subjectId": "buches"
+      "scenarioId": "onboarding",
+      "dimensionId": "profile"
     },
     {
-      "id": "f-lease",
+      "id": "f-decision-rentabilite",
+      "type": "decision",
+      "title": "Priorité : connaître la rentabilité de chaque affaire",
+      "summary": "Thomas choisit de traiter d'abord la rentabilité par affaire. Les retards de paiement des collectivités restent la deuxième priorité.",
+      "createdAt": "2026-11-25T10:52:00",
+      "origin": "conversation",
+      "confidence": "confirmed",
+      "scenarioId": "onboarding",
+      "dimensionId": "priorities",
+      "subjectId": "rentabilite-affaire"
+    },
+    {
+      "id": "f-rc-pro",
       "type": "document",
-      "title": "Bail commercial : révision le 1er mars 2027",
-      "summary": "Loyer indexé sur l'ILC. Hausse attendue d'environ 3 %, soit près de 100 € par mois.",
+      "title": "Assurance RC pro : renouvellement le 1er février 2027",
+      "summary": "La prime fait partie des 5 600 € mensuels d'assurance et divers. Pensez à comparer avant la date de reconduction.",
       "createdAt": "2026-11-28T08:40:00",
       "origin": "drive",
       "confidence": "estimated",
       "body": [
         {
-          "id": "fl-lead",
+          "id": "frc-lead",
           "type": "lead",
-          "text": "J'ai lu la clause d'indexation dans votre bail Drive."
+          "text": "J'ai repéré la date de reconduction dans vos documents Drive."
         },
         {
-          "id": "fl-callout",
+          "id": "frc-callout",
           "type": "callout",
           "tone": "warning",
-          "title": "Révision au 1er mars 2027",
-          "text": "Hausse estimée d'environ 3 % sur le loyer actuel, soit près de 100 € par mois."
+          "title": "Renouvellement au 1er février 2027",
+          "text": "Le contrat se reconduit tacitement. Demandez une offre concurrente avant fin décembre."
         }
       ],
+      "dimensionId": "finances"
+    },
+    {
+      "id": "f-bail",
+      "type": "document",
+      "title": "Bail des bureaux : loyer de 4 800 € par mois",
+      "summary": "Bail des bureaux quai de la Fosse, lu dans le dossier « Affaires 2026 ».",
+      "createdAt": "2026-11-28T08:45:00",
+      "origin": "drive",
+      "confidence": "confirmed",
       "dimensionId": "finances"
     }
   ],
@@ -188,7 +243,7 @@
       "provider": "gmail",
       "label": "Gmail",
       "status": "connected",
-      "detail": "sophie@maisonmartin.fr",
+      "detail": "thomas@morel-ingenierie.fr",
       "lastSync": "2026-12-16T06:00:00"
     },
     {
@@ -196,7 +251,7 @@
       "provider": "drive",
       "label": "Google Drive",
       "status": "connected",
-      "detail": "Dossier « Compta 2026 »",
+      "detail": "Dossier « Affaires 2026 »",
       "lastSync": "2026-12-16T06:00:00"
     },
     {
@@ -208,105 +263,112 @@
   ],
   "plans": [
     {
-      "id": "p-breakeven",
-      "title": "Connaître et suivre votre seuil de rentabilité",
-      "goal": "Savoir chaque matin combien vendre pour couvrir vos charges, et suivre l'écart chaque semaine.",
+      "id": "p-rentabilite",
+      "title": "Connaître la rentabilité de chaque affaire",
+      "goal": "Savoir quelles affaires font vraiment gagner de l'argent, et recevoir chaque lundi la marge par affaire.",
       "status": "active",
       "steps": [
         {
           "id": "s1",
-          "title": "Vérifier vos charges du mois",
-          "detail": "Fait le 27 novembre : 57 400 €.",
+          "title": "Lister vos affaires en cours et leurs honoraires",
+          "detail": "Fait le 27 novembre : 41 affaires listées.",
           "due": "2026-11-27",
           "status": "done"
         },
         {
           "id": "s2",
-          "title": "Séparer charges fixes et variables",
-          "detail": "Fait le 1er décembre.",
+          "title": "Récupérer les heures passées par affaire",
+          "detail": "Fait le 1er décembre, depuis le tableau des heures.",
           "due": "2026-12-01",
           "status": "done"
         },
         {
           "id": "s3",
-          "title": "Fixer votre seuil journalier",
-          "detail": "2 170 € par jour.",
+          "title": "Calculer votre taux horaire de revient",
+          "detail": "58 € de l'heure.",
           "due": "2026-12-03",
           "status": "done"
         },
         {
           "id": "s4",
-          "title": "Recevoir votre point du lundi",
-          "detail": "Deuxième point reçu le 15 décembre.",
-          "due": "2026-12-08",
+          "title": "Repérer les affaires déficitaires",
+          "detail": "Première affaire repérée : Bouguenais. On regarde les autres.",
+          "due": "2026-12-14",
           "status": "doing"
         },
         {
           "id": "s5",
-          "title": "Choisir quoi faire les jours faibles",
-          "detail": "Mardi et mercredi passent sous le seuil : on regarde ensemble les options.",
-          "due": "2026-12-18",
+          "title": "Recevoir votre point du lundi (marge par affaire)",
+          "detail": "Chaque lundi, la marge de vos affaires en cours, en une phrase.",
+          "due": "2026-12-21",
           "status": "todo"
         }
       ],
-      "subjectId": "breakeven"
+      "subjectId": "rentabilite-affaire"
     },
     {
-      "id": "p-late-payment",
-      "title": "Être payée à temps par le Comptoir des Halles",
-      "goal": "Revenir à un paiement à 30 jours et récupérer les 9 600 € dus.",
+      "id": "p-delais-paiement",
+      "title": "Réduire vos délais de paiement",
+      "goal": "Ramener le délai moyen des collectivités vers 45 jours et récupérer les situations échues.",
       "status": "waiting",
       "steps": [
         {
-          "id": "l1",
-          "title": "Préparer une relance courtoise",
-          "detail": "Je rédige, vous relisez.",
-          "due": "2026-12-17",
+          "id": "d1",
+          "title": "Lister les situations échues",
+          "detail": "Je prépare la liste par collectivité.",
+          "due": "2026-12-18",
           "status": "todo"
         },
         {
-          "id": "l2",
-          "title": "Proposer un échéancier",
-          "detail": "Deux versements avant le 15 janvier.",
+          "id": "d2",
+          "title": "Préparer une relance courtoise",
+          "detail": "Je rédige, vous relisez.",
           "due": "2026-12-22",
           "status": "todo"
         },
         {
-          "id": "l3",
-          "title": "Ajouter des pénalités de retard à vos conditions",
-          "detail": "Mention obligatoire sur vos factures.",
-          "due": "2027-01-05",
+          "id": "d3",
+          "title": "Facturer plus tôt",
+          "detail": "Émettre vos situations dès validation du maître d'œuvre.",
+          "due": "2027-01-08",
+          "status": "todo"
+        },
+        {
+          "id": "d4",
+          "title": "Suivre le délai chaque mois",
+          "detail": "Un point mensuel sur le délai moyen de paiement.",
+          "due": "2027-01-31",
           "status": "todo"
         }
       ],
-      "subjectId": "comptoir-late"
+      "subjectId": "retards-collectivites"
     }
   ],
   "attention": [
     {
       "id": "a1",
       "kind": "plan-step",
-      "planId": "p-breakeven",
-      "stepId": "s5",
-      "title": "Mardi et mercredi passent sous le seuil",
-      "text": "On regarde ensemble quoi faire de ces deux journées ?",
-      "due": "2026-12-18"
+      "planId": "p-rentabilite",
+      "stepId": "s4",
+      "title": "Affaire Bouguenais : 120 % des heures prévues déjà consommées",
+      "text": "On regarde ensemble si les autres affaires dérapent aussi ?",
+      "due": "2026-12-14"
     },
     {
       "id": "a2",
       "kind": "finding",
-      "findingId": "f-comptoir",
-      "title": "9 600 € attendus du Comptoir des Halles",
-      "text": "La facture d'octobre est échue depuis 16 jours.",
+      "findingId": "f-reze",
+      "title": "18 400 € attendus de la mairie de Rezé",
+      "text": "La situation n° 3 est échue depuis 38 jours.",
       "due": "2026-12-16"
     },
     {
       "id": "a3",
       "kind": "finding",
-      "findingId": "f-lease",
-      "title": "Révision du loyer le 1er mars",
-      "text": "Environ 100 € de plus par mois : à intégrer dans votre seuil.",
-      "due": "2027-03-01"
+      "findingId": "f-rc-pro",
+      "title": "Renouvellement de l'assurance RC pro le 1er février",
+      "text": "Un bon moment pour demander une offre concurrente.",
+      "due": "2027-02-01"
     }
   ],
   "account": {
@@ -314,29 +376,29 @@
     "method": "google"
   },
   "home": {
-    "summary": "Vous êtes 310 € au-dessus de votre seuil cette semaine. Deux sujets attendent.",
+    "summary": "Une affaire dépasse ses heures prévues et des collectivités vous doivent encore de l'argent. Trois sujets attendent.",
     "suggestions": [
       {
-        "id": "sg-contract",
-        "label": "CDD ou CDI pour une vendeuse ?",
-        "scenarioId": "ask-contract"
+        "id": "sg-subcontract",
+        "label": "Sous-traiter ou embaucher un ingénieur structure ?",
+        "scenarioId": "ask-subcontract"
       },
       {
         "id": "sg-payment",
-        "label": "Relancer le Comptoir des Halles",
+        "label": "La mairie de Rezé a payé",
         "scenarioId": "inform-payment"
       },
       {
-        "id": "sg-buches",
-        "label": "Retrouver le prix des bûches",
-        "scenarioId": "find-buches"
+        "id": "sg-hourly-rate",
+        "label": "Retrouver notre taux horaire marchés publics",
+        "scenarioId": "find-hourly-rate"
       }
     ]
   },
   "subjects": [
     {
-      "id": "breakeven",
-      "title": "Seuil de rentabilité",
+      "id": "rentabilite-affaire",
+      "title": "Rentabilité par affaire",
       "icon": "target",
       "status": "active",
       "openedAt": "2026-11-25T10:52:00",
@@ -345,51 +407,51 @@
         "onboarding"
       ],
       "planIds": [
-        "p-breakeven"
+        "p-rentabilite"
       ],
-      "summary": "Seuil fixé à 2 170 € par jour ; point du lundi en cours."
+      "summary": "Revient fixé à 58 € de l'heure ; recherche des affaires déficitaires en cours."
     },
     {
-      "id": "comptoir-late",
-      "title": "Retards du Comptoir des Halles",
+      "id": "retards-collectivites",
+      "title": "Retards de paiement des collectivités",
       "icon": "handshake",
       "status": "active",
       "openedAt": "2026-11-25T10:46:00",
-      "lastExchangeAt": "2026-11-25T10:46:00",
+      "lastExchangeAt": "2026-12-01T20:30:00",
       "scenarioIds": [
         "onboarding",
         "inform-payment"
       ],
       "planIds": [
-        "p-late-payment"
+        "p-delais-paiement"
       ],
-      "summary": "9 600 € en attente ; délai passé à 46 jours."
+      "summary": "44 500 € en attente ; délai moyen passé de 45 à 61 jours."
     },
     {
-      "id": "weekend-hire",
-      "title": "Embauche d'une vendeuse le week-end",
+      "id": "sous-traiter-structure",
+      "title": "Sous-traiter ou recruter en structure",
       "icon": "users",
       "status": "paused",
       "openedAt": "2026-12-10T09:00:00",
       "lastExchangeAt": "2026-12-10T09:30:00",
       "scenarioIds": [
-        "ask-contract"
+        "ask-subcontract"
       ],
       "planIds": [],
-      "summary": "Question CDD ou CDI posée ; pas encore tranchée."
+      "summary": "Question posée pour l'affaire Bouguenais ; pas encore tranchée."
     },
     {
-      "id": "buches",
-      "title": "Prix des bûches de Noël",
-      "icon": "croissant",
+      "id": "taux-horaire-publics",
+      "title": "Taux horaire des marchés publics",
+      "icon": "clock",
       "status": "resolved",
       "openedAt": "2026-11-04T20:25:00",
       "lastExchangeAt": "2026-11-04T20:30:00",
       "scenarioIds": [
-        "find-buches"
+        "find-hourly-rate"
       ],
       "planIds": [],
-      "summary": "Prix fixé à 42 € pour 6 parts ; coût de revient 15,10 €."
+      "summary": "Taux vendu fixé à 72 € de l'heure ; revient de 58 € de l'heure."
     }
   ]
 }

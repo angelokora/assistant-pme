@@ -59,9 +59,9 @@ npm run lint           # ESLint + vérification des types
 
 ## 7. Le persona de démonstration
 
-**Sophie Martin**, 38 ans, dirige la pâtisserie-boulangerie « Maison Martin » à Lyon, reprise il y a 8 mois. 12 salariés (production et vente). Environ 2 400 € de ventes par jour en boutique, plus des livraisons au restaurant voisin, qui la paie de plus en plus tard. Charges d'environ 58 000 € par mois, dont 38 000 € de masse salariale. Elle utilise Gmail et range ses factures dans Google Drive.
+**Thomas Morel**, fondateur et gérant de **Morel Ingénierie**, bureau d'études fluides et thermique à Nantes (chauffage, ventilation, climatisation, plomberie, études thermiques RE2020). 18 salariés, dont 14 en production. Environ 115 000 € de charges par mois, 1 960 h facturables, taux de revient 58 € de l'heure, taux vendu sur les marchés publics 72 € de l'heure. Clients : promoteurs, architectes, collectivités. Compte : thomas@morel-ingenierie.fr. Sources : Gmail et Google Drive (dossier « Affaires 2026 »).
 
-Les maquettes Figma utilisaient des montants de toute petite entreprise (400 € par jour, 9 500 € de charges). Ils ont été remontés pour coller à la cible de 10 à 49 salariés. Toutes les données du prototype sont fictives.
+Toutes les données du prototype sont fictives.
 
 ## 8. Ce qu'on ne fait pas (pour l'instant)
 

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 type ComposerContextState = {
-  /** Titre du finding sur lequel Sophie veut interroger Éléa. */
+  /** Titre du finding sur lequel Thomas veut interroger Éléa. */
   aboutTitle: string | null;
   setAbout: (title: string) => void;
   clear: () => void;

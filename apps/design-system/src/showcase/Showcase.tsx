@@ -28,7 +28,7 @@ function contrast(a: string, b: string) {
   return (x + 0.05) / (y + 0.05);
 }
 
-const SAMPLE = "Les salaires avec les charges, autour de 38 000. Le loyer 3 200, je dirais 58 000 en tout.";
+const SAMPLE = "Les salaires chargés, autour de 99 000. Le loyer 4 800, je dirais 115 000 en tout.";
 
 export function Showcase() {
   return (
@@ -55,7 +55,7 @@ function ShowcaseInner() {
   const [stepDemo, setStepDemo] = useState(0);
   const [dropFiles, setDropFiles] = useState<{ name: string; progress: number }[]>([]);
   const [dropReject, setDropReject] = useState<string | null>(null);
-  const [choice, setChoice] = useState("breakeven");
+  const [choice, setChoice] = useState("rentabilite");
   const [due, setDue] = useState("2026-11-27");
 
   useEffect(() => {
@@ -126,7 +126,7 @@ function ShowcaseInner() {
         <p className="eyebrow" style={{ marginTop: 24 }}>Interface · Instrument Sans</p>
         <p style={{ maxWidth: 560 }}>
           Un ordre de grandeur suffit. Je fais le tri et je range ce que vous me dites dans <strong>Mes finances</strong>.
-          Montant : <span className="tabular">{`58${NNBSP}000${NBSP}€`}</span>.
+          Montant : <span className="tabular">{`115${NNBSP}000${NBSP}€`}</span>.
         </p>
       </section>
 
@@ -188,13 +188,13 @@ function ShowcaseInner() {
           <div style={{ width: 200 }}><Gauge value={progress} status={progress >= 1 ? "enough" : "active"} /></div>
         </div>
         <div className={styles.dims}>
-          <DimensionCard id="a" label="Mon activité" icon={<Briefcase size={18} />} tone="icy" summary="Pâtisserie-boulangerie, 12 salariés" progress={0.4} status="active" />
+          <DimensionCard id="a" label="Mon activité" icon={<Briefcase size={18} />} tone="icy" summary="Bureau d'études, 18 salariés" progress={0.4} status="active" />
           <DimensionCard id="f" label="Mes finances" icon={<Wallet size={18} />} tone="teal" summary="Charges connues" progress={progress} status={progress >= 1 ? "enough" : "active"} pulseKey={pulse} />
           <DimensionCard id="p" label="Mon profil" icon={<User size={18} />} tone="cherry" summary="À découvrir" progress={0.02} status="todo" />
           <DimensionCard id="t" label="Mes priorités" icon={<Target size={18} />} tone="bronze" summary="2 sujets identifiés" progress={0.3} status="active" compact />
         </div>
         <div style={{ maxWidth: 520, display: "grid", gap: 12 }}>
-          <NotedTag targetLabel="Mes finances" text={`Charges : environ 58${NNBSP}000${NBSP}€ par mois`} confidence="estimated" editable />
+          <NotedTag targetLabel="Mes finances" text={`Charges : 115${NNBSP}000${NBSP}€ par mois`} confidence="estimated" editable />
           <Callout tone="memory" title="Il reste novembre">La facture de novembre arrive à échéance le 30 décembre.</Callout>
           <Callout tone="success" title="C'est parti">Je vous rappelle la première étape jeudi matin.</Callout>
         </div>
@@ -222,18 +222,18 @@ function ShowcaseInner() {
           <StepList
             title="Plan étroit"
             steps={[
-              { id: "p1", label: "Vérifier vos charges du mois", detail: "Fait le 27 novembre.", due: "jeu. 27 nov.", status: "done" },
+              { id: "p1", label: "Lister vos affaires en cours", detail: "Fait le 27 novembre.", due: "jeu. 27 nov.", status: "done" },
               {
                 id: "p2",
-                label: "Recevoir votre point du lundi",
-                detail: "Deuxième point reçu le 15 décembre.",
+                label: "Repérer les affaires déficitaires",
+                detail: "Première affaire repérée : Bouguenais.",
                 due: "mar. 8 déc.",
                 status: "active",
               },
               {
                 id: "p3",
-                label: "Choisir quoi faire les jours faibles",
-                detail: "Mardi et mercredi passent sous le seuil.",
+                label: "Recevoir votre point du lundi",
+                detail: "Marge par affaire, en une phrase.",
                 due: "ven. 18 déc.",
                 status: "pending",
               },
@@ -255,19 +255,19 @@ function ShowcaseInner() {
         <div style={{ maxWidth: 480 }}>
           <ChoiceGroup label="Priorité" value={choice} onChange={setChoice}>
             <ChoiceCard
-              id="breakeven"
-              title="Savoir combien vendre chaque jour pour couvrir vos charges"
-              body={`Vous vendez autour de 2${NNBSP}400${NBSP}€ par jour pour environ 58${NNBSP}000${NBSP}€ de charges par mois.`}
+              id="rentabilite"
+              title="Savoir quelles affaires sont rentables"
+              body={`Vous facturez environ 1${NNBSP}960 h par mois pour 115${NNBSP}000${NBSP}€ de charges.`}
               meta="4 étapes · 2 semaines"
               recommended
-              selected={choice === "breakeven"}
-              dimmed={choice !== "breakeven"}
-              onSelect={() => setChoice("breakeven")}
+              selected={choice === "rentabilite"}
+              dimmed={choice !== "rentabilite"}
+              onSelect={() => setChoice("rentabilite")}
             />
             <ChoiceCard
               id="late"
-              title="Être payée à temps par le restaurant voisin"
-              body={`Il vous doit 9${NNBSP}600${NBSP}€ et paie de plus en plus tard.`}
+              title="Être payé plus vite par les collectivités"
+              body="Le délai moyen est passé de 45 à 61 jours depuis juin."
               selected={choice === "late"}
               dimmed={choice !== "late"}
               onSelect={() => setChoice("late")}
@@ -344,19 +344,19 @@ function ShowcaseInner() {
         <p className="muted">Fiche de réponse (pas une bulle), badge à vérifier, rangement.</p>
         <div style={{ maxWidth: 480 }}>
           <AnswerCard
-            title="Plutôt un CDI à temps partiel"
-            summary="Un besoin qui revient chaque week-end toute l'année est un besoin permanent."
+            title="Plutôt sous-traiter pour l'instant"
+            summary="Pour un besoin ponctuel, la sous-traitance coûte bien moins cher qu'un recrutement."
             confidence="to-check"
-            keyPoints={["Besoin permanent : CDI", "Moins de 24 h : vérifier la convention"]}
+            keyPoints={["Besoin ponctuel : sous-traiter", "Plus de cinq à six affaires par an : recruter"]}
             sections={[
               {
-                heading: "Pourquoi pas un CDD",
-                text: "Un CDD doit reposer sur un motif précis prévu par la loi.",
+                heading: "Pourquoi sous-traiter",
+                text: "Un ingénieur structure coûte environ 65\u202f000\u00a0€ par an chargé.",
               },
             ]}
-            recommendation="Faites valider le contrat par votre expert-comptable."
-            sources={[{ label: "Code du travail", detail: "Motifs de recours au CDD" }]}
-            savedTo={{ label: "Équipe" }}
+            recommendation="Faites valider le calcul par votre expert-comptable."
+            sources={[{ label: "Facture sous-traitance structure Atelier Gaudin.pdf", detail: "Dossier « Affaires 2026 »" }]}
+            savedTo={{ label: "Mon activité" }}
           />
         </div>
       </section>
@@ -367,7 +367,7 @@ function ShowcaseInner() {
         <div style={{ maxWidth: 420, display: "grid", gap: 12 }}>
           <FindingCard
             findingType="fact"
-            title={`Seuil de rentabilité : 2${NNBSP}170${NBSP}€ par jour`}
+            title={`Taux horaire de revient : 58${NBSP}€ de l'heure`}
             topicLabel="Mes finances"
             createdAt="2026-12-15T07:00:00"
             today="2026-12-16"
@@ -377,7 +377,7 @@ function ShowcaseInner() {
           <FindingCard
             variant="compact"
             findingType="decision"
-            title="Priorité : connaître le seuil"
+            title="Priorité : connaître la rentabilité de chaque affaire"
             topicLabel="Mes finances"
             createdAt="2026-11-25T10:52:00"
             today="2026-12-16"
@@ -387,13 +387,13 @@ function ShowcaseInner() {
           <FindingCard
             variant="expanded"
             findingType="fact"
-            title={`9${NNBSP}600${NBSP}€ attendus du Comptoir des Halles`}
-            topicLabel="Mon activité"
+            title={`18${NNBSP}400${NBSP}€ attendus de la mairie de Rezé`}
+            topicLabel="Mes finances"
             createdAt="2026-12-16T08:00:00"
             today="2026-12-16"
             origin="gmail"
             confidence="to-check"
-            summary="La facture d'octobre est échue depuis 16 jours."
+            summary="La situation n° 3 est échue depuis 38 jours."
           />
         </div>
       </section>

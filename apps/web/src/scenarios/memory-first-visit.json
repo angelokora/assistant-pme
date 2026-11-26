@@ -1,14 +1,14 @@
 {
   "company": {
-    "name": "Maison Martin",
-    "sector": "Pâtisserie-boulangerie",
-    "city": "Lyon",
+    "name": "Morel Ingénierie",
+    "sector": "Bureau d'études fluides et thermique",
+    "city": "Nantes",
     "employees": null,
     "since": null
   },
   "owner": {
-    "firstName": "Sophie",
-    "lastName": "Martin"
+    "firstName": "Thomas",
+    "lastName": "Morel"
   },
   "dimensions": [
     {

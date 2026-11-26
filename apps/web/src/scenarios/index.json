@@ -11,8 +11,8 @@
       "entry": "Premier lancement"
     },
     {
-      "id": "ask-contract",
-      "file": "ask-contract.json",
+      "id": "ask-subcontract",
+      "file": "ask-subcontract.json",
       "preset": "returning",
       "entry": "Composer : poser une question"
     },
@@ -23,8 +23,8 @@
       "entry": "Composer : donner une information"
     },
     {
-      "id": "find-buches",
-      "file": "find-buches.json",
+      "id": "find-hourly-rate",
+      "file": "find-hourly-rate.json",
       "preset": "returning",
       "entry": "Composer ou Recherche : retrouver une information"
     }

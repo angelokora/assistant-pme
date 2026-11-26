@@ -14,7 +14,7 @@ import { HighlightText } from "./HighlightText";
 import { findingMatchesQuery } from "./searchText";
 import styles from "./Search.module.css";
 
-const VOICE_SAMPLE = "Qu'est-ce qu'on avait dit sur le prix des bûches ?";
+const VOICE_SAMPLE = "Qu'est-ce qu'on avait dit sur notre taux horaire pour les marchés publics ?";
 
 /** Libellés filtre recherche (ticket : information = faits). */
 const SEARCH_TYPE_FILTER: Partial<Record<FindingType, string>> = {

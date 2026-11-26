@@ -21,9 +21,9 @@ const STATUS_LABEL: Record<Source["status"], string> = {
 type ConnectProvider = Extract<Source["provider"], "gmail" | "outlook" | "drive">;
 
 const EMPTY_PROVIDERS: { id: ConnectProvider; label: string; detail: string }[] = [
-  { id: "gmail", label: "Gmail", detail: "sophie@maisonmartin.fr" },
-  { id: "outlook", label: "Outlook", detail: "sophie.martin@outlook.com" },
-  { id: "drive", label: "Google Drive", detail: "Dossier «\u00a0Compta 2026\u00a0»" },
+  { id: "gmail", label: "Gmail", detail: "thomas@morel-ingenierie.fr" },
+  { id: "outlook", label: "Outlook", detail: "thomas.morel@outlook.com" },
+  { id: "drive", label: "Google Drive", detail: "Dossier «\u00a0Affaires 2026\u00a0»" },
 ];
 
 /** Reprend le bloc connector de l'onboarding pour la feuille de connexion. */

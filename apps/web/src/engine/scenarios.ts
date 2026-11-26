@@ -2,9 +2,9 @@ import { hardenMoneySpaces } from "@elea/ds";
 import type { Memory, Scenario } from "./types";
 import index from "../scenarios/index.json";
 import onboarding from "../scenarios/onboarding.json";
-import askContract from "../scenarios/ask-contract.json";
+import askSubcontract from "../scenarios/ask-subcontract.json";
 import informPayment from "../scenarios/inform-payment.json";
-import findBuches from "../scenarios/find-buches.json";
+import findHourlyRate from "../scenarios/find-hourly-rate.json";
 import firstVisit from "../scenarios/memory-first-visit.json";
 import returning from "../scenarios/memory-returning.json";
 
@@ -15,9 +15,9 @@ function hardenData<T>(data: T): T {
 
 export const SCENARIOS: Record<string, Scenario> = {
   onboarding: hardenData(onboarding as Scenario),
-  "ask-contract": hardenData(askContract as Scenario),
+  "ask-subcontract": hardenData(askSubcontract as Scenario),
   "inform-payment": hardenData(informPayment as Scenario),
-  "find-buches": hardenData(findBuches as Scenario),
+  "find-hourly-rate": hardenData(findHourlyRate as Scenario),
 };
 
 export type PresetId = "first-visit" | "returning";

@@ -2,7 +2,7 @@
 
 ## 1. Principe
 
-Le prototype imite le futur produit : **un modèle produit des données structurées, l'interface les affiche**. Ici, le modèle est remplacé par un **moteur de scénario** qui rejoue des fichiers JSON. Le code d'interface ne sait rien de la pâtisserie : il sait seulement afficher des blocs et mettre à jour une mémoire.
+Le prototype imite le futur produit : **un modèle produit des données structurées, l'interface les affiche**. Ici, le modèle est remplacé par un **moteur de scénario** qui rejoue des fichiers JSON. Le code d'interface ne sait rien du bureau d'études : il sait seulement afficher des blocs et mettre à jour une mémoire.
 
 ```
  Saisie (voix, texte, choix, dépôt)

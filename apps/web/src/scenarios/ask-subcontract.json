@@ -1,0 +1,167 @@
+{
+  "id": "ask-subcontract",
+  "intent": "ask",
+  "title": "Sous-traiter ou embaucher un ingénieur structure",
+  "start": "clarify",
+  "userUtterance": "Pour le calcul structure de l'affaire Bouguenais, je sous-traite ou j'embauche un ingénieur structure ?",
+  "steps": {
+    "clarify": {
+      "delayMs": 800,
+      "blocks": [
+        {
+          "id": "as-lead",
+          "type": "lead",
+          "text": "Une précision pour vous répondre juste."
+        },
+        {
+          "id": "as-q",
+          "type": "question",
+          "text": "C'est un besoin ponctuel, ou vous voyez venir d'autres affaires avec de la structure ?",
+          "quickReplies": [
+            {
+              "id": "one-off",
+              "label": "Ponctuel"
+            },
+            {
+              "id": "several",
+              "label": "Plusieurs affaires par an"
+            },
+            {
+              "id": "dont-know",
+              "label": "Je ne sais pas encore"
+            }
+          ]
+        }
+      ],
+      "await": {
+        "kind": "choice",
+        "blockId": "as-q",
+        "routes": {
+          "one-off": "answer",
+          "several": "answer",
+          "dont-know": "answer"
+        }
+      }
+    },
+    "answer": {
+      "delayMs": 1400,
+      "effects": [
+        {
+          "kind": "finding",
+          "finding": {
+            "id": "f-subcontract-structure",
+            "type": "answer",
+            "title": "Calcul structure : plutôt sous-traiter pour l'instant",
+            "summary": "Un ingénieur structure coûte environ 65 000 € par an chargé ; la sous-traitance de l'affaire Bouguenais, environ 9 000 €. Le recrutement devient intéressant au-delà de cinq à six affaires par an avec de la structure.",
+            "createdAt": "2026-12-16T11:05:00",
+            "origin": "conversation",
+            "confidence": "to-check",
+            "scenarioId": "ask-subcontract",
+            "body": [
+              {
+                "id": "as-answer",
+                "type": "answer",
+                "title": "Plutôt sous-traiter pour l'instant",
+                "summary": "Pour un besoin ponctuel, la sous-traitance coûte bien moins cher qu'un recrutement. Ce sont des ordres de grandeur, à affiner avec vos chiffres.",
+                "confidence": "to-check",
+                "sections": [
+                  {
+                    "heading": "Pourquoi sous-traiter",
+                    "text": "Un ingénieur structure coûte environ 65 000 € par an chargé, que vous ayez de la structure à lui donner ou non. La sous-traitance de cette affaire représente environ 9 000 €."
+                  },
+                  {
+                    "heading": "Quand recruter devient intéressant",
+                    "text": "Au-delà de cinq à six affaires par an avec de la structure, le recrutement devient intéressant : le coût du poste est alors couvert par les sous-traitances évitées."
+                  }
+                ],
+                "keyPoints": [
+                  "Besoin ponctuel : sous-traiter, environ 9 000 € pour Bouguenais",
+                  "Poste d'ingénieur structure : environ 65 000 € par an chargé",
+                  "Plus de cinq à six affaires par an avec de la structure : recruter"
+                ],
+                "recommendation": "Comptez les affaires avec de la structure prévues sur les douze prochains mois avant de décider, et faites valider le calcul par votre expert-comptable.",
+                "sources": [
+                  {
+                    "label": "Facture sous-traitance structure Atelier Gaudin.pdf",
+                    "detail": "Dernière sous-traitance structure, dossier « Affaires 2026 »"
+                  },
+                  {
+                    "label": "Ordres de grandeur de coût de recrutement",
+                    "detail": "Salaire chargé d'un ingénieur structure, à vérifier"
+                  }
+                ],
+                "savedTo": {
+                  "label": "Mon activité",
+                  "subjectId": "sous-traiter-structure"
+                }
+              }
+            ],
+            "dimensionId": "activity",
+            "subjectId": "sous-traiter-structure"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "as-answer",
+          "type": "answer",
+          "title": "Plutôt sous-traiter pour l'instant",
+          "summary": "Pour un besoin ponctuel, la sous-traitance coûte bien moins cher qu'un recrutement. Ce sont des ordres de grandeur, à affiner avec vos chiffres.",
+          "confidence": "to-check",
+          "sections": [
+            {
+              "heading": "Pourquoi sous-traiter",
+              "text": "Un ingénieur structure coûte environ 65 000 € par an chargé, que vous ayez de la structure à lui donner ou non. La sous-traitance de cette affaire représente environ 9 000 €."
+            },
+            {
+              "heading": "Quand recruter devient intéressant",
+              "text": "Au-delà de cinq à six affaires par an avec de la structure, le recrutement devient intéressant : le coût du poste est alors couvert par les sous-traitances évitées."
+            }
+          ],
+          "keyPoints": [
+            "Besoin ponctuel : sous-traiter, environ 9 000 € pour Bouguenais",
+            "Poste d'ingénieur structure : environ 65 000 € par an chargé",
+            "Plus de cinq à six affaires par an avec de la structure : recruter"
+          ],
+          "recommendation": "Comptez les affaires avec de la structure prévues sur les douze prochains mois avant de décider, et faites valider le calcul par votre expert-comptable.",
+          "sources": [
+            {
+              "label": "Facture sous-traitance structure Atelier Gaudin.pdf",
+              "detail": "Dernière sous-traitance structure, dossier « Affaires 2026 »"
+            },
+            {
+              "label": "Ordres de grandeur de coût de recrutement",
+              "detail": "Salaire chargé d'un ingénieur structure, à vérifier"
+            }
+          ],
+          "savedTo": {
+            "label": "Mon activité",
+            "subjectId": "sous-traiter-structure"
+          }
+        },
+        {
+          "id": "as-suggestions",
+          "type": "suggestions",
+          "items": [
+            {
+              "id": "cost",
+              "label": "Combien coûterait un recrutement ?",
+              "action": {
+                "kind": "route",
+                "target": "/entreprise/sous-traiter-structure"
+              }
+            },
+            {
+              "id": "subject",
+              "label": "Voir le sujet « Sous-traiter ou recruter en structure »",
+              "action": {
+                "kind": "route",
+                "target": "/entreprise/sous-traiter-structure"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

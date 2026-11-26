@@ -70,7 +70,7 @@ export function DeviceStage() {
     return Math.min(1, availW / frameW, availH / frameH);
   }, [viewport, screenW, screenH, kind]);
 
-  const src = `/?frame=1&safeTop=${safe.top}&safeBottom=${safe.bottom}`;
+  const src = `${import.meta.env.BASE_URL}?frame=1&safeTop=${safe.top}&safeBottom=${safe.bottom}`;
 
   return (
     <div className={styles.stage}>

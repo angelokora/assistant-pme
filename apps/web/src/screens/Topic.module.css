@@ -1,10 +1,16 @@
 .page {
   max-width: 640px;
   margin: 0 auto;
-  padding: var(--space-6) var(--space-5) var(--space-10);
+  padding: var(--space-6) var(--space-5) calc(var(--space-10) + 72px);
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
+}
+
+@media (min-width: 1024px) {
+  .page {
+    padding-bottom: var(--space-10);
+  }
 }
 
 .back {
@@ -27,6 +33,11 @@
   gap: var(--space-4);
 }
 
+.headerBody {
+  min-width: 0;
+  flex: 1;
+}
+
 .topicIcon {
   display: grid;
   place-items: center;
@@ -45,9 +56,160 @@
   text-wrap: balance;
 }
 
-.count {
-  margin: var(--space-1) 0 0;
+.statusRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.statusSelect {
+  font: inherit;
   font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  padding: 6px 10px;
+  border-radius: var(--radius-full);
+  border: var(--border-width) solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  min-height: 36px;
+}
+
+.dates {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.sectionTitle {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-3);
+}
+
+.whereText {
+  margin: 0;
+  font-size: var(--text-lg);
+  text-wrap: pretty;
+}
+
+.askDock {
+  position: sticky;
+  top: var(--space-3);
+  z-index: 5;
+  padding: var(--space-2) 0;
+  background: linear-gradient(to bottom, var(--color-bg) 60%, transparent);
+}
+
+.askDock button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.searchWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: var(--space-3);
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.search {
+  width: 100%;
+  min-height: 48px;
+  padding: var(--space-3) var(--space-3) var(--space-3) calc(var(--space-3) + 28px);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font: inherit;
+  color: var(--color-text);
+}
+
+.search:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.planList,
+.exchangeList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.planRow,
+.exchangeRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 var(--border-width) var(--color-border), var(--shadow-1);
+  text-align: left;
+  cursor: pointer;
+  color: var(--color-text);
+  font: inherit;
+}
+
+.exchangeRow {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.planRow:hover,
+.exchangeRow:hover {
+  box-shadow: inset 0 0 0 var(--border-width) var(--color-border-strong), var(--shadow-2);
+}
+
+.planTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.planGauge {
+  max-width: 100%;
+}
+
+.planNext {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.exchangeBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.exchangeTitle {
+  font-weight: var(--weight-semibold);
+}
+
+.exchangeMeta {
+  font-size: var(--text-xs);
   color: var(--color-text-muted);
 }
 
@@ -74,14 +236,22 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-4);
-  padding: var(--space-6) 0;
+  padding: var(--space-4) 0;
 }
 
 .emptyVoice {
   margin: 0;
-  font-size: var(--text-xl);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
   text-wrap: pretty;
-  max-width: 28ch;
+  color: var(--color-text-muted);
+  max-width: 36ch;
+}
+
+.count {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
 }
 
 .composerLink {

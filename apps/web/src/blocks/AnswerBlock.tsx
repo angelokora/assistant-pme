@@ -21,7 +21,7 @@ export function AnswerBlockView({ block }: BlockProps<AnswerBlockType>) {
               label: block.savedTo.label,
               onClick: () => {
                 const dest = block.savedTo!.subjectId ?? block.savedTo!.dimensionId;
-                navigate(dest ? `/entreprise/${dest}` : "/entreprise");
+                navigate(dest ? `/sujet/${dest}` : "/entreprise");
               },
             }
           : undefined

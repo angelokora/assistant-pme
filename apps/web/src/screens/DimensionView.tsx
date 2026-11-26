@@ -185,7 +185,7 @@ export function DimensionView({ dimensionId, embedded, openFindingId }: Props) {
                     className={styles.subjectRow}
                     onClick={() => {
                       if (embedded) return;
-                      navigate(`/entreprise/${s.id}`);
+                      navigate(`/sujet/${s.id}`);
                     }}
                   >
                     <span className={styles.subjectIcon} aria-hidden>

@@ -48,7 +48,7 @@ export function DetailPanel() {
     close();
     if (location.pathname.startsWith("/finding/")) {
       const subjectId = finding?.subjectId;
-      navigate(subjectId ? `/entreprise/${subjectId}` : "/entreprise");
+      navigate(subjectId ? `/sujet/${subjectId}` : "/entreprise");
     }
   }
 

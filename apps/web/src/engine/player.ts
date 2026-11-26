@@ -32,8 +32,13 @@ type PlayerState = {
   vars: StepVars;
   resolutions: Record<string, BlockResolution>;
   start: (scenarioId: string, opts?: { withUtterance?: string }) => void;
-  /** Rejoue les effets du chemin principal jusqu'à `stepId`, puis affiche cette étape. */
+  /** Rejoue les effets du chemin principal jusqu'à `stepId`, puis affiche cette étape (démo). */
   jumpTo: (scenarioId: string, stepId: string) => void;
+  /**
+   * Rouvre un besoin déjà joué : historique en lecture seule (aucun effet passé),
+   * puis blocs `scenario.resume` interpolés depuis la mémoire actuelle.
+   */
+  reopen: (scenarioId: string) => void;
   reply: (reply: Reply) => void;
   stop: () => void;
 };
@@ -74,13 +79,25 @@ export function varsFromPlan(planId: string): StepVars {
   const plan = useMemory.getState().plans.find((p) => p.id === planId);
   if (!plan) return { planId };
   const n = plan.steps.length;
+  const done = plan.steps.filter((s) => s.status === "done").length;
+  const next = plan.steps.find((s) => s.status === "doing") ?? plan.steps.find((s) => s.status === "todo");
   return {
     planId: plan.id,
     planTitle: plan.title,
     planFirstStep: plan.steps[0]?.title ?? "",
+    planNextStep: next?.title ?? "",
     planStepCount: String(n),
     planStepCountLabel: n <= 1 ? `${n} étape` : `${n} étapes`,
+    planDoneCount: String(done),
+    planDoneCountLabel: done <= 1 ? `${done} étape` : `${done} étapes`,
   };
+}
+
+/** Plan actif (ou premier) pour interpoler une reprise. */
+function varsFromActivePlan(): StepVars {
+  const plans = useMemory.getState().plans;
+  const plan = plans.find((p) => p.status === "active") ?? plans.find((p) => p.status === "waiting") ?? plans[0];
+  return plan ? varsFromPlan(plan.id) : {};
 }
 
 function enrichPlanVars(vars: StepVars): StepVars {
@@ -115,8 +132,11 @@ export function lastMainStepId(scenario: Scenario): string {
   return last;
 }
 
-/** Suit la route « principale » d'une étape (recommandée / première) pour le saut démo. */
-function mainPathNext(step: Step, vars: StepVars): { next?: string; vars: StepVars } {
+/**
+ * Suit la route « principale » d'une étape (recommandée / première).
+ * `dry` : aucun effet mémoire (auth), pour la reconstitution en lecture seule.
+ */
+function mainPathNext(step: Step, vars: StepVars, dry = false): { next?: string; vars: StepVars } {
   const a = step.await;
   if (!a) return { next: step.next, vars };
   switch (a.kind) {
@@ -125,7 +145,7 @@ function mainPathNext(step: Step, vars: StepVars): { next?: string; vars: StepVa
     case "plan":
       return { next: a.next, vars };
     case "auth":
-      useMemory.getState().apply([{ kind: "account", method: "google" }]);
+      if (!dry) useMemory.getState().apply([{ kind: "account", method: "google" }]);
       return { next: a.next, vars };
     case "connector":
       return {
@@ -302,6 +322,66 @@ export const usePlayer = create<PlayerState>((set, get) => {
         currentStep: stepId,
       });
       void goTo(stepId, token);
+    },
+
+    reopen: (scenarioId) => {
+      const scenario = SCENARIOS[scenarioId];
+      if (!scenario) return console.warn(`[engine] scénario inconnu : ${scenarioId}`);
+
+      ++runToken;
+      useGauges.setState({ shown: {}, pulses: {} });
+      useUploadInbox.getState().clear();
+
+      let cursor: string | undefined = scenario.start;
+      let vars: StepVars = {};
+      const seen = new Set<string>();
+      const pastTurns: Turn[] = [];
+      const resolutions: Record<string, BlockResolution> = {};
+
+      while (cursor) {
+        if (seen.has(cursor)) break;
+        seen.add(cursor);
+        const step: Step | undefined = scenario.steps[cursor];
+        if (!step) break;
+        if (step.await?.kind === "auth" && useMemory.getState().account.created) {
+          cursor = step.await.next;
+          continue;
+        }
+        // Lecture seule : pas d'applyStepEffects.
+        const stepVars = enrichPlanVars(vars);
+        const blocks = interpolateVars(step.blocks, stepVars);
+        pastTurns.push({ id: `past-${cursor}`, from: "elea", stepId: cursor, blocks });
+        for (const b of blocks) {
+          if (b.type === "choice" || b.type === "connector" || b.type === "auth" || b.type === "upload" || b.type === "plan") {
+            resolutions[b.id] = { summary: "Fait" };
+          }
+        }
+        const progressed = mainPathNext(step, vars, true);
+        vars = progressed.vars;
+        if (!progressed.next) break;
+        cursor = progressed.next;
+      }
+
+      const resumeVars = enrichPlanVars({ ...vars, ...varsFromActivePlan() });
+      const resumeBlocks = scenario.resume?.blocks?.length ? interpolateVars(scenario.resume.blocks, resumeVars) : [];
+
+      const utterance = scenario.userUtterance;
+      const turns: Turn[] = [
+        ...(utterance ? [{ id: "utterance", from: "user" as const, text: utterance, mode: "text" as const }] : []),
+        ...pastTurns,
+        ...(resumeBlocks.length ? [{ id: "resume", from: "elea" as const, stepId: "resume", blocks: resumeBlocks }] : []),
+      ];
+
+      set({
+        scenario,
+        done: true,
+        awaiting: null,
+        vars: resumeVars,
+        resolutions,
+        turns,
+        currentStep: null,
+        orb: "idle",
+      });
     },
 
     reply: (reply) => {

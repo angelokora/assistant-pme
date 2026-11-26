@@ -93,7 +93,10 @@ function StepCopy({ step }: { step: StepItem }) {
   );
 }
 
-/** Liste d'étapes (analyse, plan) : en attente, en cours (arc), fait (coche dessinée). */
+/**
+ * Liste d'étapes (analyse, plan) : en attente, en cours (arc), fait (coche).
+ * Même grille pour les trois états (done / active / pending), cliquables ou non.
+ */
 export function StepList({ steps, title, className, onStepComplete }: Props) {
   return (
     <div className={[styles.list, className].filter(Boolean).join(" ")} role="list" aria-label={title ?? "Étapes"}>
@@ -101,27 +104,25 @@ export function StepList({ steps, title, className, onStepComplete }: Props) {
       <ol className={styles.items}>
         {steps.map((step) => {
           const canComplete = !!onStepComplete && step.status !== "done";
+          const body = (
+            <>
+              <StepMarker status={step.status} />
+              <StepCopy step={step} />
+            </>
+          );
           return (
-            <li
-              key={step.id}
-              className={[styles.item, styles[step.status], canComplete && styles.clickable].filter(Boolean).join(" ")}
-              role="listitem"
-            >
+            <li key={step.id} className={[styles.item, styles[step.status]].filter(Boolean).join(" ")} role="listitem">
               {canComplete ? (
                 <button
                   type="button"
-                  className={styles.stepButton}
+                  className={styles.row}
                   onClick={() => onStepComplete(step.id)}
                   aria-label={`Marquer « ${step.label} » comme faite`}
                 >
-                  <StepMarker status={step.status} />
-                  <StepCopy step={step} />
+                  {body}
                 </button>
               ) : (
-                <>
-                  <StepMarker status={step.status} />
-                  <StepCopy step={step} />
-                </>
+                <div className={styles.row}>{body}</div>
               )}
             </li>
           );

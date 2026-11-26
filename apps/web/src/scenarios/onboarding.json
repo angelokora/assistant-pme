@@ -275,8 +275,8 @@
             "id": "f-charges",
             "type": "fact",
             "topicId": "finances",
-            "title": "Charges mensuelles : environ 58 000 €",
-            "summary": "Masse salariale 38 000 €, matières premières 11 000 €, loyer 3 200 €, énergie 2 600 €, assurances et divers 3 200 €.",
+            "title": "Charges mensuelles : environ 58 000 €",
+            "summary": "Masse salariale 38 000 €, matières premières 11 000 €, loyer 3 200 €, énergie 2 600 €, assurances et divers 3 200 €.",
             "createdAt": "2026-11-25T10:43:00",
             "origin": "{{provider}}",
             "confidence": "estimated",
@@ -293,42 +293,42 @@
             {
               "id": "ex-1",
               "label": "Masse salariale",
-              "value": "38 000 € / mois",
+              "value": "38 000 € / mois",
               "source": "Bulletins et charges sociales, oct. 2026",
               "confidence": "confirmed"
             },
             {
               "id": "ex-2",
               "label": "Matières premières",
-              "value": "11 000 € / mois",
+              "value": "11 000 € / mois",
               "source": "Factures Moulins Bourgeois et Sodiaal, 3 mois",
               "confidence": "estimated"
             },
             {
               "id": "ex-3",
               "label": "Loyer",
-              "value": "3 200 € / mois",
+              "value": "3 200 € / mois",
               "source": "Facture SCI Bellecour, nov. 2026",
               "confidence": "confirmed"
             },
             {
               "id": "ex-4",
               "label": "Énergie",
-              "value": "2 600 € / mois",
+              "value": "2 600 € / mois",
               "source": "Factures EDF Pro, moyenne 3 mois",
               "confidence": "estimated"
             },
             {
               "id": "ex-5",
               "label": "Assurances et divers",
-              "value": "3 200 € / mois",
+              "value": "3 200 € / mois",
               "source": "Relevés bancaires",
               "confidence": "to-check"
             }
           ],
           "total": {
             "label": "Charges mensuelles",
-            "value": "environ 58 000 €"
+            "value": "environ 58 000 €"
           }
         },
         {
@@ -339,7 +339,7 @@
             "id": "finances",
             "label": "Mes finances"
           },
-          "text": "Charges : environ 58 000 € par mois",
+          "text": "Charges : environ 58 000 € par mois",
           "confidence": "estimated",
           "editable": true
         }
@@ -362,8 +362,8 @@
             "id": "f-charges",
             "type": "fact",
             "topicId": "finances",
-            "title": "Charges mensuelles : environ 58 000 €",
-            "summary": "Masse salariale 38 000 €, matières premières 11 000 €, loyer 3 200 €, énergie 2 600 €, assurances et divers 3 200 €. Lues dans {{fileCountLabel}}.",
+            "title": "Charges mensuelles : environ 58 000 €",
+            "summary": "Masse salariale 38 000 €, matières premières 11 000 €, loyer 3 200 €, énergie 2 600 €, assurances et divers 3 200 €. Lues dans {{fileCountLabel}}.",
             "createdAt": "2026-11-25T10:43:00",
             "origin": "upload",
             "confidence": "estimated",
@@ -380,42 +380,42 @@
             {
               "id": "ex-1",
               "label": "Masse salariale",
-              "value": "38 000 € / mois",
+              "value": "38 000 € / mois",
               "source": "Bulletins et charges sociales, oct. 2026",
               "confidence": "confirmed"
             },
             {
               "id": "ex-2",
               "label": "Matières premières",
-              "value": "11 000 € / mois",
+              "value": "11 000 € / mois",
               "source": "Factures Moulins Bourgeois et Sodiaal, 3 mois",
               "confidence": "estimated"
             },
             {
               "id": "ex-3",
               "label": "Loyer",
-              "value": "3 200 € / mois",
+              "value": "3 200 € / mois",
               "source": "Facture SCI Bellecour, nov. 2026",
               "confidence": "confirmed"
             },
             {
               "id": "ex-4",
               "label": "Énergie",
-              "value": "2 600 € / mois",
+              "value": "2 600 € / mois",
               "source": "Factures EDF Pro, moyenne 3 mois",
               "confidence": "estimated"
             },
             {
               "id": "ex-5",
               "label": "Assurances et divers",
-              "value": "3 200 € / mois",
+              "value": "3 200 € / mois",
               "source": "Relevés bancaires",
               "confidence": "to-check"
             }
           ],
           "total": {
             "label": "Charges mensuelles",
-            "value": "environ 58 000 €"
+            "value": "environ 58 000 €"
           }
         },
         {
@@ -426,7 +426,7 @@
             "id": "finances",
             "label": "Mes finances"
           },
-          "text": "Charges : environ 58 000 € par mois",
+          "text": "Charges : environ 58 000 € par mois",
           "confidence": "estimated",
           "editable": true
         }
@@ -484,8 +484,8 @@
             "id": "f-charges",
             "type": "fact",
             "topicId": "finances",
-            "title": "Charges mensuelles : environ 58 000 €",
-            "summary": "Masse salariale 38 000 €, matières environ 10 000 €, loyer 3 200 €, énergie 2 600 €. Estimation de Sophie, à confirmer avec les factures.",
+            "title": "Charges mensuelles : environ 58 000 €",
+            "summary": "Masse salariale 38 000 €, matières environ 10 000 €, loyer 3 200 €, énergie 2 600 €. Estimation de Sophie, à confirmer avec les factures.",
             "createdAt": "2026-11-25T10:43:00",
             "origin": "conversation",
             "confidence": "estimated",
@@ -502,7 +502,7 @@
             "id": "finances",
             "label": "Mes finances"
           },
-          "text": "Charges : environ 58 000 € par mois",
+          "text": "Charges : environ 58 000 € par mois",
           "confidence": "estimated",
           "editable": true
         }
@@ -527,7 +527,7 @@
       ],
       "await": {
         "kind": "input",
-        "simulated": "À peu près 4 800 € par mois. Normalement il paie à 30 jours, mais il traîne de plus en plus : là, il me doit octobre et novembre.",
+        "simulated": "À peu près 4 800 € par mois. Normalement il paie à 30 jours, mais il traîne de plus en plus : là, il me doit octobre et novembre.",
         "next": "restaurant-noted",
         "quickRoutes": {
           "dont-know": "restaurant-unknown"
@@ -558,7 +558,7 @@
             "type": "fact",
             "topicId": "clients",
             "title": "Le Comptoir des Halles paie de plus en plus tard",
-            "summary": "Environ 4 800 € de livraisons par mois. Factures d'octobre et de novembre en attente, soit 9 600 €. Délai réel passé de 30 à 46 jours depuis l'été.",
+            "summary": "Environ 4 800 € de livraisons par mois. Factures d'octobre et de novembre en attente, soit 9 600 €. Délai réel passé de 30 à 46 jours depuis l'été.",
             "createdAt": "2026-11-25T10:46:00",
             "origin": "conversation",
             "confidence": "confirmed",
@@ -575,7 +575,7 @@
             "id": "finances",
             "label": "Mes finances"
           },
-          "text": "Restaurant voisin : 4 800 € par mois, 9 600 € en attente",
+          "text": "Restaurant voisin : 4 800 € par mois, 9 600 € en attente",
           "editable": true
         }
       ],
@@ -812,13 +812,13 @@
             {
               "id": "breakeven",
               "title": "Savoir combien vendre chaque jour pour couvrir vos charges",
-              "body": "Vous vendez autour de 2 400 € par jour pour environ 58 000 € de charges par mois, sans savoir où se situe l'équilibre.",
+              "body": "Vous vendez autour de 2 400 € par jour pour environ 58 000 € de charges par mois, sans savoir où se situe l'équilibre.",
               "recommended": true
             },
             {
               "id": "late-payment",
               "title": "Être payée à temps par le restaurant voisin",
-              "body": "Il vous doit 9 600 € et paie de plus en plus tard. Cet argent manque en fin de mois."
+              "body": "Il vous doit 9 600 € et paie de plus en plus tard. Cet argent manque en fin de mois."
             }
           ],
           "confirmLabel": "Commencer par celle-ci",
@@ -1165,5 +1165,44 @@
         }
       ]
     }
+  },
+  "resume": {
+    "blocks": [
+      {
+        "id": "resume-lead",
+        "type": "lead",
+        "text": "Depuis, vous avez avancé : {{planDoneCount}} étapes sur {{planStepCount}} pour « {{planTitle}} ». On continue ?"
+      },
+      {
+        "id": "resume-suggestions",
+        "type": "suggestions",
+        "items": [
+          {
+            "id": "go-plan",
+            "label": "Voir le plan en cours",
+            "action": {
+              "kind": "route",
+              "target": "/plans"
+            }
+          },
+          {
+            "id": "go-home",
+            "label": "Voir mon accueil",
+            "action": {
+              "kind": "route",
+              "target": "/"
+            }
+          },
+          {
+            "id": "go-company",
+            "label": "Voir Mon entreprise",
+            "action": {
+              "kind": "route",
+              "target": "/entreprise"
+            }
+          }
+        ]
+      }
+    ]
   }
 }

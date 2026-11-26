@@ -1,5 +1,7 @@
-/** Espace fine insécable (milliers et avant €), comme Intl fr-FR. */
+/** Espace fine insécable entre les milliers. */
 export const NNBSP = "\u202f";
+/** Espace insécable avant €. */
+export const NBSP = "\u00a0";
 
 const euro = new Intl.NumberFormat("fr-FR", {
   style: "currency",
@@ -8,16 +10,21 @@ const euro = new Intl.NumberFormat("fr-FR", {
 });
 
 /**
- * 58000 -> « 58 000 € » avec espaces fines insécables (NNBSP), à la française.
- * Utiliser partout pour les montants calculés ; dans les JSON, préférer aussi `\u202f`.
+ * 58000 -> montant FR : NNBSP (\u202f) entre milliers, NBSP (\u00a0) avant euro.
+ * Intl fr-FR le fait déjà ; on normalise au cas où.
  */
 export function formatEuro(value: number): string {
-  return euro.format(value);
+  return hardenMoneySpaces(euro.format(value));
 }
 
-/** Remplace les espaces cassables d'un montant déjà écrit (« 2 170 € ») par des espaces fines insécables. */
+/**
+ * Normalise un montant écrit : fine insécable entre chiffres groupés,
+ * insécable classique avant €.
+ */
 export function hardenMoneySpaces(text: string): string {
-  return text.replace(/(\d)\s+(?=\d)/g, `$1${NNBSP}`).replace(/(\d)\s+€/g, `$1${NNBSP}€`);
+  return text
+    .replace(/(\d)[\s\u00a0\u202f]+(?=\d)/g, `$1${NNBSP}`)
+    .replace(/(\d)[\s\u00a0\u202f]*€/g, `$1${NBSP}€`);
 }
 
 function parseDay(iso: string) {

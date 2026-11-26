@@ -178,13 +178,30 @@ function ShowcaseInner() {
         <div style={{ maxWidth: 420 }}>
           <StepList title="J'analyse ce que vous m'avez dit" steps={demoSteps(stepDemo)} />
         </div>
-        <div style={{ maxWidth: 420, marginTop: 16 }}>
+        <p className="muted" style={{ marginTop: 16 }}>
+          Suivi live (done / active / pending), y compris en colonne étroite : même grille pour les trois états.
+        </p>
+        <div style={{ maxWidth: 200, marginTop: 8, border: "1px dashed var(--color-border)", padding: 8 }}>
           <StepList
-            title="Aperçu de plan"
+            title="Plan étroit"
             steps={[
-              { id: "p1", label: "Vérifier vos charges du mois", detail: "10 minutes.", due: "jeu. 27 nov.", status: "pending" },
-              { id: "p2", label: "Fixer votre seuil journalier", detail: "Je calcule le montant.", due: "mar. 3 déc.", status: "pending" },
+              { id: "p1", label: "Vérifier vos charges du mois", detail: "Fait le 27 novembre.", due: "jeu. 27 nov.", status: "done" },
+              {
+                id: "p2",
+                label: "Recevoir votre point du lundi",
+                detail: "Deuxième point reçu le 15 décembre.",
+                due: "mar. 8 déc.",
+                status: "active",
+              },
+              {
+                id: "p3",
+                label: "Choisir quoi faire les jours faibles",
+                detail: "Mardi et mercredi passent sous le seuil.",
+                due: "ven. 18 déc.",
+                status: "pending",
+              },
             ]}
+            onStepComplete={(id) => toast.show(`Étape ${id} cochée`)}
           />
         </div>
       </section>

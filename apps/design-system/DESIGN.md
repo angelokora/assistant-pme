@@ -118,7 +118,7 @@ Quand le moteur attend un événement de bloc, les actions principales restent a
 
 ### DocumentCard
 
-Carte d'un document de l'entreprise (#41) : icône de fichier, type, nom, sujet traité rattaché (« Sans sujet » sinon), date, source (Import, Gmail, Drive, Outlook) et nombre de constats tirés. Variantes `default` (avec résumé) et `compact` (recherche, page d'un sujet). La zone principale devient un bouton avec `onOpen` ; l'emplacement `actions` accueille le rattachement ou le détachement (jamais un bouton imbriqué dans la zone principale).
+Carte d'un document de l'entreprise (#41) : icône de fichier, type, nom, sujet traité rattaché (« Sans sujet » sinon), date, source (Import, Gmail, Drive, Outlook) et nombre de constats tirés. Variantes `default` (avec résumé) et `compact` (recherche, page d'un sujet). La zone principale devient un bouton avec `onOpen` ; l'emplacement `actions` accueille le rattachement ou le détachement (jamais un bouton imbriqué dans la zone principale). `subjectNode` remplace le libellé du sujet, par exemple par un lien vers sa page (à n'utiliser que sans `onOpen`, pour ne pas imbriquer un lien dans un bouton).
 
 ## 8. Accessibilité
 

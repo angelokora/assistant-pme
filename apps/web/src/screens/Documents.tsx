@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowLeft, Plus } from "lucide-react";
-import { Button, DocumentCard, Elephant, blockItem, blockList, useToast } from "@elea/ds";
+import { ArrowLeft, ListFilter, Plus } from "lucide-react";
+import { Button, DocumentCard, Elephant, Sheet, blockItem, blockList, useToast } from "@elea/ds";
 import type { DocKind, DocOrigin, EleaDocument } from "../engine/types";
 import { usePlayer } from "../engine/player";
 import { useMemory } from "../memory/store";
+import { useMediaQuery } from "../composer/useMediaQuery";
 import { DocumentAttach } from "./DocumentAttach";
 import { FilterBar, FilterChip, FilterSection } from "./FilterBar";
 import {
@@ -56,6 +57,9 @@ export function Documents() {
   const stop = usePlayer((s) => s.stop);
   const focusId = params.get("doc");
 
+  const desktop = useMediaQuery("(min-width: 1024px)");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [attachDocId, setAttachDocId] = useState<string | null>(null);
   const [filters, setFilters] = useState<Filters>(NO_FILTER);
   const set = <K extends keyof Filters>(key: K, value: Filters[K]) => setFilters((f) => ({ ...f, [key]: value }));
 
@@ -117,9 +121,101 @@ export function Documents() {
     patchDocument(doc.id, { subjectId });
     const subject = subjects.find((s) => s.id === subjectId);
     toast.show(subject ? `Rattaché à «\u00a0${subject.title}\u00a0».` : "Document détaché de son sujet.");
+    setAttachDocId(null);
   }
 
   const filtered = JSON.stringify(filters) !== JSON.stringify(NO_FILTER);
+  const attachDoc = documents.find((d) => d.id === attachDocId);
+
+  // Filtres actifs (mobile) : libellé et retrait de chacun.
+  const activeFilters: { key: keyof Filters; label: string }[] = [];
+  if (filters.kind !== "all") activeFilters.push({ key: "kind", label: DOC_KIND_FILTER[filters.kind] });
+  if (filters.origin !== "all") activeFilters.push({ key: "origin", label: DOC_ORIGIN_LABEL[filters.origin] });
+  if (filters.subject !== "all") {
+    activeFilters.push({
+      key: "subject",
+      label: filters.subject === "none" ? "Sans sujet" : (subjects.find((s) => s.id === filters.subject)?.title ?? "Sujet"),
+    });
+  }
+  if (filters.period !== "all") activeFilters.push({ key: "period", label: DOC_PERIOD_LABEL[filters.period] });
+
+  const renderFilterBars = (titled: boolean) => (
+    <>
+      <FilterBar aria-label="Filtrer par type" title={titled ? "Type" : undefined}>
+        <FilterChip
+          active={filters.kind === "all"}
+          onClick={() => set("kind", "all")}
+          label="Tous les types"
+          count={applyFilters(documents, filters, today, "kind").length}
+        />
+        {presentKinds.map((k) => (
+          <FilterChip
+            key={k}
+            active={filters.kind === k}
+            onClick={() => set("kind", k)}
+            label={DOC_KIND_FILTER[k]}
+            count={kindCounts.get(k) ?? 0}
+            muted={(kindCounts.get(k) ?? 0) === 0}
+          />
+        ))}
+      </FilterBar>
+      <FilterBar aria-label="Filtrer par source" title={titled ? "Source" : undefined}>
+        <FilterChip
+          active={filters.origin === "all"}
+          onClick={() => set("origin", "all")}
+          label="Toutes les sources"
+          count={applyFilters(documents, filters, today, "origin").length}
+        />
+        {presentOrigins.map((o) => (
+          <FilterChip
+            key={o}
+            active={filters.origin === o}
+            onClick={() => set("origin", o)}
+            label={DOC_ORIGIN_LABEL[o]}
+            count={originCounts.get(o) ?? 0}
+            muted={(originCounts.get(o) ?? 0) === 0}
+          />
+        ))}
+      </FilterBar>
+      <FilterBar aria-label="Filtrer par sujet traité" title={titled ? "Sujet traité" : undefined}>
+        <FilterChip
+          active={filters.subject === "all"}
+          onClick={() => set("subject", "all")}
+          label="Tous les sujets"
+          count={applyFilters(documents, filters, today, "subject").length}
+        />
+        {subjectsWithDocs.map((s) => (
+          <FilterChip
+            key={s.id}
+            active={filters.subject === s.id}
+            onClick={() => set("subject", s.id)}
+            label={s.title}
+            count={subjectCounts.get(s.id) ?? 0}
+            muted={(subjectCounts.get(s.id) ?? 0) === 0}
+          />
+        ))}
+        <FilterChip
+          active={filters.subject === "none"}
+          onClick={() => set("subject", "none")}
+          label="Sans sujet"
+          count={subjectCounts.get("none") ?? 0}
+          muted={(subjectCounts.get("none") ?? 0) === 0}
+        />
+      </FilterBar>
+      <FilterBar aria-label="Filtrer par période" title={titled ? "Période" : undefined}>
+        {PERIODS.map((p) => (
+          <FilterChip
+            key={p}
+            active={filters.period === p}
+            onClick={() => set("period", p)}
+            label={DOC_PERIOD_LABEL[p]}
+            count={periodCounts.get(p) ?? 0}
+            muted={p !== "all" && (periodCounts.get(p) ?? 0) === 0}
+          />
+        ))}
+      </FilterBar>
+    </>
+  );
 
   return (
     <motion.main className={styles.page} variants={blockList} initial="hidden" animate="shown">
@@ -150,81 +246,27 @@ export function Documents() {
       ) : (
         <>
           <motion.div variants={blockItem}>
-            <FilterSection>
-              <FilterBar aria-label="Filtrer par type">
-                <FilterChip
-                  active={filters.kind === "all"}
-                  onClick={() => set("kind", "all")}
-                  label="Tous les types"
-                  count={applyFilters(documents, filters, today, "kind").length}
-                />
-                {presentKinds.map((k) => (
-                  <FilterChip
-                    key={k}
-                    active={filters.kind === k}
-                    onClick={() => set("kind", k)}
-                    label={DOC_KIND_FILTER[k]}
-                    count={kindCounts.get(k) ?? 0}
-                    muted={(kindCounts.get(k) ?? 0) === 0}
-                  />
-                ))}
-              </FilterBar>
-              <FilterBar aria-label="Filtrer par source">
-                <FilterChip
-                  active={filters.origin === "all"}
-                  onClick={() => set("origin", "all")}
-                  label="Toutes les sources"
-                  count={applyFilters(documents, filters, today, "origin").length}
-                />
-                {presentOrigins.map((o) => (
-                  <FilterChip
-                    key={o}
-                    active={filters.origin === o}
-                    onClick={() => set("origin", o)}
-                    label={DOC_ORIGIN_LABEL[o]}
-                    count={originCounts.get(o) ?? 0}
-                    muted={(originCounts.get(o) ?? 0) === 0}
-                  />
-                ))}
-              </FilterBar>
-              <FilterBar aria-label="Filtrer par sujet traité">
-                <FilterChip
-                  active={filters.subject === "all"}
-                  onClick={() => set("subject", "all")}
-                  label="Tous les sujets"
-                  count={applyFilters(documents, filters, today, "subject").length}
-                />
-                {subjectsWithDocs.map((s) => (
-                  <FilterChip
-                    key={s.id}
-                    active={filters.subject === s.id}
-                    onClick={() => set("subject", s.id)}
-                    label={s.title}
-                    count={subjectCounts.get(s.id) ?? 0}
-                    muted={(subjectCounts.get(s.id) ?? 0) === 0}
-                  />
-                ))}
-                <FilterChip
-                  active={filters.subject === "none"}
-                  onClick={() => set("subject", "none")}
-                  label="Sans sujet"
-                  count={subjectCounts.get("none") ?? 0}
-                  muted={(subjectCounts.get("none") ?? 0) === 0}
-                />
-              </FilterBar>
-              <FilterBar aria-label="Filtrer par période">
-                {PERIODS.map((p) => (
-                  <FilterChip
-                    key={p}
-                    active={filters.period === p}
-                    onClick={() => set("period", p)}
-                    label={DOC_PERIOD_LABEL[p]}
-                    count={periodCounts.get(p) ?? 0}
-                    muted={p !== "all" && (periodCounts.get(p) ?? 0) === 0}
-                  />
-                ))}
-              </FilterBar>
-            </FilterSection>
+            {desktop ? (
+              <FilterSection>{renderFilterBars(false)}</FilterSection>
+            ) : (
+              <div className={styles.mobileFilters}>
+                <Button
+                  variant="secondary"
+                  icon={<ListFilter size={18} strokeWidth={1.75} />}
+                  onClick={() => setFiltersOpen(true)}
+                  aria-haspopup="dialog"
+                >
+                  {activeFilters.length > 0 ? `Filtres (${activeFilters.length})` : "Filtres"}
+                </Button>
+                {activeFilters.length > 0 && (
+                  <div className={styles.activeFilters} role="group" aria-label="Filtres actifs">
+                    {activeFilters.map((f) => (
+                      <FilterChip key={f.key} active removable label={f.label} onClick={() => set(f.key, "all")} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </motion.div>
 
           {visible.length === 0 ? (
@@ -254,10 +296,25 @@ export function Documents() {
                       addedAt={doc.addedAt}
                       origin={doc.origin}
                       summary={doc.summary}
-                      subjectLabel={subjects.find((s) => s.id === doc.subjectId)?.title}
+                      subjectNode={
+                        doc.subjectId && subjects.some((s) => s.id === doc.subjectId) ? (
+                          <Link to={`/sujet/${doc.subjectId}`}>{subjects.find((s) => s.id === doc.subjectId)?.title}</Link>
+                        ) : undefined
+                      }
                       findingCount={documentFindingCount(doc, findings)}
                       highlighted={focusId === doc.id}
-                      actions={<DocumentAttach document={doc} subjects={subjects} onChange={(id) => attach(doc, id)} />}
+                      actions={
+                        <>
+                          <Button size="sm" variant="secondary" onClick={() => setAttachDocId(doc.id)}>
+                            {doc.subjectId ? "Changer de sujet" : "Rattacher à un sujet"}
+                          </Button>
+                          {doc.subjectId && (
+                            <Button size="sm" variant="ghost" onClick={() => attach(doc, undefined)}>
+                              Détacher
+                            </Button>
+                          )}
+                        </>
+                      }
                     />
                   </motion.li>
                 ))}
@@ -266,6 +323,34 @@ export function Documents() {
           )}
         </>
       )}
+
+      <Sheet open={filtersOpen && !desktop} onClose={() => setFiltersOpen(false)} title="Filtres">
+        <div className={styles.filterSheet}>
+          <FilterSection className={styles.filterSheetGroups}>{renderFilterBars(true)}</FilterSection>
+          <div className={styles.filterSheetActions}>
+            <Button full onClick={() => setFiltersOpen(false)}>
+              {visible.length === 0
+                ? "Aucun document"
+                : visible.length === 1
+                  ? "Voir 1 document"
+                  : `Voir ${visible.length} documents`}
+            </Button>
+            {filtered && (
+              <Button full variant="ghost" onClick={() => setFilters(NO_FILTER)}>
+                Réinitialiser les filtres
+              </Button>
+            )}
+          </div>
+        </div>
+      </Sheet>
+
+      <Sheet
+        open={!!attachDoc}
+        onClose={() => setAttachDocId(null)}
+        title={attachDoc?.subjectId ? "Changer de sujet" : "Rattacher à un sujet"}
+      >
+        {attachDoc && <DocumentAttach document={attachDoc} subjects={subjects} onChange={(id) => attach(attachDoc, id)} />}
+      </Sheet>
     </motion.main>
   );
 }

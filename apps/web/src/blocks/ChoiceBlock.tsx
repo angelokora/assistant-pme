@@ -27,14 +27,14 @@ export function ChoiceBlockView({ block, active }: BlockProps<ChoiceBlock>) {
     setSelected(recommended);
   }, [recommended, block.id]);
 
-  function confirm() {
-    if (!canAct || !selected) return;
+  function confirm(optionId: string = selected) {
+    if (!canAct || !optionId) return;
     reply({
       kind: "event",
       blockId: block.id,
-      value: selected,
-      doneLabel: choiceDoneSummary(block, selected, plans),
-      vars: block.sideDetail === "plan" ? { planId: selected } : undefined,
+      value: optionId,
+      doneLabel: choiceDoneSummary(block, optionId, plans),
+      vars: block.sideDetail === "plan" ? { planId: optionId } : undefined,
     });
   }
 
@@ -48,6 +48,8 @@ export function ChoiceBlockView({ block, active }: BlockProps<ChoiceBlock>) {
 
   const selectedPlan = block.sideDetail === "plan" ? plans.find((p) => p.id === selected) : undefined;
   const showSide = block.sideDetail === "plan";
+  // Une seule option, sans saisie libre : pas de carte à choisir, un bouton d'action suffit.
+  const single = block.options.length === 1 && !block.allowFreeInput && !showSide ? block.options[0] : undefined;
 
   return (
     <motion.section
@@ -76,37 +78,49 @@ export function ChoiceBlockView({ block, active }: BlockProps<ChoiceBlock>) {
           </header>
         )}
 
-        <ChoiceGroup label={block.title} value={selected} onChange={setSelected} disabled={!canAct}>
-          {block.options.map((opt) => (
-            <ChoiceCard
-              key={opt.id}
-              id={opt.id}
-              title={opt.title}
-              body={opt.body}
-              meta={opt.meta}
-              recommended={opt.recommended}
-              selected={selected === opt.id}
-              dimmed={selected !== opt.id}
-              disabled={!canAct}
-              onSelect={() => setSelected(opt.id)}
-            />
-          ))}
-        </ChoiceGroup>
+        {single ? (
+          <ActionSlot active={canAct}>
+            <div className={styles.choiceActions}>
+              <Button full onClick={() => confirm(single.id)} disabled={!canAct}>
+                {single.title}
+              </Button>
+            </div>
+          </ActionSlot>
+        ) : (
+          <>
+            <ChoiceGroup label={block.title} value={selected} onChange={setSelected} disabled={!canAct}>
+              {block.options.map((opt) => (
+                <ChoiceCard
+                  key={opt.id}
+                  id={opt.id}
+                  title={opt.title}
+                  body={opt.body}
+                  meta={opt.meta}
+                  recommended={opt.recommended}
+                  selected={selected === opt.id}
+                  dimmed={selected !== opt.id}
+                  disabled={!canAct}
+                  onSelect={() => setSelected(opt.id)}
+                />
+              ))}
+            </ChoiceGroup>
 
-        <ActionSlot active={canAct && !block.allowFreeInput}>
-          <div className={styles.choiceActions}>
-            <Button full onClick={confirm} disabled={!canAct || !selected}>
-              {block.confirmLabel}
-            </Button>
-          </div>
-        </ActionSlot>
+            <ActionSlot active={canAct && !block.allowFreeInput}>
+              <div className={styles.choiceActions}>
+                <Button full onClick={() => confirm()} disabled={!canAct || !selected}>
+                  {block.confirmLabel}
+                </Button>
+              </div>
+            </ActionSlot>
 
-        {block.allowFreeInput && canAct && (
-          <div className={styles.choiceActions}>
-            <Button full onClick={confirm} disabled={!selected}>
-              {block.confirmLabel}
-            </Button>
-          </div>
+            {block.allowFreeInput && canAct && (
+              <div className={styles.choiceActions}>
+                <Button full onClick={() => confirm()} disabled={!selected}>
+                  {block.confirmLabel}
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </div>
 

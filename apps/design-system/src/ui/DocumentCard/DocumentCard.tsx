@@ -20,6 +20,8 @@ type Props = {
   origin: DocumentOrigin;
   /** Sujet traité rattaché (sinon « Sans sujet »). */
   subjectLabel?: string;
+  /** Remplace le libellé du sujet (ex. lien vers la page du sujet). Hors zone `onOpen`. */
+  subjectNode?: ReactNode;
   findingCount: number;
   summary?: string;
   variant?: "default" | "compact";
@@ -40,6 +42,7 @@ export function DocumentCard({
   addedAt,
   origin,
   subjectLabel,
+  subjectNode,
   findingCount,
   summary,
   variant = "default",
@@ -58,8 +61,8 @@ export function DocumentCard({
         <span className={styles.title}>{titleNode ?? title}</span>
         {variant === "default" && summary && <span className={styles.summary}>{summary}</span>}
         <span className={styles.foot}>
-          <span className={[styles.subject, !subjectLabel && styles.subjectNone].filter(Boolean).join(" ")}>
-            {subjectLabel ?? "Sans sujet"}
+          <span className={[styles.subject, !subjectLabel && !subjectNode && styles.subjectNone].filter(Boolean).join(" ")}>
+            {subjectNode ?? subjectLabel ?? "Sans sujet"}
           </span>
           <span aria-hidden>·</span>
           <time dateTime={addedAt}>{formatDate(addedAt, "short")}</time>

@@ -406,7 +406,7 @@ function ShowcaseInner() {
 
       <section className={styles.section}>
         <h2 className={styles.h2}>DocumentCard</h2>
-        <p className="muted">default avec actions, compact, sans sujet.</p>
+        <p className="muted">default avec actions et sujet en lien, compact, sans sujet.</p>
         <div style={{ maxWidth: 420, display: "grid", gap: 12 }}>
           <DocumentCard
             kindLabel="Facture"
@@ -414,9 +414,14 @@ function ShowcaseInner() {
             summary="Situation de travaux adressée à la mairie de Rezé, échue depuis le 8 novembre."
             addedAt="2026-11-25T10:46:00"
             origin="gmail"
-            subjectLabel="Retards de paiement des collectivités"
+            subjectNode={<a href="#documentcard">Retards de paiement des collectivités</a>}
             findingCount={1}
-            actions={<Button size="sm" variant="secondary">Détacher</Button>}
+            actions={
+              <>
+                <Button size="sm" variant="secondary">Changer de sujet</Button>
+                <Button size="sm" variant="ghost">Détacher</Button>
+              </>
+            }
           />
           <DocumentCard
             variant="compact"

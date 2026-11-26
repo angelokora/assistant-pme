@@ -144,7 +144,7 @@
             "items": [
               "Lecture des messages contenant une facture ou un relevé",
               "Aucune modification, aucun envoi",
-              "Accès révocable à tout moment depuis Mon entreprise"
+              "Accès révocable à tout moment depuis le Profil"
             ],
             "confirmLabel": "Autoriser",
             "cancelLabel": "Annuler"

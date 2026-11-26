@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AnimatePresence, animate, motion } from "motion/react";
 import { ChevronRight } from "lucide-react";
 import { DimensionCard, blockItem, blockList, formatDate } from "@elea/ds";
 import { Icon } from "../blocks/icons";
 import { useMemory } from "../memory/store";
-import { useTheme, type ThemeId } from "../theme/theme";
-import { CompanySources } from "./CompanySources";
 import { latestFindingDate } from "./findings";
 import styles from "./Company.module.css";
 
@@ -25,24 +23,16 @@ function AnimatedCount({ value }: { value: number }) {
   return <span>{shown}</span>;
 }
 
-/** Écran Mon entreprise : dimensions, sujets, résumé des sources. */
+const STATUS_LABEL = { active: "En cours", paused: "En pause", resolved: "Résolu" } as const;
+
+/** Écran Mon entreprise : dimensions et sujets traités. */
 export function Company() {
   const navigate = useNavigate();
-  const location = useLocation();
   const company = useMemory((s) => s.company);
-
-  useEffect(() => {
-    if (location.hash !== "#sources") return;
-    document.getElementById("sources")?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [location.hash]);
   const dimensions = useMemory((s) => s.dimensions);
   const subjects = useMemory((s) => s.subjects);
   const findings = useMemory((s) => s.findings);
   const plans = useMemory((s) => s.plans);
-  const theme = useTheme((s) => s.theme);
-  const setTheme = useTheme((s) => s.setTheme);
-
-  const STATUS_LABEL = { active: "En cours", paused: "En pause", resolved: "Résolu" } as const;
 
   return (
     <motion.main className={styles.page} variants={blockList} initial="hidden" animate="shown">
@@ -136,39 +126,9 @@ export function Company() {
         )}
       </motion.section>
 
-      <motion.div variants={blockItem}>
-        <CompanySources />
-      </motion.div>
-
-      <motion.section variants={blockItem} className={styles.prefs} aria-labelledby="prefs-title">
-        <h2 id="prefs-title" className={styles.sectionTitle}>
-          Préférences
-        </h2>
-        <fieldset className={styles.themeField}>
-          <div className={styles.themeLegend} id="appearance-label">
-            Apparence
-          </div>
-          <div className={styles.themeOptions} role="radiogroup" aria-labelledby="appearance-label">
-            {(
-              [
-                { id: "vivant", label: "Vivant" },
-                { id: "classic", label: "Classique" },
-              ] as { id: ThemeId; label: string }[]
-            ).map((opt) => (
-              <label key={opt.id} className={[styles.themeOption, theme === opt.id && styles.themeOptionActive].filter(Boolean).join(" ")}>
-                <input
-                  type="radio"
-                  name="appearance"
-                  value={opt.id}
-                  checked={theme === opt.id}
-                  onChange={() => setTheme(opt.id)}
-                />
-                {opt.label}
-              </label>
-            ))}
-          </div>
-        </fieldset>
-      </motion.section>
+      <motion.p variants={blockItem} className={styles.docsHint}>
+        Les documents arriveront ici avec #41. Sources et préférences sont dans le Profil.
+      </motion.p>
     </motion.main>
   );
 }

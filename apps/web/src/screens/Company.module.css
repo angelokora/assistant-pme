@@ -132,57 +132,10 @@
   text-wrap: pretty;
 }
 
-.prefs {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.themeField {
+.docsHint {
   margin: 0;
-  padding: var(--space-4);
-  border: 0;
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  box-shadow: inset 0 0 0 var(--border-width) var(--color-border), var(--shadow-card);
-}
-
-.themeLegend {
-  margin: 0 0 var(--space-3);
   font-size: var(--text-sm);
-  font-weight: var(--weight-semibold);
-  color: var(--color-text);
-}
-
-.themeOptions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-
-.themeOption {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--tap-min);
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-full);
-  background: var(--color-bg);
-  box-shadow: inset 0 0 0 var(--border-width) var(--color-border);
-  font-size: var(--text-sm);
-  cursor: pointer;
-}
-
-.themeOption input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.themeOptionActive {
-  background: var(--color-action);
-  color: var(--color-text-on-action);
-  box-shadow: var(--shadow-card);
-  font-weight: var(--weight-semibold);
+  color: var(--color-text-muted);
+  text-wrap: pretty;
 }
 

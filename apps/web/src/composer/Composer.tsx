@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { Camera, FileText, Keyboard, Mic, SendHorizontal, X } from "lucide-react";
-import { ActionDock, Button, IconButton, Orb, TranscriptText, Waveform, spring } from "@elea/ds";
+import { ActionDock, Button, IconButton, Elephant, TranscriptText, Waveform, spring } from "@elea/ds";
 import { pickFiles } from "../blocks/pickFiles";
 import { useUploadInbox } from "../blocks/uploadInbox";
 import { useDemo } from "../demo/demo";
@@ -194,7 +194,7 @@ export function Composer() {
         </ActionDock>
       ) : silentAwait ? null : !inputOpen ? (
         <div className={styles.status}>
-          <Orb size={20} state={orb} decorative />
+          <Elephant size={20} state={orb} decorative />
           <span>{orb === "thinking" ? "Éléa réfléchit…" : orb === "speaking" ? "Éléa vous répond" : "Éléa est là"}</span>
         </div>
       ) : useCompact && !compactOpen ? (
@@ -242,8 +242,7 @@ export function Composer() {
                   transition={spring.gentle}
                   {...radial}
                 >
-                  <Orb size={72} state="idle" decorative className={styles.micOrb} />
-                  <Mic className={styles.micIcon} size={26} strokeWidth={2} />
+                  <Elephant size={72} state="idle" decorative mic="badge" className={styles.micOrb} />
                 </motion.button>
               ) : (
                 <motion.button
@@ -266,8 +265,7 @@ export function Composer() {
                   }}
                   onPointerLeave={() => window.clearTimeout(holdTimer.current)}
                 >
-                  <Orb size={72} state="idle" decorative className={styles.micOrb} />
-                  <Mic className={styles.micIcon} size={26} strokeWidth={2} />
+                  <Elephant size={72} state="idle" decorative mic="badge" className={styles.micOrb} />
                 </motion.button>
               )}
               <p className={styles.hint}>{menuB ? "Toucher pour parler · glisser pour le menu" : "Toucher pour parler"}</p>
@@ -285,7 +283,7 @@ export function Composer() {
           ) : mode === "listening" ? (
             <motion.div key="listening" layoutId="composer-shell" className={styles.panel} transition={spring.gentle}>
               <div className={styles.panelHead}>
-                <Orb size={36} state="listening" level={speech.level} decorative />
+                <Elephant size={36} state="listening" level={speech.level} decorative />
                 <div className={styles.listenLabel}>
                   <strong>Je vous écoute…</strong>
                   <Waveform level={speech.level} active={!speech.finished} />

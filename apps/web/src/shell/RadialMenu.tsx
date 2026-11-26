@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { ChevronUp, Mic } from "lucide-react";
-import { Orb, spring } from "@elea/ds";
+import { Elephant, spring } from "@elea/ds";
 import { useDemo } from "../demo/demo";
 import { DESTINATIONS, type DestinationId } from "./destinations";
 import { fanOffset, layoutRadialFan } from "./radialLayout";
@@ -168,7 +168,7 @@ export function RadialMenu({ active, needsFallbackOrb }: Props) {
           aria-label={open ? "Fermer le menu" : "Toucher pour parler, glisser ou appui long pour le menu"}
           {...fallback}
         >
-          <Orb size={52} state="idle" decorative />
+          <Elephant size={52} state="idle" decorative />
           <Mic size={20} strokeWidth={1.75} className={styles.orbMic} aria-hidden />
         </button>
       )}

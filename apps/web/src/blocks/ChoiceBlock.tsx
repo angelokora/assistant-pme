@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Button, ChoiceCard, ChoiceGroup, Orb, StepList, formatDate, spring } from "@elea/ds";
+import { Button, ChoiceCard, ChoiceGroup, Elephant, StepList, formatDate, spring } from "@elea/ds";
 import { motion } from "motion/react";
 import type { ChoiceBlock } from "../engine/types";
 import { usePlayer } from "../engine/player";
@@ -60,7 +60,7 @@ export function ChoiceBlockView({ block, active }: BlockProps<ChoiceBlock>) {
           <header className={styles.choiceHeader}>
             {block.eyebrow && (
               <div className={styles.choiceEyebrow}>
-                <Orb size={56} state="done" layoutId="elea-presence" decorative />
+                <Elephant size={56} state="done" layoutId="elea-presence" decorative />
                 <p className={styles.choiceEyebrowLabel}>{block.eyebrow}</p>
               </div>
             )}

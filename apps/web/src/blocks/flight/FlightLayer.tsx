@@ -1,7 +1,6 @@
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
-import { BookmarkCheck } from "lucide-react";
-import { spring } from "@elea/ds";
+import { Elephant, spring } from "@elea/ds";
 import { useFlights } from "./flights";
 import { useGauges } from "../../memory/store";
 import styles from "./FlightLayer.module.css";
@@ -37,7 +36,7 @@ export function FlightLayer() {
               done(f.id);
             }}
           >
-            <BookmarkCheck size={16} strokeWidth={2.2} />
+            <Elephant size={28} state="idle" decorative />
           </motion.div>
         );
       })}

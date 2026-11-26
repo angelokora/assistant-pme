@@ -1,0 +1,226 @@
+.root {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.svg {
+  display: none;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Variante par thème + taille (pas de branchement JS). */
+:global(html[data-theme="classic"]) .classic {
+  display: block;
+}
+
+:global(html:not([data-theme="classic"])) .root:not([data-compact]) .detailed {
+  display: block;
+}
+
+:global(html:not([data-theme="classic"])) .root[data-compact] .simple {
+  display: block;
+}
+
+/* Origines de transformation (réf. elephant.css). */
+.root :global(*) {
+  transform-box: fill-box;
+}
+.root :global(.ear-left) {
+  transform-origin: 100% 45%;
+}
+.root :global(.ear-right) {
+  transform-origin: 0% 45%;
+}
+.root :global(.eyes) {
+  transform-origin: 50% 50%;
+}
+.root :global(.trunk) {
+  transform-origin: 50% 0%;
+}
+.root :global(.head) {
+  transform-origin: 50% 100%;
+}
+.root :global(.dots circle) {
+  opacity: 0;
+}
+
+/* Repos */
+.root[data-state="idle"] :global(.eyes) {
+  animation: el-blink 4s infinite;
+}
+.root[data-state="idle"] :global(.ear-left),
+.root[data-state="idle"] :global(.ear-right) {
+  animation: el-breathe 3.2s ease-in-out infinite alternate;
+}
+
+/* Écoute : échelle max 1, jamais au-delà */
+.root[data-state="listening"] :global(.ear-left),
+.root[data-state="listening"] :global(.ear-right) {
+  animation: el-flap 0.45s ease-in-out infinite alternate;
+}
+.root[data-state="listening"] :global(.head) {
+  transform: rotate(-5deg);
+}
+
+/* Réflexion */
+.root[data-state="thinking"] :global(.eyes) {
+  transform: translateY(-1.5px);
+}
+.root[data-state="thinking"] :global(.pupils) {
+  transform: translate(1.5px, -2px);
+}
+.root[data-state="thinking"] :global(.trunk) {
+  animation: el-curl 1.6s ease-in-out infinite alternate;
+}
+.root[data-state="thinking"] :global(.dots circle) {
+  animation: el-dot 1.2s infinite;
+}
+.root[data-state="thinking"] :global(.dots circle:nth-child(2)) {
+  animation-delay: 0.2s;
+}
+.root[data-state="thinking"] :global(.dots circle:nth-child(3)) {
+  animation-delay: 0.4s;
+}
+
+/* Parole */
+.root[data-state="speaking"] :global(.head) {
+  animation: el-bob 0.32s ease-in-out infinite alternate;
+}
+.root[data-state="speaking"] :global(.trunk) {
+  animation: el-sway 0.32s ease-in-out infinite alternate;
+}
+
+@keyframes el-blink {
+  0%,
+  93%,
+  100% {
+    transform: scaleY(1);
+  }
+  96% {
+    transform: scaleY(0.1);
+  }
+}
+@keyframes el-breathe {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0.94);
+  }
+}
+@keyframes el-flap {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0.72);
+  }
+}
+@keyframes el-curl {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(-28deg);
+  }
+}
+@keyframes el-dot {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes el-bob {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-2.5px);
+  }
+}
+@keyframes el-sway {
+  from {
+    transform: rotate(-7deg);
+  }
+  to {
+    transform: rotate(7deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root :global(*),
+  .root :global(.dots circle) {
+    animation: none !important;
+  }
+  .root[data-state="thinking"] :global(.dots circle) {
+    opacity: 1;
+  }
+}
+
+:global(html[data-animations="off"]) .root :global(*),
+:global(html[data-animations="off"]) .root :global(.dots circle) {
+  animation: none !important;
+}
+:global(html[data-animations="off"]) .root[data-state="thinking"] :global(.dots circle) {
+  opacity: 1;
+}
+
+/* Option 1 (défaut) : pastille micro blanche à côté de la tête */
+.micBadge {
+  position: absolute;
+  right: -2%;
+  bottom: 8%;
+  display: grid;
+  place-items: center;
+  width: 34%;
+  height: 34%;
+  min-width: 14px;
+  min-height: 14px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: inset 0 0 0 var(--border-width) var(--color-border), var(--shadow-card);
+  pointer-events: none;
+}
+
+.micBadge svg {
+  width: 55%;
+  height: 55%;
+}
+
+/* Option 2 : micro sous la trompe */
+.micTrunk {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-35%, 15%);
+  display: grid;
+  place-items: center;
+  width: 28%;
+  height: 28%;
+  min-width: 12px;
+  min-height: 12px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: inset 0 0 0 var(--border-width) var(--color-border), var(--shadow-card);
+  pointer-events: none;
+}
+
+.micTrunk svg {
+  width: 55%;
+  height: 55%;
+}
+
+.root[data-size="s"] .micBadge,
+.root[data-size="s"] .micTrunk {
+  display: none;
+}

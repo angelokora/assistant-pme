@@ -94,6 +94,14 @@
   color: var(--color-text-muted);
 }
 
+.titleEdit {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-regular);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--color-text);
+}
+
 .input,
 .textarea {
   width: 100%;

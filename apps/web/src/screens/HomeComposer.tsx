@@ -1,7 +1,7 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Keyboard, Mic, SendHorizontal } from "lucide-react";
-import { Callout, IconButton, Orb, spring } from "@elea/ds";
+import { IconButton, Orb, spring } from "@elea/ds";
 import { motion } from "motion/react";
 import { ROUTES, routeUtterance } from "../engine/router";
 import { usePlayer } from "../engine/player";
@@ -24,13 +24,15 @@ type Props = {
   onHandled?: () => void;
   /** Accueil C + menu B : l'orbe de présence porte la voix ; pas de second micro. */
   hideVoiceOrb?: boolean;
+  /** Signale une demande non reconnue (pour mettre en avant les jetons de l'accueil). */
+  onUnknownChange?: (unknown: boolean) => void;
 };
 
 /**
- * Composer de l'accueil : aiguillage via `routeUtterance`, sinon callout des besoins disponibles.
+ * Composer de l'accueil : aiguillage via `routeUtterance`, sinon phrase d'Éléa au-dessus.
  */
 export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeComposer(
-  { forceOpen, onHandled, hideVoiceOrb },
+  { forceOpen, onHandled, hideVoiceOrb, onUnknownChange },
   ref,
 ) {
   const navigate = useNavigate();
@@ -48,6 +50,14 @@ export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeC
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const speech = useSimulatedSpeech(FALLBACK_SIMULATED);
   const startSpeech = speech.start;
+
+  const setUnknownState = useCallback(
+    (value: boolean) => {
+      setUnknown(value);
+      onUnknownChange?.(value);
+    },
+    [onUnknownChange],
+  );
 
   const listen = useCallback(() => {
     setMode("listening");
@@ -75,7 +85,7 @@ export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeC
     stop();
     start(scenarioId, utterance ? { withUtterance: utterance } : undefined);
     navigate(`/besoin/${scenarioId}`);
-    setUnknown(false);
+    setUnknownState(false);
     setDraft("");
   }
 
@@ -87,12 +97,7 @@ export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeC
       launch(id, trimmed);
       return;
     }
-    setUnknown(true);
-  }
-
-  function launchExample(utterance: string) {
-    const id = routeUtterance(utterance);
-    if (id) launch(id, utterance);
+    setUnknownState(true);
   }
 
   function submitVoice() {
@@ -113,18 +118,13 @@ export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeC
           </button>
         </div>
       )}
+
       {unknown && (
-        <div className={styles.unknown}>
-          <Callout tone="info" title={ROUTES.unknown.title}>
-            {ROUTES.unknown.text}
-          </Callout>
-          <div className={styles.links}>
-            {ROUTES.unknown.examples.map((ex) => (
-              <button key={ex.id} type="button" className={styles.link} onClick={() => launchExample(ex.utterance)}>
-                {ex.label}
-              </button>
-            ))}
-          </div>
+        <div className={styles.unknownLine} role="status">
+          <Orb size={28} state="idle" decorative />
+          <p className={styles.unknownText}>
+            {ROUTES.unknown.title}. Essayez l'un des exemples ci-dessus.
+          </p>
         </div>
       )}
 
@@ -172,7 +172,7 @@ export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeC
             aria-label="Demander à Éléa"
             onChange={(e) => {
               setDraft(e.target.value);
-              setUnknown(false);
+              setUnknownState(false);
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {

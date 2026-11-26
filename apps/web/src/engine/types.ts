@@ -236,4 +236,4 @@ export type Reply =
 export type StepVars = Record<string, string>;
 
 /** Résolution d'un bloc interactif : état « fait » compact, sans écho « Vous : … ». */
-export type BlockResolution = { summary: string };
+export type BlockResolution = { summary: string; /** Id de l'option / réponse rapide choisie. */ value?: string };

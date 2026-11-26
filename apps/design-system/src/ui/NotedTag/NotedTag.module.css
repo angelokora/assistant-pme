@@ -40,6 +40,10 @@
   margin-top: var(--space-1);
   align-items: center;
 }
+.phrase {
+  flex: 1 1 12rem;
+  font-weight: var(--weight-semibold);
+}
 .input {
   flex: 1 1 12rem;
   min-width: 0;
@@ -50,10 +54,6 @@
   box-shadow: inset 0 0 0 1px var(--color-memory);
   font: inherit;
   min-height: 44px;
-}
-.amount {
-  flex: 0 1 7rem;
-  font-variant-numeric: tabular-nums;
 }
 .save {
   font-size: var(--text-sm);

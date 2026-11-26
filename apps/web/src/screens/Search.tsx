@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { Mic } from "lucide-react";
@@ -9,6 +9,7 @@ import { foldText } from "../engine/router";
 import { useDemo, type FindVariant } from "../demo/demo";
 import { useMemory } from "../memory/store";
 import { useDetail } from "../shell/detailStore";
+import { FilterBar, FilterChip, FilterSection } from "./FilterBar";
 import { FINDING_TYPE_FILTER, sortFindingsRecent, typesPresent } from "./findings";
 import { HighlightText } from "./HighlightText";
 import { findingMatchesQuery } from "./searchText";
@@ -41,14 +42,40 @@ export function Search() {
   const [listening, setListening] = useState(false);
   const speech = useSimulatedSpeech(VOICE_SAMPLE);
 
+  /** Résultats selon la saisie seule (avant filtres sujet/type). */
+  const queryMatches = useMemo(
+    () => findings.filter((f) => findingMatchesQuery(f.title, f.summary, query)),
+    [findings, query],
+  );
+
   const matched = useMemo(() => {
-    let list = findings.filter((f) => findingMatchesQuery(f.title, f.summary, query));
+    let list = queryMatches;
     if (topicFilter !== "all") list = list.filter((f) => f.topicId === topicFilter);
     if (typeFilter !== "all") list = list.filter((f) => f.type === typeFilter);
     return sortFindingsRecent(list);
-  }, [findings, query, topicFilter, typeFilter]);
+  }, [queryMatches, topicFilter, typeFilter]);
 
   const presentTypes = useMemo(() => typesPresent(findings), [findings]);
+
+  const topicCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const f of queryMatches) map.set(f.topicId, (map.get(f.topicId) ?? 0) + 1);
+    return map;
+  }, [queryMatches]);
+
+  const typeCounts = useMemo(() => {
+    const map = new Map<FindingType, number>();
+    for (const f of queryMatches) map.set(f.type, (map.get(f.type) ?? 0) + 1);
+    return map;
+  }, [queryMatches]);
+
+  useEffect(() => {
+    if (topicFilter !== "all" && (topicCounts.get(topicFilter) ?? 0) === 0) setTopicFilter("all");
+  }, [topicFilter, topicCounts]);
+
+  useEffect(() => {
+    if (typeFilter !== "all" && (typeCounts.get(typeFilter) ?? 0) === 0) setTypeFilter("all");
+  }, [typeFilter, typeCounts]);
 
   const grouped = useMemo(() => {
     const byTopic = new Map<string, typeof matched>();
@@ -122,8 +149,8 @@ export function Search() {
           }}
         />
         <button type="button" className={styles.voiceBtn} aria-label="Parler" onClick={startVoice}>
-          <Orb size={28} state={listening ? "listening" : "idle"} level={speech.level} decorative />
-          <Mic size={14} strokeWidth={1.75} style={{ position: "absolute", opacity: 0 }} aria-hidden />
+          <Orb size={36} state={listening ? "listening" : "idle"} level={speech.level} decorative />
+          <Mic size={16} strokeWidth={1.75} className={styles.micIcon} aria-hidden />
         </button>
       </motion.div>
 
@@ -138,37 +165,54 @@ export function Search() {
       )}
 
       {variant === "a" && (
-        <>
-          <motion.div variants={blockItem} className={styles.filters} role="toolbar" aria-label="Filtrer par sujet">
-            <FilterChip
-              active={topicFilter === "all"}
-              onClick={() => setTopicFilter("all")}
-              label="Tous les sujets"
-              count={findings.length}
-            />
-            {topics.map((t) => (
+        <motion.div variants={blockItem}>
+          <FilterSection>
+            <FilterBar aria-label="Filtrer par sujet">
               <FilterChip
-                key={t.id}
-                active={topicFilter === t.id}
-                onClick={() => setTopicFilter(t.id)}
-                label={t.label}
-                count={findings.filter((f) => f.topicId === t.id).length}
+                active={topicFilter === "all"}
+                onClick={() => setTopicFilter("all")}
+                label="Tous les sujets"
+                count={queryMatches.length}
+                muted={queryMatches.length === 0}
               />
-            ))}
-          </motion.div>
-          <motion.div variants={blockItem} className={styles.filters} role="toolbar" aria-label="Filtrer par type">
-            <FilterChip active={typeFilter === "all"} onClick={() => setTypeFilter("all")} label="Tous" count={matched.length} />
-            {presentTypes.map((t) => (
+              {topics.map((t) => {
+                const count = topicCounts.get(t.id) ?? 0;
+                return (
+                  <FilterChip
+                    key={t.id}
+                    active={topicFilter === t.id}
+                    onClick={() => setTopicFilter(t.id)}
+                    label={t.label}
+                    count={count}
+                    muted={count === 0}
+                  />
+                );
+              })}
+            </FilterBar>
+            <FilterBar aria-label="Filtrer par type">
               <FilterChip
-                key={t}
-                active={typeFilter === t}
-                onClick={() => setTypeFilter(t)}
-                label={SEARCH_TYPE_FILTER[t] ?? FINDING_TYPE_FILTER[t]}
-                count={findings.filter((f) => f.type === t).length}
+                active={typeFilter === "all"}
+                onClick={() => setTypeFilter("all")}
+                label="Tous"
+                count={queryMatches.length}
+                muted={queryMatches.length === 0}
               />
-            ))}
-          </motion.div>
-        </>
+              {presentTypes.map((t) => {
+                const count = typeCounts.get(t) ?? 0;
+                return (
+                  <FilterChip
+                    key={t}
+                    active={typeFilter === t}
+                    onClick={() => setTypeFilter(t)}
+                    label={SEARCH_TYPE_FILTER[t] ?? FINDING_TYPE_FILTER[t]}
+                    count={count}
+                    muted={count === 0}
+                  />
+                );
+              })}
+            </FilterBar>
+          </FilterSection>
+        </motion.div>
       )}
 
       {empty ? (
@@ -263,29 +307,5 @@ export function Search() {
         </motion.div>
       )}
     </motion.main>
-  );
-}
-
-function FilterChip({
-  active,
-  onClick,
-  label,
-  count,
-}: {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-  count: number;
-}) {
-  return (
-    <button
-      type="button"
-      className={[styles.chip, active && styles.chipActive].filter(Boolean).join(" ")}
-      onClick={onClick}
-      aria-pressed={active}
-    >
-      {label}
-      <span className={styles.chipCount}>{count}</span>
-    </button>
   );
 }

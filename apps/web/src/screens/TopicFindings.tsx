@@ -4,6 +4,7 @@ import { AnimatePresence, LayoutGroup, motion } from "motion/react";
 import { FindingCard, type FindingType } from "@elea/ds";
 import { useDetail } from "../shell/detailStore";
 import { useMemory } from "../memory/store";
+import { FilterBar, FilterChip, FilterSection } from "./FilterBar";
 import { FINDING_TYPE_FILTER, sortFindingsRecent, typesPresent } from "./findings";
 import styles from "./Topic.module.css";
 
@@ -31,18 +32,30 @@ export function TopicFindings({ topicId, topicLabel, openFindingId }: Props) {
 
   return (
     <>
-      <div className={styles.filters} role="toolbar" aria-label="Filtrer par type">
-        <FilterChip active={filter === "all"} onClick={() => setFilter("all")} label="Tous" count={topicFindings.length} />
-        {present.map((t) => (
+      <FilterSection>
+        <FilterBar aria-label="Filtrer par type">
           <FilterChip
-            key={t}
-            active={filter === t}
-            onClick={() => setFilter(t)}
-            label={FINDING_TYPE_FILTER[t]}
-            count={topicFindings.filter((f) => f.type === t).length}
+            active={filter === "all"}
+            onClick={() => setFilter("all")}
+            label="Tous"
+            count={topicFindings.length}
+            muted={topicFindings.length === 0}
           />
-        ))}
-      </div>
+          {present.map((t) => {
+            const count = topicFindings.filter((f) => f.type === t).length;
+            return (
+              <FilterChip
+                key={t}
+                active={filter === t}
+                onClick={() => setFilter(t)}
+                label={FINDING_TYPE_FILTER[t]}
+                count={count}
+                muted={count === 0}
+              />
+            );
+          })}
+        </FilterBar>
+      </FilterSection>
 
       <LayoutGroup>
         <motion.ul className={styles.list} layout>
@@ -81,24 +94,5 @@ export function TopicFindings({ topicId, topicLabel, openFindingId }: Props) {
         </motion.ul>
       </LayoutGroup>
     </>
-  );
-}
-
-function FilterChip({
-  active,
-  onClick,
-  label,
-  count,
-}: {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-  count: number;
-}) {
-  return (
-    <button type="button" className={[styles.chip, active && styles.chipActive].filter(Boolean).join(" ")} onClick={onClick} aria-pressed={active}>
-      {label}
-      <span className={styles.chipCount}>{count}</span>
-    </button>
   );
 }

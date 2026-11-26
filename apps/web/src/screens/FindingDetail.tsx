@@ -269,7 +269,9 @@ export function FindingDetail({ finding, showTitle = true }: Props) {
 
       <Sheet open={confirmDelete} onClose={() => setConfirmDelete(false)} title="Oublier ce constat ?">
         <p className={styles.confirmText}>
-          Je retirerai « {finding.title} » de la mémoire. Vous pourrez annuler pendant quelques secondes.
+          Je retirerai «{"\u00a0"}
+          {finding.title}
+          {"\u00a0"}» de la mémoire. Vous pourrez annuler pendant quelques secondes.
         </p>
         <div className={styles.editActions}>
           <Button onClick={confirmForget}>Oublier</Button>

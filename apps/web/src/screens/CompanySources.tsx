@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button, Card, ProviderLogo, Sheet, formatDate, type ProviderId, useToast } from "@elea/ds";
 import { Check, EyeOff, ShieldCheck } from "lucide-react";
 import type { ConnectorBlock, Source } from "../engine/types";
@@ -18,8 +18,16 @@ const STATUS_LABEL: Record<Source["status"], string> = {
   disconnected: "Déconnectée",
 };
 
-/** Reprend le bloc connector de l'onboarding pour la feuille Outlook. */
-function outlookConnector(): ConnectorBlock | null {
+type ConnectProvider = Extract<Source["provider"], "gmail" | "outlook" | "drive">;
+
+const EMPTY_PROVIDERS: { id: ConnectProvider; label: string; detail: string }[] = [
+  { id: "gmail", label: "Gmail", detail: "sophie@maisonmartin.fr" },
+  { id: "outlook", label: "Outlook", detail: "sophie.martin@outlook.com" },
+  { id: "drive", label: "Google Drive", detail: "Dossier «\u00a0Compta 2026\u00a0»" },
+];
+
+/** Reprend le bloc connector de l'onboarding pour la feuille de connexion. */
+function onboardingConnector(): ConnectorBlock | null {
   const scenario = SCENARIOS.onboarding;
   if (!scenario) return null;
   for (const step of Object.values(scenario.steps)) {
@@ -29,16 +37,33 @@ function outlookConnector(): ConnectorBlock | null {
   return null;
 }
 
+function connectorFor(provider: ConnectProvider, base: ConnectorBlock): ConnectorBlock {
+  const labels: Record<ConnectProvider, string> = {
+    gmail: "Gmail",
+    outlook: "Outlook",
+    drive: "Google Drive",
+  };
+  const label = labels[provider];
+  return {
+    ...base,
+    title: base.title.replace(/Gmail|Outlook|Google Drive|\{\{providerLabel\}\}/g, label),
+    why: base.why.replace(/Gmail|Outlook|Google Drive|\{\{providerLabel\}\}/g, label),
+  };
+}
+
 type ConfirmState = { source: Source } | null;
+type ConnectState = { provider: ConnectProvider; label: string; detail: string } | null;
 
 /** Section sources de Mon entreprise : états, sync, couper / reconnecter / connecter. */
 export function CompanySources() {
   const sources = useMemory((s) => s.sources);
+  const apply = useMemory((s) => s.apply);
   const setSourceStatus = useMemory((s) => s.setSourceStatus);
   const { show } = useToast();
   const [confirm, setConfirm] = useState<ConfirmState>(null);
-  const [connectOpen, setConnectOpen] = useState(false);
-  const connector = outlookConnector();
+  const [connect, setConnect] = useState<ConnectState>(null);
+  const baseConnector = useMemo(() => onboardingConnector(), []);
+  const connector = connect && baseConnector ? connectorFor(connect.provider, baseConnector) : null;
 
   function disconnect(source: Source) {
     setSourceStatus(source.id, "disconnected", { detail: source.detail });
@@ -54,13 +79,23 @@ export function CompanySources() {
     show(`${source.label} reconnectée.`);
   }
 
-  function connectOutlook() {
-    setSourceStatus("outlook", "connected", {
-      detail: "sophie.martin@outlook.com",
-      lastSync: new Date().toISOString().slice(0, 19),
-    });
-    setConnectOpen(false);
-    show("Outlook connectée.");
+  function confirmConnect() {
+    if (!connect) return;
+    apply([
+      {
+        kind: "source",
+        source: {
+          id: connect.provider,
+          provider: connect.provider,
+          label: connect.label,
+          status: "connected",
+          detail: connect.detail,
+          lastSync: new Date().toISOString().slice(0, 19),
+        },
+      },
+    ]);
+    setConnect(null);
+    show(`${connect.label} connectée.`);
   }
 
   return (
@@ -68,46 +103,77 @@ export function CompanySources() {
       <h2 id="sources-title" className={styles.sectionTitle}>
         Sources
       </h2>
-      <ul className={styles.list}>
-        {sources.map((s) => (
-          <li key={s.id} className={styles.row}>
-            {PROVIDER_MAP[s.provider] ? (
-              <ProviderLogo provider={PROVIDER_MAP[s.provider]} size={32} />
-            ) : (
-              <span className={styles.fallback} aria-hidden />
-            )}
-            <div className={styles.body}>
-              <div className={styles.top}>
-                <strong>{s.label}</strong>
-                <span className={styles.status} data-status={s.status}>
-                  {STATUS_LABEL[s.status]}
-                </span>
+
+      {sources.length === 0 ? (
+        <div className={styles.empty}>
+          <p className={styles.emptyLead}>
+            Aucune source connectée pour l'instant. Reliez Gmail, Outlook ou Drive quand vous voudrez que je lise vos
+            factures.
+          </p>
+          <div className={styles.emptyActions} role="group" aria-label="Connecter une source">
+            {EMPTY_PROVIDERS.map((p) => (
+              <Button
+                key={p.id}
+                variant="secondary"
+                icon={<ProviderLogo provider={p.id} size={18} labelled={false} />}
+                onClick={() => setConnect({ provider: p.id, label: p.label, detail: p.detail })}
+              >
+                {p.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <ul className={styles.list}>
+          {sources.map((s) => (
+            <li key={s.id} className={styles.row}>
+              {PROVIDER_MAP[s.provider] ? (
+                <ProviderLogo provider={PROVIDER_MAP[s.provider]} size={32} />
+              ) : (
+                <span className={styles.fallback} aria-hidden />
+              )}
+              <div className={styles.body}>
+                <div className={styles.top}>
+                  <strong>{s.label}</strong>
+                  <span className={styles.status} data-status={s.status}>
+                    {STATUS_LABEL[s.status]}
+                  </span>
+                </div>
+                {s.detail && <p className={styles.detail}>{s.detail}</p>}
+                {s.lastSync && s.status === "connected" && (
+                  <p className={styles.sync}>Dernière sync. {formatDate(s.lastSync, "short")}</p>
+                )}
               </div>
-              {s.detail && <p className={styles.detail}>{s.detail}</p>}
-              {s.lastSync && s.status === "connected" && (
-                <p className={styles.sync}>Dernière sync. {formatDate(s.lastSync, "short")}</p>
-              )}
-            </div>
-            <div className={styles.actions}>
-              {s.status === "connected" && (
-                <Button variant="ghost" size="sm" onClick={() => setConfirm({ source: s })}>
-                  Couper l'accès
-                </Button>
-              )}
-              {s.status === "disconnected" && (
-                <Button variant="secondary" size="sm" onClick={() => reconnect(s)}>
-                  Reconnecter
-                </Button>
-              )}
-              {s.status === "available" && s.provider === "outlook" && (
-                <Button size="sm" onClick={() => setConnectOpen(true)}>
-                  Connecter
-                </Button>
-              )}
-            </div>
-          </li>
-        ))}
-      </ul>
+              <div className={styles.actions}>
+                {s.status === "connected" && (
+                  <Button variant="ghost" size="sm" onClick={() => setConfirm({ source: s })}>
+                    Couper l'accès
+                  </Button>
+                )}
+                {s.status === "disconnected" && (
+                  <Button variant="secondary" size="sm" onClick={() => reconnect(s)}>
+                    Reconnecter
+                  </Button>
+                )}
+                {s.status === "available" && PROVIDER_MAP[s.provider] && (
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      setConnect({
+                        provider: PROVIDER_MAP[s.provider] as ConnectProvider,
+                        label: s.label,
+                        detail: s.detail ?? "",
+                      })
+                    }
+                  >
+                    Connecter
+                  </Button>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <Sheet
         open={!!confirm}
@@ -151,8 +217,8 @@ export function CompanySources() {
         )}
       </Sheet>
 
-      <Sheet open={connectOpen} onClose={() => setConnectOpen(false)} title={connector?.title ?? "Connecter Outlook"}>
-        {connector && (
+      <Sheet open={!!connect} onClose={() => setConnect(null)} title={connector?.title ?? connect?.label}>
+        {connector && connect && (
           <div className={styles.connector}>
             <p className={styles.connectorWhy}>{connector.why}</p>
             <div className={styles.connectorCols}>
@@ -185,8 +251,8 @@ export function CompanySources() {
                 </li>
               ))}
             </ul>
-            <Button onClick={connectOutlook}>
-              <ProviderLogo provider="outlook" size={18} labelled={false} /> Connecter Outlook
+            <Button onClick={confirmConnect}>
+              <ProviderLogo provider={connect.provider} size={18} labelled={false} /> Connecter {connect.label}
             </Button>
           </div>
         )}

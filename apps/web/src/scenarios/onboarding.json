@@ -1171,7 +1171,7 @@
       {
         "id": "resume-lead",
         "type": "lead",
-        "text": "Depuis, vous avez avancé : {{planDoneCount}} étapes sur {{planStepCount}} pour « {{planTitle}} ». On continue ?"
+        "text": "Depuis, vous avez avancé : {{planDoneCount}} étapes sur {{planStepCount}} pour «\u00a0{{planTitle}}\u00a0». On continue ?"
       },
       {
         "id": "resume-suggestions",

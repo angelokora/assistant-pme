@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Button, Card, ProviderLogo, Sheet } from "@elea/ds";
+import { Button, Card, Gauge, ProviderLogo, Sheet, StepList } from "@elea/ds";
 import { BookmarkCheck, Mail } from "lucide-react";
 import type { AuthBlock } from "../engine/types";
 import { usePlayer } from "../engine/player";
+import { useMemory } from "../memory/store";
 import { ActionSlot } from "./ActionSlot";
 import { BlockDone } from "./BlockDone";
 import type { BlockProps } from "./BlockRenderer";
@@ -30,9 +31,16 @@ export function AuthBlockView({ block, active }: BlockProps<AuthBlock>) {
   const reply = usePlayer((s) => s.reply);
   const awaiting = usePlayer((s) => s.awaiting);
   const resolution = usePlayer((s) => s.resolutions[block.id]);
+  const vars = usePlayer((s) => s.vars);
+  const plans = useMemory((s) => s.plans);
+  const plan =
+    plans.find((p) => p.id === vars.planId) ??
+    plans.find((p) => p.status === "active") ??
+    plans[0];
   const canAct = active && awaiting?.kind === "auth";
   const [sheetOpen, setSheetOpen] = useState(false);
   const [pending, setPending] = useState<Method | null>(null);
+  const showPlanPreview = !!block.recap && !!plan;
 
   function choose(method: Method) {
     if (!canAct) return;
@@ -67,8 +75,30 @@ export function AuthBlockView({ block, active }: BlockProps<AuthBlock>) {
       {block.recap && (
         <Card tone="memory" padding="md" className={styles.authRecap}>
           <p className={styles.authRecapLabel}>{block.recap.label}</p>
-          <p className={styles.authRecapValue}>{block.recap.value}</p>
-          {block.recap.highlight && <p className={styles.authRecapHighlight}>{block.recap.highlight}</p>}
+          {showPlanPreview && plan ? (
+            <div className={styles.authPlanPreview}>
+              <p className={styles.authRecapValue}>{plan.title}</p>
+              <Gauge
+                value={0}
+                segments={plan.steps.length || 1}
+                status="todo"
+                label={`Plan : ${plan.steps.length} étapes`}
+                className={styles.authPlanGauge}
+              />
+              <StepList
+                steps={plan.steps.slice(0, 2).map((s) => ({
+                  id: s.id,
+                  label: s.title,
+                  status: "pending" as const,
+                }))}
+              />
+            </div>
+          ) : (
+            <>
+              <p className={styles.authRecapValue}>{block.recap.value}</p>
+              {block.recap.highlight && <p className={styles.authRecapHighlight}>{block.recap.highlight}</p>}
+            </>
+          )}
         </Card>
       )}
 

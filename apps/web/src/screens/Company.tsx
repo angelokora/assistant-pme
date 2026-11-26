@@ -129,8 +129,10 @@ export function Company() {
           Préférences
         </h2>
         <fieldset className={styles.themeField}>
-          <legend className={styles.themeLegend}>Apparence</legend>
-          <div className={styles.themeOptions} role="radiogroup" aria-label="Apparence">
+          <div className={styles.themeLegend} id="appearance-label">
+            Apparence
+          </div>
+          <div className={styles.themeOptions} role="radiogroup" aria-labelledby="appearance-label">
             {(
               [
                 { id: "vivant", label: "Vivant" },

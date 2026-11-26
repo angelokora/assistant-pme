@@ -12,6 +12,14 @@
 }
 .dock > * { pointer-events: auto; width: 100%; max-width: var(--content-max); }
 
+/* Bureau : le fondu reste dans la colonne centrale (pas sur la nav blanche). */
+@media (min-width: 1024px) {
+  .dock {
+    left: 240px;
+    right: 0;
+  }
+}
+
 /* Attente sans action à porter : pas de barre ni de padding bas. */
 .dockEmpty {
   padding: 0;

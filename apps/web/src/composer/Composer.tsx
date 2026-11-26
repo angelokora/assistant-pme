@@ -84,10 +84,12 @@ export function Composer() {
     const apply = () => {
       if (silentAwait) {
         root.style.removeProperty("--composer-offset");
+        root.style.removeProperty("--need-scroll-pad");
         return;
       }
       const h = Math.ceil(el.getBoundingClientRect().height);
       root.style.setProperty("--composer-offset", `${h}px`);
+      root.style.setProperty("--need-scroll-pad", `${h}px`);
     };
     apply();
     const ro = new ResizeObserver(apply);
@@ -95,6 +97,7 @@ export function Composer() {
     return () => {
       ro.disconnect();
       root.style.removeProperty("--composer-offset");
+      root.style.removeProperty("--need-scroll-pad");
     };
   }, [showActionDock, silentAwait, choiceFree, mode, compactOpen, awaiting?.kind]);
 

@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import { DimensionCard } from "@elea/ds";
+import { useEffect, useRef, useState } from "react";
+import { DimensionCard, Sheet } from "@elea/ds";
 import type { DimensionsBlock } from "../engine/types";
 import { useMemory, useGauges } from "../memory/store";
 import { Icon } from "./icons";
@@ -9,29 +9,62 @@ import styles from "./blocks.module.css";
 
 export function DimensionGrid({ ids, compact }: { ids: string[]; compact?: boolean }) {
   const dimensions = useMemory((s) => s.dimensions);
+  const findings = useMemory((s) => s.findings);
   const shown = useGauges((s) => s.shown);
   const pulses = useGauges((s) => s.pulses);
+  const [openId, setOpenId] = useState<string | null>(null);
+  const open = dimensions.find((d) => d.id === openId);
+  const openFindings = open
+    ? findings.filter((f) => f.topicId === open.id)
+    : [];
+
   return (
-    <div className={compact ? styles.dimStrip : styles.dimGrid}>
-      {ids.map((id) => {
-        const d = dimensions.find((x) => x.id === id);
-        if (!d) return null;
-        return (
-          <DimensionCard
-            key={d.id}
-            id={d.id}
-            label={d.label}
-            icon={<Icon name={d.icon} />}
-            tone={d.tone}
-            summary={d.summary}
-            progress={shown[d.id] ?? d.progress}
-            status={d.status}
-            pulseKey={pulses[d.id]}
-            compact={compact}
-          />
-        );
-      })}
-    </div>
+    <>
+      <div className={compact ? styles.dimStrip : styles.dimGrid}>
+        {ids.map((id) => {
+          const d = dimensions.find((x) => x.id === id);
+          if (!d) return null;
+          return (
+            <DimensionCard
+              key={d.id}
+              id={d.id}
+              label={d.label}
+              icon={<Icon name={d.icon} />}
+              tone={d.tone}
+              summary={d.summary}
+              progress={shown[d.id] ?? d.progress}
+              status={d.status}
+              pulseKey={pulses[d.id]}
+              compact={compact}
+              onClick={compact ? undefined : () => setOpenId(d.id)}
+            />
+          );
+        })}
+      </div>
+      <Sheet open={!!open} onClose={() => setOpenId(null)} title={open?.label}>
+        {open && (
+          <div className={styles.dimSheet}>
+            <p className={styles.dimSheetLead}>
+              {open.summary && open.summary !== "À découvrir"
+                ? open.summary
+                : "Je n'ai encore rien de précis sur cette dimension."}
+            </p>
+            {openFindings.length > 0 ? (
+              <ul className={styles.dimSheetList}>
+                {openFindings.map((f) => (
+                  <li key={f.id}>
+                    <strong>{f.title}</strong>
+                    <span>{f.summary}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className={styles.dimSheetEmpty}>Aucun constat rangé pour l'instant.</p>
+            )}
+          </div>
+        )}
+      </Sheet>
+    </>
   );
 }
 

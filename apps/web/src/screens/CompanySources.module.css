@@ -15,6 +15,30 @@
   margin: 0;
 }
 
+.empty {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 var(--border-width) var(--color-border);
+}
+
+.emptyLead {
+  margin: 0;
+  font-family: var(--font-voice);
+  font-variation-settings: var(--voice-variation);
+  font-size: var(--text-lg);
+  line-height: var(--leading-snug);
+  text-wrap: pretty;
+}
+
+.emptyActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
 .list {
   list-style: none;
   margin: 0;

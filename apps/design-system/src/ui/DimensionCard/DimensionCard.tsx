@@ -73,7 +73,7 @@ export function DimensionCard({ id, label, icon, tone, summary, progress, status
       </AnimatePresence>
       <span className={styles.top}>
         <span className={[styles.icon, styles[tone]].join(" ")}>{icon}</span>
-        {!compact && (
+        {!compact && onClick && (
           <span className={styles.chevron} aria-hidden>
             <ChevronRight size={16} strokeWidth={2} />
           </span>

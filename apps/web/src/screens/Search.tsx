@@ -217,7 +217,7 @@ export function Search() {
         <motion.div variants={blockItem} className={styles.empty}>
           <p className={styles.emptyText}>
             {query.trim()
-              ? `Je ne trouve rien pour « ${query.trim()} ». Reformulez, ou demandez-moi autrement.`
+              ? `Je ne trouve rien pour «\u00a0${query.trim()}\u00a0». Reformulez, ou demandez-moi autrement.`
               : "Aucun constat ne correspond à ces filtres."}
           </p>
           {query.trim() && (

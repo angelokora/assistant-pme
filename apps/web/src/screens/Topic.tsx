@@ -68,7 +68,9 @@ export function Topic() {
         <motion.section variants={blockItem} className={styles.emptyState}>
           <Elephant size={56} state="idle" decorative />
           <p className={["voice", styles.emptyVoice].join(" ")}>
-            Je n'ai encore rien rangé dans « {topic.label} ». Donnez-moi une information, je la note ici.
+            Je n'ai encore rien rangé dans «{"\u00a0"}
+            {topic.label}
+            {"\u00a0"}». Donnez-moi une information, je la note ici.
           </p>
           {suggestion && (
             <Button onClick={() => navigate(`/besoin/${suggestion.scenarioId}`)}>{suggestion.label}</Button>

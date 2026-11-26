@@ -20,15 +20,11 @@
   max-width: var(--content-max);
   margin: 0 auto;
   /*
-   * Padding bas : assez grand pour amener le début d'un tour sous l'en-tête
-   * (même si le tour est court et que l'ActionDock mange le bas),
-   * tout en dégageant le composer / dock.
+   * Padding bas = hauteur réelle de la zone basse (composer / dock / « Éléa est là »),
+   * mesurée dans --need-scroll-pad (alias --composer-offset).
    */
   padding: var(--space-6) var(--space-5)
-    max(
-      calc(var(--composer-offset, 120px) + var(--space-6)),
-      var(--need-scroll-pad, 80vh)
-    );
+    calc(var(--need-scroll-pad, var(--composer-offset, 120px)) + var(--space-6));
   display: grid;
   gap: var(--space-8);
 }
@@ -77,5 +73,6 @@
 
 @media (min-width: 1024px) {
   .top { padding: var(--space-4) var(--space-10); }
-  .flow { padding-top: var(--space-10); }
+  /* Air sous l'en-tête aligné sur l'écart entre tours. */
+  .flow { padding-top: var(--space-8); gap: var(--space-8); }
 }

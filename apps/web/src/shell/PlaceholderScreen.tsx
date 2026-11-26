@@ -19,7 +19,9 @@ export function PlaceholderScreen({ title, ticketId, ticketName }: Props) {
         {title}
       </motion.h1>
       <motion.p variants={blockItem} className={styles.text}>
-        Cet écran sera construit dans le ticket #{ticketId} « {ticketName} ».
+        Cet écran sera construit dans le ticket #{ticketId} «{"\u00a0"}
+        {ticketName}
+        {"\u00a0"}».
       </motion.p>
     </motion.main>
   );

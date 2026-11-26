@@ -305,7 +305,9 @@ export const usePlayer = create<PlayerState>((set, get) => {
             resolutions[b.id] = { summary: "Fait" };
           }
         }
-        const progressed = mainPathNext(step, vars);
+        // dry : ne pas créer le compte en passant un auth antérieur, sinon l'étape
+        // cible account-* est sautée.
+        const progressed = mainPathNext(step, vars, true);
         vars = progressed.vars;
         cursor = progressed.next;
       }

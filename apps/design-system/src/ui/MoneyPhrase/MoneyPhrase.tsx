@@ -1,11 +1,16 @@
-import { formatEuro, hardenMoneySpaces, NBSP } from "../../format";
+import { formatEuro, hardenMoneySpaces } from "../../format";
 import styles from "./MoneyPhrase.module.css";
 
 const MONEY_RE = /(\d[\d\s\u00a0\u202f]*)([\s\u00a0\u202f]*€)/;
 
 /** Affiche un montant saisi avec les espaces fines FR (sans symbole €). */
 export function formatAmountDraft(value: number): string {
-  return formatEuro(value).replace(new RegExp(`${NBSP}?€$`), "");
+  return formatEuro(value).replace(/[\s\u00a0\u202f]*€$/, "");
+}
+
+/** Parse un brouillon de montant (espaces FR acceptés). */
+export function parseAmountDraft(raw: string): number {
+  return Number(raw.replace(/[\s\u00a0\u202f]/g, "").replace(",", "."));
 }
 
 export type MoneyParts = {
@@ -67,6 +72,11 @@ export function MoneyPhraseEditor({
   amountLabel = "Montant en euros",
   className,
 }: EditorProps) {
+  function reformat() {
+    const amount = parseAmountDraft(amountDraft);
+    if (!Number.isNaN(amount)) onAmountChange(formatAmountDraft(amount));
+  }
+
   return (
     <span className={[styles.phrase, className].filter(Boolean).join(" ")}>
       {before}
@@ -76,6 +86,7 @@ export function MoneyPhraseEditor({
         inputMode="decimal"
         value={amountDraft}
         onChange={(e) => onAmountChange(e.target.value)}
+        onBlur={reformat}
         aria-label={amountLabel}
         size={Math.max(amountDraft.length, 3)}
       />

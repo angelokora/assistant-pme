@@ -62,8 +62,10 @@ export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeC
   });
 
   useEffect(() => {
-    if (forceOpen || (location.state as { openComposer?: boolean } | null)?.openComposer) {
+    const state = location.state as { openComposer?: boolean; draft?: string } | null;
+    if (forceOpen || state?.openComposer) {
       setMode("text");
+      if (state?.draft) setDraft(state.draft);
       onHandled?.();
       window.setTimeout(() => inputRef.current?.focus(), 40);
     }

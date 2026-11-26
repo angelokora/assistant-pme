@@ -35,6 +35,8 @@ const ORIGIN_LABEL: Record<FindingOrigin, string> = {
 type Props = Omit<HTMLMotionProps<"button">, "children" | "type"> & {
   findingType: FindingType;
   title: string;
+  /** Remplace le titre texte (ex. termes surlignés dans la recherche). */
+  titleNode?: ReactNode;
   topicLabel: string;
   createdAt: string;
   /** Date de référence pour le relatif (souvent `memory.today`). */
@@ -50,6 +52,7 @@ type Props = Omit<HTMLMotionProps<"button">, "children" | "type"> & {
 export function FindingCard({
   findingType,
   title,
+  titleNode,
   topicLabel,
   createdAt,
   today,
@@ -74,7 +77,7 @@ export function FindingCard({
         <span className={styles.type}>{TYPE_LABEL[findingType]}</span>
         {confidence && <ConfidenceBadge value={confidence} />}
       </div>
-      <p className={styles.title}>{title}</p>
+      <p className={styles.title}>{titleNode ?? title}</p>
       {variant === "expanded" && (summary || children) && (
         <div className={styles.summary}>{summary || children}</div>
       )}

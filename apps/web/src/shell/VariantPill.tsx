@@ -66,8 +66,11 @@ export function VariantPill() {
             { id: "a", title: "A" },
             { id: "b", title: "B" },
           ]}
-          value={findVariant}
-          onChange={(v) => setFindVariant(v as FindVariant)}
+          value={(params.get("find") === "a" || params.get("find") === "b" ? params.get("find") : findVariant) as FindVariant}
+          onChange={(v) => {
+            setFindVariant(v as FindVariant);
+            navigate(`/recherche?find=${v}`);
+          }}
         />
       )}
     </div>

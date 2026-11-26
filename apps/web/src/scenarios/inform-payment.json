@@ -50,7 +50,8 @@
           },
           "text": "Comptoir des Halles : octobre réglé, 4 800 €",
           "confidence": "confirmed",
-          "editable": true
+          "editable": true,
+          "findingId": "f-payment-oct"
         },
         {
           "id": "ip-callout",

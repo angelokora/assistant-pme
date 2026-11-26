@@ -9,6 +9,10 @@ type MemoryState = Memory & {
   apply: (effects: Effect[]) => void;
   /** Correction manuelle d'un finding ou d'une dimension (exigence : pouvoir rectifier la mémoire). */
   patchFinding: (id: string, patch: Partial<Memory["findings"][number]>) => void;
+  /** Retire un finding (et l'attention liée). Renvoie le snapshot pour annuler. */
+  removeFinding: (id: string) => { finding: Memory["findings"][number]; attention: Memory["attention"] } | null;
+  /** Restaure un finding après annulation. */
+  restoreFinding: (snapshot: { finding: Memory["findings"][number]; attention: Memory["attention"] }) => void;
   /** Met à jour les étapes d'un plan (dates, ordre) depuis le bloc editable. */
   patchPlanSteps: (planId: string, steps: Memory["plans"][number]["steps"]) => void;
   /** Coche une étape (live) : faite, prochaine en cours, attention liée retirée. */
@@ -83,6 +87,31 @@ export const useMemory = create<MemoryState>()(
       reset: (preset) => set({ ...clone(PRESETS[preset]), preset }),
       apply: (effects) => set((s) => effects.reduce<Memory>(reduce, s) as MemoryState),
       patchFinding: (id, patch) => set((s) => ({ findings: s.findings.map((f) => (f.id === id ? { ...f, ...patch } : f)) })),
+      removeFinding: (id) => {
+        type Snapshot = { finding: Memory["findings"][number]; attention: Memory["attention"] };
+        let snapshot: Snapshot | null = null;
+        set((s) => {
+          const finding = s.findings.find((f) => f.id === id);
+          if (!finding) return s;
+          const linkedAttention = s.attention.filter((a) => a.findingId === id);
+          snapshot = { finding, attention: linkedAttention };
+          return {
+            findings: s.findings.filter((f) => f.id !== id),
+            attention: s.attention.filter((a) => a.findingId !== id),
+          };
+        });
+        return snapshot;
+      },
+      restoreFinding: (snapshot) =>
+        set((s) => ({
+          findings: s.findings.some((f) => f.id === snapshot.finding.id)
+            ? s.findings
+            : [snapshot.finding, ...s.findings],
+          attention: [
+            ...snapshot.attention.filter((a) => !s.attention.some((x) => x.id === a.id)),
+            ...s.attention,
+          ],
+        })),
       patchPlanSteps: (planId, steps) =>
         set((s) => ({ plans: s.plans.map((p) => (p.id === planId ? { ...p, steps } : p)) })),
       completePlanStep: (planId, stepId) =>

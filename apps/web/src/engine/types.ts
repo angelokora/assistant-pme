@@ -22,6 +22,8 @@ export type NotedBlock = Base<"noted"> & {
   text: string;
   confidence?: Confidence;
   editable?: boolean;
+  /** Finding lié pour la correction (#23). */
+  findingId?: string;
 };
 export type CalloutBlock = Base<"callout"> & { tone: "info" | "memory" | "warning" | "success"; title?: string; text: string };
 export type DimensionsBlock = Base<"dimensions"> & { title?: string; subtitle?: string; compact?: boolean; dimensionIds: string[] };

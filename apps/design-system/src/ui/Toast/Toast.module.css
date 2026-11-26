@@ -30,6 +30,30 @@
   text-wrap: pretty;
 }
 
+.action {
+  flex: none;
+  align-self: center;
+  margin: 0;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: rgb(255 255 255 / 0.12);
+  color: inherit;
+  font: inherit;
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  min-height: 36px;
+}
+
+.action:hover {
+  background: rgb(255 255 255 / 0.18);
+}
+
+.action:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
 .close {
   flex: none;
   width: 28px;

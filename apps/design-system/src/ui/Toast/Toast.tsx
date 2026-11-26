@@ -4,10 +4,22 @@ import { X } from "lucide-react";
 import { spring } from "../../motion/springs";
 import styles from "./Toast.module.css";
 
-type ToastItem = { id: string; message: string };
+type ToastAction = { label: string; onClick: () => void };
+
+type ToastItem = {
+  id: string;
+  message: string;
+  action?: ToastAction;
+};
+
+type ToastOptions = {
+  action?: ToastAction;
+  /** Durée d'affichage (défaut 3800 ms). */
+  durationMs?: number;
+};
 
 type ToastApi = {
-  show: (message: string) => void;
+  show: (message: string, opts?: ToastOptions) => void;
 };
 
 const ToastContext = createContext<ToastApi | null>(null);
@@ -23,12 +35,12 @@ export function useToast() {
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<ToastItem[]>([]);
 
-  const show = useCallback((message: string) => {
+  const show = useCallback((message: string, opts?: ToastOptions) => {
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-    setItems((prev) => [...prev, { id, message }]);
+    setItems((prev) => [...prev, { id, message, action: opts?.action }]);
     window.setTimeout(() => {
       setItems((prev) => prev.filter((t) => t.id !== id));
-    }, 3800);
+    }, opts?.durationMs ?? 3800);
   }, []);
 
   const api = useMemo(() => ({ show }), [show]);
@@ -49,6 +61,18 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               transition={spring.snappy}
             >
               <p>{t.message}</p>
+              {t.action && (
+                <button
+                  type="button"
+                  className={styles.action}
+                  onClick={() => {
+                    t.action?.onClick();
+                    setItems((prev) => prev.filter((x) => x.id !== t.id));
+                  }}
+                >
+                  {t.action.label}
+                </button>
+              )}
               <button
                 type="button"
                 className={styles.close}

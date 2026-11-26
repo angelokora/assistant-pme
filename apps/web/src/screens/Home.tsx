@@ -258,6 +258,7 @@ export function Home() {
               progress={d.progress}
               status={d.status}
               compact
+              onClick={() => navigate(`/entreprise/dimension/${d.id}`)}
             />
           ))}
         </motion.section>

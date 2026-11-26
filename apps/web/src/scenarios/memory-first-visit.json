@@ -18,7 +18,8 @@
       "tone": "icy",
       "progress": 0.05,
       "status": "todo",
-      "summary": "À découvrir"
+      "summary": "À découvrir",
+      "gaps": []
     },
     {
       "id": "finances",
@@ -27,7 +28,8 @@
       "tone": "teal",
       "progress": 0.05,
       "status": "todo",
-      "summary": "À découvrir"
+      "summary": "À découvrir",
+      "gaps": []
     },
     {
       "id": "profile",
@@ -36,7 +38,8 @@
       "tone": "cherry",
       "progress": 0.02,
       "status": "todo",
-      "summary": "À découvrir"
+      "summary": "À découvrir",
+      "gaps": []
     },
     {
       "id": "priorities",
@@ -45,7 +48,8 @@
       "tone": "bronze",
       "progress": 0.02,
       "status": "todo",
-      "summary": "À découvrir"
+      "summary": "À découvrir",
+      "gaps": []
     }
   ],
   "subjects": [],

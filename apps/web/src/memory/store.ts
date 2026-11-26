@@ -171,7 +171,7 @@ export const useMemory = create<MemoryState>()(
     }),
     {
       name: "elea-memory",
-      version: 2,
+      version: 3,
       migrate: () => clone(PRESETS["first-visit"]),
     },
   ),

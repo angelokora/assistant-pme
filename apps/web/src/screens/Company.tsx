@@ -78,6 +78,7 @@ export function Company() {
               summary={d.summary}
               progress={d.progress}
               status={d.status}
+              onClick={() => navigate(`/entreprise/dimension/${d.id}`)}
             />
           ))}
         </div>

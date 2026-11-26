@@ -119,6 +119,13 @@ export type Block =
 
 // ---------- Mémoire ----------
 export type DimensionStatus = "todo" | "active" | "enough";
+/** Question qu'Éléa aimerait poser pour enrichir une dimension. */
+export type DimensionGap = {
+  id: string;
+  question: string;
+  /** Besoin à lancer si l'utilisateur accepte. */
+  scenarioId?: string;
+};
 export type Dimension = {
   id: string;
   label: string;
@@ -127,6 +134,8 @@ export type Dimension = {
   progress: number;
   status: DimensionStatus;
   summary: string;
+  /** Une ou deux questions « Ce qui manque » (données, pas du code). */
+  gaps?: DimensionGap[];
 };
 /** Statut d'un sujet traité (problématique travaillée avec Éléa). */
 export type SubjectStatus = "active" | "paused" | "resolved";

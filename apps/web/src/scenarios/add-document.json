@@ -1,0 +1,454 @@
+{
+  "id": "add-document",
+  "intent": "inform",
+  "title": "Ajouter un document",
+  "start": "upload",
+  "steps": {
+    "upload": {
+      "delayMs": 400,
+      "blocks": [
+        {
+          "id": "ad-upload",
+          "type": "upload",
+          "title": "Déposez votre document",
+          "why": "Une photo ou un PDF suffit. Je le lis, je note ce qui compte et je le range avec vos autres documents.",
+          "accept": [
+            "pdf",
+            "image"
+          ],
+          "examples": [
+            "Facture",
+            "Devis",
+            "Contrat",
+            "Relevé bancaire"
+          ],
+          "skipLabel": "Plus tard"
+        }
+      ],
+      "await": {
+        "kind": "upload",
+        "blockId": "ad-upload",
+        "onUpload": "read",
+        "onSkip": "later"
+      }
+    },
+    "later": {
+      "delayMs": 500,
+      "blocks": [
+        {
+          "id": "ad-later-lead",
+          "type": "lead",
+          "text": "Pas de souci. Vous pouvez ajouter un document à tout moment depuis la page Documents."
+        },
+        {
+          "id": "ad-later-sugg",
+          "type": "suggestions",
+          "items": [
+            {
+              "id": "see-doc",
+              "label": "Voir mes documents",
+              "action": {
+                "kind": "route",
+                "target": "/documents"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "read": {
+      "delayMs": 500,
+      "blocks": [
+        {
+          "id": "ad-analysis",
+          "type": "analysis",
+          "title": "Je lis votre document",
+          "steps": [
+            {
+              "id": "ad-1",
+              "label": "Je reconnais le type de document…",
+              "durationMs": 1100
+            },
+            {
+              "id": "ad-2",
+              "label": "Je repère les montants et les échéances…",
+              "durationMs": 1400
+            }
+          ]
+        }
+      ],
+      "next": "noted"
+    },
+    "noted": {
+      "delayMs": 300,
+      "effects": [
+        {
+          "kind": "document",
+          "document": {
+            "id": "d-devis-forges",
+            "title": "Devis honoraires Résidence Les Forges.pdf",
+            "kind": "devis",
+            "origin": "import",
+            "addedAt": "2026-12-16T11:20:00",
+            "findingIds": [
+              "f-devis-forges",
+              "f-acompte-forges"
+            ],
+            "summary": "Devis d'honoraires pour les lots CVC et plomberie de la Résidence Les Forges : 24 800 € HT, acompte de 30 % à la commande."
+          }
+        },
+        {
+          "kind": "finding",
+          "finding": {
+            "id": "f-devis-forges",
+            "type": "document",
+            "title": "Devis Résidence Les Forges : 24 800 € HT d'honoraires",
+            "summary": "Lots CVC et plomberie, offre valable trois mois. Lue dans le devis que vous venez de déposer.",
+            "createdAt": "2026-12-16T11:21:00",
+            "origin": "document",
+            "confidence": "confirmed",
+            "scenarioId": "add-document",
+            "dimensionId": "activity"
+          }
+        },
+        {
+          "kind": "finding",
+          "finding": {
+            "id": "f-acompte-forges",
+            "type": "fact",
+            "title": "Acompte de 30 % à la commande : 7 440 €",
+            "summary": "Prévu au devis de la Résidence Les Forges, à facturer dès la signature.",
+            "createdAt": "2026-12-16T11:21:00",
+            "origin": "document",
+            "confidence": "confirmed",
+            "scenarioId": "add-document",
+            "dimensionId": "finances"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "ad-extraction",
+          "type": "extraction",
+          "title": "J'ai lu votre devis",
+          "items": [
+            {
+              "id": "adx-1",
+              "label": "Honoraires",
+              "value": "24 800 € HT",
+              "source": "Devis honoraires Résidence Les Forges",
+              "confidence": "confirmed"
+            },
+            {
+              "id": "adx-2",
+              "label": "Missions",
+              "value": "Lots CVC et plomberie",
+              "source": "Devis, page 1",
+              "confidence": "confirmed"
+            },
+            {
+              "id": "adx-3",
+              "label": "Acompte à la commande",
+              "value": "7 440 €",
+              "source": "Devis, conditions de paiement",
+              "confidence": "confirmed"
+            }
+          ],
+          "total": {
+            "label": "Honoraires du devis",
+            "value": "24 800 € HT"
+          }
+        },
+        {
+          "id": "ad-noted-act",
+          "type": "noted",
+          "target": {
+            "kind": "dimension",
+            "id": "activity",
+            "label": "Mon activité"
+          },
+          "text": "Devis Résidence Les Forges : 24 800 € HT",
+          "confidence": "confirmed",
+          "editable": true,
+          "findingId": "f-devis-forges"
+        },
+        {
+          "id": "ad-noted-fin",
+          "type": "noted",
+          "target": {
+            "kind": "dimension",
+            "id": "finances",
+            "label": "Mes finances"
+          },
+          "text": "Acompte de 30 % à la commande : 7 440 €",
+          "confidence": "confirmed",
+          "editable": true,
+          "findingId": "f-acompte-forges"
+        }
+      ],
+      "next": "attach"
+    },
+    "attach": {
+      "delayMs": 600,
+      "blocks": [
+        {
+          "id": "ad-choice",
+          "type": "choice",
+          "eyebrow": "Rangement",
+          "title": "Voulez-vous le rattacher à un sujet ?",
+          "subtitle": "Vous le retrouverez dans la page du sujet, avec ses constats.",
+          "options": [
+            {
+              "id": "rentabilite-affaire",
+              "title": "Rentabilité par affaire",
+              "body": "Pour suivre la marge de cette affaire dès l'offre.",
+              "recommended": true
+            },
+            {
+              "id": "retards-collectivites",
+              "title": "Retards de paiement des collectivités",
+              "body": "Si l'acompte doit être suivi comme une créance."
+            },
+            {
+              "id": "sous-traiter-structure",
+              "title": "Sous-traiter ou recruter en structure"
+            },
+            {
+              "id": "none",
+              "title": "Pas pour l'instant",
+              "body": "Il reste dans vos documents, sans sujet."
+            }
+          ],
+          "confirmLabel": "Valider",
+          "doneLabel": "Rattachement"
+        }
+      ],
+      "await": {
+        "kind": "choice",
+        "blockId": "ad-choice",
+        "routes": {
+          "rentabilite-affaire": "attach-rentabilite-affaire",
+          "retards-collectivites": "attach-retards-collectivites",
+          "sous-traiter-structure": "attach-sous-traiter-structure",
+          "none": "attach-none"
+        }
+      }
+    },
+    "attach-rentabilite-affaire": {
+      "delayMs": 600,
+      "effects": [
+        {
+          "kind": "update-document",
+          "documentId": "d-devis-forges",
+          "patch": {
+            "subjectId": "rentabilite-affaire"
+          }
+        },
+        {
+          "kind": "update-finding",
+          "findingId": "f-devis-forges",
+          "patch": {
+            "subjectId": "rentabilite-affaire"
+          }
+        },
+        {
+          "kind": "update-finding",
+          "findingId": "f-acompte-forges",
+          "patch": {
+            "subjectId": "rentabilite-affaire"
+          }
+        },
+        {
+          "kind": "update-subject",
+          "subjectId": "rentabilite-affaire",
+          "patch": {
+            "lastExchangeAt": "2026-12-16T11:30:00"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "ad-rentabilite-affaire-callout",
+          "type": "callout",
+          "tone": "memory",
+          "title": "Rangé dans « Rentabilité par affaire »",
+          "text": "Le devis et ses deux constats rejoignent ce sujet. Je comparerai les honoraires aux heures passées."
+        },
+        {
+          "id": "ad-rentabilite-affaire-sugg",
+          "type": "suggestions",
+          "items": [
+            {
+              "id": "see-doc",
+              "label": "Voir mes documents",
+              "action": {
+                "kind": "route",
+                "target": "/documents"
+              }
+            },
+            {
+              "id": "see-subject",
+              "label": "Ouvrir « Rentabilité par affaire »",
+              "action": {
+                "kind": "route",
+                "target": "/sujet/rentabilite-affaire"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "attach-retards-collectivites": {
+      "delayMs": 600,
+      "effects": [
+        {
+          "kind": "update-document",
+          "documentId": "d-devis-forges",
+          "patch": {
+            "subjectId": "retards-collectivites"
+          }
+        },
+        {
+          "kind": "update-finding",
+          "findingId": "f-devis-forges",
+          "patch": {
+            "subjectId": "retards-collectivites"
+          }
+        },
+        {
+          "kind": "update-finding",
+          "findingId": "f-acompte-forges",
+          "patch": {
+            "subjectId": "retards-collectivites"
+          }
+        },
+        {
+          "kind": "update-subject",
+          "subjectId": "retards-collectivites",
+          "patch": {
+            "lastExchangeAt": "2026-12-16T11:30:00"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "ad-retards-collectivites-callout",
+          "type": "callout",
+          "tone": "memory",
+          "title": "Rangé dans « Retards de paiement des collectivités »",
+          "text": "Le devis et ses deux constats rejoignent ce sujet. Je suivrai l'acompte avec les autres sommes à encaisser."
+        },
+        {
+          "id": "ad-retards-collectivites-sugg",
+          "type": "suggestions",
+          "items": [
+            {
+              "id": "see-doc",
+              "label": "Voir mes documents",
+              "action": {
+                "kind": "route",
+                "target": "/documents"
+              }
+            },
+            {
+              "id": "see-subject",
+              "label": "Ouvrir « Retards de paiement des collectivités »",
+              "action": {
+                "kind": "route",
+                "target": "/sujet/retards-collectivites"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "attach-sous-traiter-structure": {
+      "delayMs": 600,
+      "effects": [
+        {
+          "kind": "update-document",
+          "documentId": "d-devis-forges",
+          "patch": {
+            "subjectId": "sous-traiter-structure"
+          }
+        },
+        {
+          "kind": "update-finding",
+          "findingId": "f-devis-forges",
+          "patch": {
+            "subjectId": "sous-traiter-structure"
+          }
+        },
+        {
+          "kind": "update-finding",
+          "findingId": "f-acompte-forges",
+          "patch": {
+            "subjectId": "sous-traiter-structure"
+          }
+        },
+        {
+          "kind": "update-subject",
+          "subjectId": "sous-traiter-structure",
+          "patch": {
+            "lastExchangeAt": "2026-12-16T11:30:00"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "ad-sous-traiter-structure-callout",
+          "type": "callout",
+          "tone": "memory",
+          "title": "Rangé dans « Sous-traiter ou recruter en structure »",
+          "text": "Le devis et ses deux constats rejoignent ce sujet. Il servira de repère pour une future affaire avec de la structure."
+        },
+        {
+          "id": "ad-sous-traiter-structure-sugg",
+          "type": "suggestions",
+          "items": [
+            {
+              "id": "see-doc",
+              "label": "Voir mes documents",
+              "action": {
+                "kind": "route",
+                "target": "/documents"
+              }
+            },
+            {
+              "id": "see-subject",
+              "label": "Ouvrir « Sous-traiter ou recruter en structure »",
+              "action": {
+                "kind": "route",
+                "target": "/sujet/sous-traiter-structure"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "attach-none": {
+      "delayMs": 500,
+      "blocks": [
+        {
+          "id": "ad-none-lead",
+          "type": "lead",
+          "text": "C'est rangé dans vos documents. Vous pourrez le rattacher à un sujet quand vous voudrez."
+        },
+        {
+          "id": "ad-none-sugg",
+          "type": "suggestions",
+          "items": [
+            {
+              "id": "see-doc",
+              "label": "Voir mes documents",
+              "action": {
+                "kind": "route",
+                "target": "/documents"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

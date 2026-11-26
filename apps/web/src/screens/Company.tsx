@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnimatePresence, animate, motion } from "motion/react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, FileText } from "lucide-react";
 import { DimensionCard, blockItem, blockList, formatDate } from "@elea/ds";
 import { Icon } from "../blocks/icons";
 import { useMemory } from "../memory/store";
 import { latestFindingDate } from "./findings";
+import { sortDocumentsRecent } from "./documentLabels";
 import styles from "./Company.module.css";
 
 function AnimatedCount({ value }: { value: number }) {
@@ -33,6 +34,7 @@ export function Company() {
   const subjects = useMemory((s) => s.subjects);
   const findings = useMemory((s) => s.findings);
   const plans = useMemory((s) => s.plans);
+  const documents = useMemory((s) => s.documents);
 
   return (
     <motion.main className={styles.page} variants={blockList} initial="hidden" animate="shown">
@@ -126,6 +128,28 @@ export function Company() {
         )}
       </motion.section>
 
+      <motion.section variants={blockItem} aria-labelledby="documents-title">
+        <h2 id="documents-title" className={styles.sectionTitle}>
+          Documents
+        </h2>
+        <button type="button" className={styles.topicRow} onClick={() => navigate("/documents")}>
+          <span className={styles.topicIcon} aria-hidden>
+            <FileText size={20} strokeWidth={1.75} />
+          </span>
+          <span className={styles.topicBody}>
+            <span className={styles.topicLabel}>Vos documents</span>
+            <span className={styles.topicMeta}>
+              {documents.length === 0
+                ? "Factures, devis, contrats : déposez-les, je les lis"
+                : `Dernier ajout ${formatDate(sortDocumentsRecent(documents)[0]!.addedAt, "short")}`}
+            </span>
+          </span>
+          <span className={styles.topicCount} aria-label={`${documents.length} documents`}>
+            <AnimatedCount value={documents.length} />
+          </span>
+          <ChevronRight size={18} strokeWidth={1.75} aria-hidden className={styles.chevron} />
+        </button>
+      </motion.section>
     </motion.main>
   );
 }

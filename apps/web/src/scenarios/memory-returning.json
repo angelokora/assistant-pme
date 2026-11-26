@@ -270,6 +270,110 @@
       "origin": "drive",
       "confidence": "confirmed",
       "dimensionId": "finances"
+    },
+    {
+      "id": "f-forges",
+      "type": "document",
+      "title": "Contrat Résidence Les Forges : 41 200 € HT d'honoraires",
+      "summary": "Mission CVC et plomberie pour un promoteur, paiement à 45 jours. Contrat de maîtrise d'œuvre lu dans le dossier « Affaires 2026 ».",
+      "createdAt": "2026-11-20T14:35:00",
+      "origin": "drive",
+      "confidence": "confirmed",
+      "dimensionId": "activity"
+    },
+    {
+      "id": "f-gaudin",
+      "type": "fact",
+      "title": "Sous-traitance structure : 9 000 € facturés par l'Atelier Gaudin",
+      "summary": "Facture reçue le 10 décembre pour le calcul de structure de l'affaire Bouguenais. C'est l'ordre de grandeur retenu pour comparer avec un recrutement.",
+      "createdAt": "2026-12-10T09:25:00",
+      "origin": "gmail",
+      "confidence": "confirmed",
+      "dimensionId": "activity",
+      "subjectId": "sous-traiter-structure"
+    }
+  ],
+  "documents": [
+    {
+      "id": "d-situation-3",
+      "title": "Situation n° 3 école Jean-Jaurès.pdf",
+      "kind": "facture",
+      "origin": "gmail",
+      "addedAt": "2026-11-25T10:46:00",
+      "subjectId": "retards-collectivites",
+      "findingIds": [
+        "f-reze"
+      ],
+      "summary": "Situation de travaux n° 3 adressée à la mairie de Rezé : 18 400 €, échue depuis le 8 novembre."
+    },
+    {
+      "id": "d-contrat-forges",
+      "title": "Contrat de maîtrise d'œuvre Résidence Les Forges.pdf",
+      "kind": "contrat",
+      "origin": "drive",
+      "addedAt": "2026-11-20T14:30:00",
+      "findingIds": [
+        "f-forges"
+      ],
+      "summary": "Contrat de maîtrise d'œuvre pour un promoteur : lots CVC et plomberie, 41 200 € HT, paiement à 45 jours."
+    },
+    {
+      "id": "d-releve-novembre",
+      "title": "Relevé bancaire novembre.pdf",
+      "kind": "releve",
+      "origin": "import",
+      "addedAt": "2026-12-01T20:25:00",
+      "subjectId": "retards-collectivites",
+      "findingIds": [
+        "f-collectivites-dues"
+      ],
+      "summary": "Relevé du compte courant, rapproché des situations émises aux collectivités."
+    },
+    {
+      "id": "d-gaudin",
+      "title": "Facture sous-traitance structure Atelier Gaudin.pdf",
+      "kind": "facture",
+      "origin": "gmail",
+      "addedAt": "2026-12-10T09:20:00",
+      "subjectId": "sous-traiter-structure",
+      "findingIds": [
+        "f-gaudin"
+      ],
+      "summary": "Facture de 9 000 € pour le calcul de structure de l'affaire Bouguenais."
+    },
+    {
+      "id": "d-heures-octobre",
+      "title": "Tableau des heures octobre.xlsx",
+      "kind": "heures",
+      "origin": "drive",
+      "addedAt": "2026-12-01T20:05:00",
+      "subjectId": "rentabilite-affaire",
+      "findingIds": [
+        "f-heures"
+      ],
+      "summary": "Heures passées par affaire et par personne en octobre, base du calcul de rentabilité."
+    },
+    {
+      "id": "d-bail",
+      "title": "Bail bureaux quai de la Fosse.pdf",
+      "kind": "contrat",
+      "origin": "drive",
+      "addedAt": "2026-11-28T08:40:00",
+      "findingIds": [
+        "f-bail"
+      ],
+      "summary": "Bail commercial des bureaux de Nantes : loyer de 4 800 € par mois."
+    },
+    {
+      "id": "d-rc-pro",
+      "title": "Contrat assurance RC pro.pdf",
+      "kind": "contrat",
+      "origin": "drive",
+      "addedAt": "2026-11-28T08:35:00",
+      "findingIds": [
+        "f-rc-pro"
+      ],
+      "summary": "Contrat de responsabilité civile professionnelle, reconduction tacite au 1er février 2027."
     }
   ],
   "sources": [

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion } from "motion/react";
 import { ArrowLeft, ChevronRight, MessageCircleQuestion, Search } from "lucide-react";
-import { Button, Elephant, Gauge, Sheet, blockItem, blockList, formatDate } from "@elea/ds";
+import { Button, DocumentCard, Elephant, Gauge, Sheet, blockItem, blockList, formatDate, useToast } from "@elea/ds";
 import type { SubjectStatus } from "../engine/types";
 import { SCENARIOS } from "../engine/scenarios";
 import { Icon } from "../blocks/icons";
@@ -12,6 +12,7 @@ import { useComposerContext } from "../shell/composerContext";
 import { HomeComposer } from "./HomeComposer";
 import { TopicFindings } from "./TopicFindings";
 import { findingMatchesQuery } from "./searchText";
+import { DOC_KIND_LABEL, documentFindingCount, documentMatchesQuery, sortDocumentsRecent } from "./documentLabels";
 import styles from "./Topic.module.css";
 
 const STATUS_LABEL: Record<SubjectStatus, string> = {
@@ -37,6 +38,9 @@ export function Topic() {
   const findings = useMemory((s) => s.findings);
   const plans = useMemory((s) => s.plans);
   const patchSubject = useMemory((s) => s.patchSubject);
+  const documents = useMemory((s) => s.documents);
+  const patchDocument = useMemory((s) => s.patchDocument);
+  const toast = useToast();
   const subject = subjects.find((t) => t.id === subjectId);
   const desktop = useMediaQuery("(min-width: 1024px)");
 
@@ -52,6 +56,15 @@ export function Topic() {
     () => plans.filter((p) => p.subjectId === subjectId || subject?.planIds.includes(p.id)),
     [plans, subjectId, subject],
   );
+
+  const subjectDocuments = useMemo(
+    () =>
+      sortDocumentsRecent(documents.filter((d) => d.subjectId === subjectId)).filter((d) =>
+        documentMatchesQuery(d, query),
+      ),
+    [documents, subjectId, query],
+  );
+  const attachable = useMemo(() => sortDocumentsRecent(documents.filter((d) => !d.subjectId)), [documents]);
 
   const exchanges = useMemo(() => {
     if (!subject) return [];
@@ -81,6 +94,19 @@ export function Topic() {
         <p className={styles.empty}>Ce sujet traité n'existe pas dans la mémoire.</p>
       </main>
     );
+  }
+
+  function attachDocument(documentId: string) {
+    const doc = documents.find((d) => d.id === documentId);
+    if (!doc) return;
+    patchDocument(documentId, { subjectId: subject!.id });
+    toast.show(`«\u00a0${doc.title}\u00a0» est rattaché à ce sujet.`);
+  }
+
+  function detachDocument(documentId: string) {
+    const doc = documents.find((d) => d.id === documentId);
+    patchDocument(documentId, { subjectId: undefined });
+    if (doc) toast.show(`«\u00a0${doc.title}\u00a0» n'est plus rattaché à ce sujet.`);
   }
 
   function askAboutSubject() {
@@ -276,9 +302,51 @@ export function Topic() {
         <h2 id="docs-title" className={styles.sectionTitle}>
           Documents
         </h2>
-        <p className={["voice", styles.emptyVoice].join(" ")}>
-          Aucun document rattaché pour l'instant.
-        </p>
+        {subjectDocuments.length === 0 ? (
+          <p className={["voice", styles.emptyVoice].join(" ")}>
+            {query.trim() ? "Aucun document ne correspond." : "Aucun document rattaché pour l'instant."}
+          </p>
+        ) : (
+          <ul className={styles.docList}>
+            {subjectDocuments.map((d) => (
+              <li key={d.id}>
+                <DocumentCard
+                  variant="compact"
+                  title={d.title}
+                  kindLabel={DOC_KIND_LABEL[d.kind]}
+                  addedAt={d.addedAt}
+                  origin={d.origin}
+                  subjectLabel={subject.title}
+                  findingCount={documentFindingCount(d, findings)}
+                  onOpen={() => navigate(`/documents?doc=${d.id}`)}
+                  actions={
+                    <Button size="sm" variant="secondary" onClick={() => detachDocument(d.id)}>
+                      Détacher
+                    </Button>
+                  }
+                />
+              </li>
+            ))}
+          </ul>
+        )}
+        {attachable.length > 0 && (
+          <label className={styles.attachField}>
+            <span>Rattacher un document</span>
+            <select
+              className={styles.statusSelect}
+              value=""
+              aria-label="Rattacher un document à ce sujet"
+              onChange={(e) => e.target.value && attachDocument(e.target.value)}
+            >
+              <option value="">Choisir un document…</option>
+              {attachable.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.title}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
       </motion.section>
     </motion.main>
   );

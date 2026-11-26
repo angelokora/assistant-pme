@@ -2,171 +2,131 @@
 
 Source de vérité pour toute interface du prototype. Les valeurs sont dans `src/styles/tokens.css` et `src/motion/springs.ts`. Un composant ou un motif absent d'ici doit y être ajouté **avant** d'être utilisé dans une fonctionnalité (voir `tickets/README.md`, section Design system).
 
-## 1. Direction : l'atelier vivant
+## 1. Direction : deux thèmes, une voix
 
 Éléa n'est pas un tableau de bord ni un chat. C'est le **carnet d'un conseiller** : chaleureux, posé, qui écoute, note et range sous les yeux du dirigeant.
 
+Le thème par défaut est **Vivant** (néo-brutal doux) : fond jaune franc, contours d'encre, ombres dures, aplats pleins, Bricolage Grotesque. L'ancien rendu reste disponible sous le nom **Classique**.
+
 Cinq principes :
 
-1. **Une voix, pas une machine.** Les questions et les titres d'Éléa sont en serif (Fraunces), comme une parole. L'interface autour est en sans-serif discret.
-2. **La mémoire se voit.** Chaque fois qu'Éléa retient quelque chose, un mouvement le montre (« Noté dans… » qui rejoint sa case, jauge qui se remplit). C'est la promesse de l'éléphant.
-3. **Un geste, une animation, une raison.** Aucune animation décorative. Chacune dit : j'écoute, je réfléchis, j'ai noté, c'est rangé, c'est à vous.
-4. **Le papier, pas l'écran.** Fond papier chaud, encre profonde, cartes blanches légèrement levées. Pas de dégradés criards, pas de verre dépoli, pas de violet générique.
-5. **Calme sur mobile, dense sur ordinateur.** Une chose à la fois sur téléphone ; sur ordinateur, le contexte (sujets, détail) reste visible autour du besoin.
+1. **Une voix, pas une machine.** Les questions et titres d'Éléa utilisent `--font-voice` (Bricolage 800 en Vivant, Fraunces en Classique).
+2. **La mémoire se voit.** Chaque fois qu'Éléa retient quelque chose, un mouvement le montre.
+3. **Un geste, une animation, une raison.** Aucune animation décorative.
+4. **Tokens uniquement.** Le thème passe par `data-theme` sur `<html>`. Aucun composant ne teste le thème dans son code.
+5. **Calme sur mobile, dense sur ordinateur.**
 
-À éviter : Inter, les dégradés violets, les cartes à bordure colorée sur un seul côté, les emojis dans l'interface, les ombres grises froides, les rayons identiques partout, les textes centrés en série.
+À éviter : Inter, les dégradés violets, les ombres grises froides, les emojis dans l'interface, brancher un composant sur `data-theme`.
 
-## 2. Couleurs
+## 2. Thèmes
 
-### Rôles
+Pilotage : `document.documentElement.dataset.theme = "vivant" | "classic"`.
 
-| Rôle | Token | Couleur | Usage |
-| --- | --- | --- | --- |
-| Texte | `--color-text` | Ink Black `#011627` | Tout le texte principal |
-| Texte secondaire | `--color-text-muted` | `#5b6875` | Sous-titres, métadonnées |
-| Fond | `--color-bg` | Papier `#fbf8f3` | Fond de l'app |
-| Surface | `--color-surface` | Blanc | Cartes, feuilles |
-| Action | `--color-action` | Teal `#087e8b` | Boutons principaux, liens, progrès, validé |
-| Présence | `--color-presence` | Cherry Rose `#a30b37` | L'orbe, la voix, l'écoute. **Jamais** pour un bouton standard |
-| Mémoire | `--color-memory` | Light Bronze `#dda77b` | « Noté dans… », ce qu'Éléa retient. **Fonds uniquement** |
-| Information | `--color-info` | Icy Blue `#b1ddf1` | Sources, documents, informations. **Fonds uniquement** |
+| Token clé | Vivant (défaut) | Classique |
+| --- | --- | --- |
+| `--color-bg` | `#ffe066` | Papier `#fbf8f3` |
+| `--color-surface` | Blanc | Blanc |
+| `--color-border` | Encre `#011627` | `#e6e1d8` |
+| `--border-width` | `2px` | `1px` |
+| `--border-width-strong` | `2px` | `1.5px` |
+| `--shadow-card` | `3px 3px 0` encre | ombre douce actuelle |
+| `--shadow-raised` | `4px 4px 0` encre | ombre douce niveau 2 |
+| `--press-shift` / `--press-shadow` | `2px` / ombre réduite | `0` / inchangé |
+| `--font-voice` / `--font-ui` | Bricolage Grotesque | Fraunces / Instrument Sans |
+| `--radius-md` | `12px` | `14px` |
+| Softs (action, mémoire…) | aplats pleins | lavis pâles |
 
-### Contrastes vérifiés (WCAG 2.1, AA = 4,5 pour le texte courant, 3 pour le grand texte et les icônes)
+### Contrastes AA (WCAG 2.1)
+
+Texte courant ≥ 4,5 ; grand texte / icônes ≥ 3.
+
+#### Vivant
+
+| Paire | Contraste | Verdict |
+| --- | --- | --- |
+| Encre `#011627` sur jaune `#ffe066` | ≈ 12,6 | AAA |
+| Texte secondaire `#3d4a57` sur jaune | ≈ 7,0 | AAA |
+| Blanc sur Teal `#087e8b` | 4,8 | AA |
+| Blanc sur Cherry `#a30b37` | ≈ 7,2 | AAA |
+| Encre sur Icy `#b1ddf1` | 12,6 | AAA |
+| Encre sur Bronze `#dda77b` | 8,6 | AAA |
+| Teal `#087e8b` sur jaune (lien) | ≈ 4,6 | AA |
+| Bronze ou Icy en texte seul sur jaune | < 3 | **Interdit** |
+
+#### Classique
 
 | Paire | Contraste | Verdict |
 | --- | --- | --- |
 | Ink sur papier | 17,3 | AAA |
 | Texte secondaire `#5b6875` sur papier | 5,4 | AA |
-| Texte secondaire sur les fonds teintés | 4,8 à 5,1 | AA |
-| Blanc sur Teal (bouton) | 4,8 | AA |
-| Teal `#087e8b` sur papier | 4,5 | AA (limite) : préférer `--teal-600` pour le petit texte |
-| `--teal-600` `#066a75` sur fonds teintés | 5,3 à 6,0 | AA |
+| Blanc sur Teal | 4,8 | AA |
+| Teal `#087e8b` sur papier | 4,5 | AA (limite) : préférer `--teal-600` |
 | Cherry sur papier | 7,5 | AAA |
-| `--bronze-700` `#8a5a2b` sur fonds teintés | 4,9 à 5,5 | AA |
-| Ink sur Bronze | 8,6 | AAA |
-| Ink sur Icy | 12,6 | AAA |
+| Ink sur Bronze / Icy | 8,6 / 12,6 | AAA |
 | Bronze ou Icy en texte sur clair | 1,5 à 2,1 | **Interdit** |
-| Cherry sur Teal | 1,6 | **Interdit** (ne jamais juxtaposer) |
 
-### Règles
+### Règles couleur
 
-- Bronze et Icy ne portent jamais de texte : ce sont des surfaces. Le texte posé dessus est Ink ou leur version 700.
-- Le rouge Cherry évoque une perte dans un contexte de gestion. Il est réservé à la présence d'Éléa. Les erreurs utilisent `--color-danger` **avec une icône et un texte explicite**, jamais la couleur seule.
-- Une donnée chiffrée positive ou négative ne se signale jamais par la couleur seule (flèche, signe, libellé).
+- Bronze et Icy ne portent jamais de texte « décor » : utiliser `--color-on-memory` / `--color-on-info`.
+- Cherry reste réservé à la présence d'Éléa. Sur aplat Cherry (Vivant), texte `--color-on-presence` (blanc).
+- Une donnée chiffrée ne se signale jamais par la couleur seule.
 
 ## 3. Typographie
 
-| Usage | Police | Taille | Graisse |
-| --- | --- | --- | --- |
-| Question d'Éléa | Fraunces | `--text-2xl` (28) mobile, 32 à 36 desktop | 500, `--voice-variation` |
-| Titre d'écran | Fraunces | `--text-xl` à `--text-3xl` | 500 |
-| Phrase d'Éléa (`lead`) | Instrument Sans | `--text-md` | 500, couleur muted |
-| Titre de carte | Instrument Sans | `--text-lg` | 600 |
-| Texte courant | Instrument Sans | `--text-md` | 400 |
-| Métadonnées, eyebrow | Instrument Sans | `--text-xs`, capitales, `--tracking-eyebrow` | 600 |
-| Montants | Instrument Sans | selon contexte | `font-variant-numeric: tabular-nums` |
-
-- Les montants s'écrivent à la française : `58 000 €` (espace fine insécable avant €, espace insécable des milliers).
-- Pas plus de deux niveaux de titre dans un même bloc.
+| Usage | Vivant | Classique |
+| --- | --- | --- |
+| Question / titre (`voice`) | Bricolage 800 | Fraunces 500 + `--voice-variation` |
+| Texte courant | Bricolage 400–600 | Instrument Sans 400–600 |
+| Montants | `tabular-nums`, espaces fines FR | idem |
 
 ## 4. Espace, forme, profondeur
 
-- Grille de 4 px. Marges d'écran : 20 px mobile, 32 px tablette, 40 px desktop.
-- Rayons : `--radius-md` pour les cartes, `--radius-lg` pour les feuilles, `--radius-full` pour les puces et boutons ronds. Les cartes imbriquées ont un rayon plus petit que leur parent.
-- Profondeur : le papier est au niveau 0, les cartes au niveau 1 (`--shadow-1` + bordure `--color-border`), les éléments flottants (composer, feuilles) au niveau 3.
-- Cible tactile minimale : 44 × 44 px.
+- Grille de 4 px. Marges : 20 / 32 / 40 px.
+- Contours : `inset 0 0 0 var(--border-width) …` ou `border: var(--border-width) solid …`.
+- Ombres : `var(--shadow-card)` / `var(--shadow-raised)`. Vivant : dures, sans flou.
+- Appui : `translate(var(--press-shift), var(--press-shift))` + `var(--press-shadow)`.
+- Progression : jauge à segments (`--gauge-gap`, `--gauge-seg-border`) : gap 0 en Classique (rendu continu), segments visibles en Vivant.
+- Cible tactile : 44 × 44 px.
 
 ## 5. Mouvement
 
-L'interface doit être **vivante** : c'est une exigence produit. Les animations restent actives même si le système demande de les réduire ; le panneau démo permet de les couper.
+L'interface doit être **vivante**. Les animations restent actives même si le système demande de les réduire ; le panneau démo permet de les couper.
 
 | Moment | Mouvement | Ressort |
 | --- | --- | --- |
-| Entrée des blocs d'un tour | Montée de 14 px + fondu + flou qui se dissipe, cascade de 60 ms | `spring.gentle` |
-| Éléa réfléchit | L'orbe se contracte et tourne lentement, halo qui pulse | CSS, `--dur-breath` |
-| Éléa écoute | L'orbe s'étire selon le volume, waveform sous la transcription | motion, valeurs simulées |
-| Mot transcrit | Chaque mot apparaît avec un fondu de 120 ms | CSS |
-| « Noté dans… » | L'étiquette apparaît, puis vole vers sa carte de dimension (`layoutId`) ; la jauge se remplit ; la carte « pulse » une fois | `spring.travel`, `spring.gauge` |
-| Étape d'analyse | Spinner en arc, puis coche qui se dessine (`pathLength`) | `spring.snappy` |
-| Choix d'une option | La carte s'élève, le bouton radio se remplit, les autres s'estompent légèrement | `spring.snappy` |
-| Ouverture d'un finding | La carte s'agrandit en panneau de détail (`layoutId`) | `spring.sheet` |
-| Bascule voix / texte | Le bouton micro se transforme en champ texte (morphing de forme) | `spring.gentle` |
-| Pression | Échelle 0,97 | `spring.snappy` |
+| Entrée des blocs | Montée + fondu, cascade 60 ms | `spring.gentle` |
+| Éléa écoute / réfléchit / parle | États de la mascotte (#33) ou orbe (Classique, dépréciée) | CSS |
+| « Noté dans… » | Vol vers la dimension | `spring.travel` |
+| Appui | Enfoncement vers l'ombre | tokens `--press-*` |
 
-Règles : jamais plus de 450 ms pour une transition d'interface ; aucune animation en boucle hors de l'orbe ; rien ne bouge pendant la lecture d'un texte.
+Règles : jamais plus de 450 ms pour une transition d'interface ; rien ne bouge pendant la lecture d'un texte.
 
-## 6. Signature : l'orbe de présence
+## 6. Signature : présence d'Éléa
 
-L'orbe est le seul élément qui représente Éléa. Dégradé `--gradient-presence`, forme organique légèrement irrégulière (pas un cercle parfait), ombre `--shadow-presence`.
-
-| État | Comportement |
-| --- | --- |
-| `idle` | Respiration lente (échelle 1 à 1,04, 3,2 s) |
-| `listening` | Déformation réactive au volume, halo Cherry doux |
-| `thinking` | Contraction, rotation lente du dégradé |
-| `speaking` | Pulsations courtes au rythme du texte qui apparaît |
-| `done` | Un battement, puis retour au repos |
-
-Tailles : 20 px (devant une phrase d'Éléa), 56 px (composer), 96 px (accueil, analyse).
+En attendant #33 (mascotte), l'orbe reste le marqueur de présence. Après #33, le composant `Elephant` la remplace partout ; `Orb` reste dans le DS, marqué déprécié.
 
 ## 7. Composants
 
-Chaque composant vit dans `src/ui/{Nom}/` avec `Nom.tsx`, `Nom.module.css` et une entrée dans la vitrine. Liste de départ :
+Chaque composant vit dans `src/ui/{Nom}/` avec `Nom.tsx`, `Nom.module.css` et une entrée dans la vitrine. La vitrine permet de basculer Vivant / Classique.
 
-| Composant | Rôle | États |
-| --- | --- | --- |
-| `Orb` | Présence d'Éléa | idle, listening, thinking, speaking, done |
-| `Button` | Action | primary (teal), secondary (contour), ghost, danger ; tailles sm, md, lg ; loading |
-| `IconButton` | Action icône seule | default, active ; libellé accessible obligatoire |
-| `Chip` | Réponse rapide, filtre | default, selected, disabled |
-| `Card` | Surface de base | default, interactive (hover, press), selected |
-| `Gauge` | Jauge de progression | todo, active, enough |
-| `DimensionCard` | Carte de dimension (icône, titre, résumé, jauge, statut) | todo, active, enough ; compact |
-| `NotedTag` | « Noté dans… » + Modifier | default, editing |
-| `ChoiceCard` | Option sélectionnable avec badge recommandé | default, selected, recommended |
-| `DateField` | Sélecteur de date (français, clavier) | fermé, ouvert |
-| `StepList` | Étapes (analyse, plan) | pending, active, done |
-| `Sheet` | Feuille du bas (mobile), panneau latéral (desktop) | ouverte, fermée |
-| `Waveform` | Visualisation de la voix | active, idle |
-| `TranscriptText` | Texte transcrit mot à mot | streaming, done |
-| `ConfidenceBadge` | Confirmé, estimé, à vérifier | 3 variantes |
-| `FindingCard` | Carte d'un finding (type, titre, sujet, date) | default, compact, expanded |
-| `AnswerCard` | Fiche de réponse structurée (titre, sections, reco) | sections ouvertes / fermées |
-| `ProviderLogo` | Gmail, Outlook, Drive, Google, Apple | |
-| `ActionDock` | Barre d'actions collante (mobile) | ouverte, fermée |
-| `DropZone` | Zone de dépôt : glisser-déposer ≥ 640 px ; « Choisir un fichier » / « Prendre une photo » en dessous | idle, survol, disabled |
-| `FileTile` | Fichier déposé (miniature, progression) | en cours, fait, erreur |
-| `Skeleton` | Chargement | ligne, bloc |
-| `Toast` | Confirmation discrète | |
-| `DeviceFrame` | Cadre d'appareil pour l'émulateur démo | téléphone, tablette ; portrait, paysage |
-
-### DeviceFrame
-
-Cadre générique (CSS / SVG, pas de logo de marque) pour prévisualiser le prototype à taille réelle dans le panneau démo. L'écran (slot `children`) a les dimensions logiques de l'appareil ; le parent peut appliquer une échelle. Variantes : téléphone (encoche / îlot, boutons latéraux discrets), tablette (bords plus larges). Ombre portée légère. Documenté dans la vitrine.
+Voir le tableau historique des composants dans le dépôt ; les nouveautés (#33) s'ajoutent ici au fil des tickets.
 
 ### ActionDock
 
-Quand le moteur attend un événement de bloc (`choice`, `connector`, `upload`, `auth`, `form`, ou `plan` avec démarrage), les actions principales ne doivent pas disparaître sous le pli sur mobile.
-
-- **Mobile (< 640 px)** : les actions du bloc actif sont rendues dans `ActionDock`, à la place du composer, au-dessus de la zone de sécurité iOS. Même entrée animée que le composer (`spring.gentle`). Le bloc garde son contenu dans le fil, sans dupliquer les boutons.
-- **Tablette et ordinateur (≥ 640 px)** : les actions restent dans le bloc.
-- Le composant design system est purement présentationnel (surface, espacement, accès clavier). Le portail et le branchement au moteur vivent dans `apps/web`.
-
-Les blocs (`docs/BLOCKS.md`) sont construits dans `apps/web` à partir de ces composants.
+Quand le moteur attend un événement de bloc, les actions principales restent accessibles sur mobile via `ActionDock`.
 
 ## 8. Accessibilité
 
-- Contrastes de la section 2. Focus visible partout (`--ring-focus`).
-- Toute action est accessible au clavier sur ordinateur.
-- L'orbe a un libellé vocal qui décrit l'état (« Éléa vous écoute »).
-- Les jauges ont une valeur textuelle (`aria-valuenow`).
-- Le mode voix a toujours une alternative texte visible.
+- Contrastes de la section 2. Focus visible (`--ring-focus`).
+- Toute action accessible au clavier.
+- La présence d'Éléa a un libellé vocal d'état.
+- Les jauges ont `aria-valuenow`.
+- Le mode voix a toujours une alternative texte.
 
 ## 9. Variantes à comparer
 
-Les écrans suivants existent en plusieurs variantes (`?v=a|b|c`, panneau démo) :
-- **Accueil** : A « Fil du jour », B « Carnet », C « Présence ».
-- **Menu** : A barre basse, B menu radial autour du composer.
-- **Retrouver une information** : A recherche avec filtres par sujet, B carte des sujets.
+- **Accueil** : A / B / C (`?v=`)
+- **Menu** : A barre basse, B radial
+- **Recherche** : A filtres, B carte des sujets
 
-Le détail de chaque variante est dans le ticket correspondant.
+Le détail est dans les tickets correspondants.

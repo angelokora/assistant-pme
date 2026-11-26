@@ -1,5 +1,6 @@
 import type { FindVariant, HomeVariant, MenuVariant } from "./demo";
 import type { PresetId } from "../engine/scenarios";
+import type { ThemeId } from "../theme/theme";
 
 export const DEMO_SOURCE = "elea-demo";
 
@@ -10,6 +11,7 @@ export type DemoSyncState = {
   animations: boolean;
   mailInterrupted: boolean;
   showVariantPill: boolean;
+  theme: ThemeId;
   safeTop: number;
   safeBottom: number;
 };
@@ -25,6 +27,7 @@ export type DemoCommand =
   | { type: "setAnimations"; value: boolean }
   | { type: "setMailInterrupted"; value: boolean }
   | { type: "setShowVariantPill"; value: boolean }
+  | { type: "setTheme"; value: ThemeId }
   | { type: "sync"; state: DemoSyncState };
 
 type Envelope = { source: typeof DEMO_SOURCE } & (DemoCommand | { type: "ready" });

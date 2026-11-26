@@ -98,6 +98,42 @@
   padding: 8px;
 }
 
+.row {
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+}
+
+.rowLabel {
+  font-size: var(--text-xs);
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pill,
+.pillActive {
+  border: 0;
+  border-radius: var(--radius-full);
+  padding: 6px 12px;
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  color: inherit;
+  background: rgb(255 255 255 / 0.08);
+}
+
+.pillActive {
+  background: rgb(255 255 255 / 0.2);
+  font-weight: var(--weight-semibold);
+}
+
 .field {
   display: grid;
   gap: 4px;

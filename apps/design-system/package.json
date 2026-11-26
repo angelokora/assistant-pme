@@ -3,9 +3,16 @@
   "private": true,
   "type": "module",
   "main": "src/index.ts",
-  "exports": { ".": "./src/index.ts", "./styles.css": "./src/styles/index.css" },
-  "scripts": { "dev": "vite --port 5174", "build": "tsc -p . && vite build" },
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles/index.css"
+  },
+  "scripts": {
+    "dev": "vite --port 5174",
+    "build": "tsc -p . && vite build"
+  },
   "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
     "@fontsource-variable/fraunces": "^5.1.0",
     "@fontsource-variable/instrument-sans": "^5.1.0",
     "lucide-react": "^0.460.0",

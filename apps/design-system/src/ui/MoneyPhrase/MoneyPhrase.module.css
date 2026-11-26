@@ -14,7 +14,7 @@
   border: 0;
   border-radius: var(--radius-sm);
   background: var(--color-surface);
-  box-shadow: inset 0 0 0 1.5px var(--color-action);
+  box-shadow: inset 0 0 0 var(--border-width-strong) var(--color-action);
   font: inherit;
   font-weight: var(--weight-semibold);
   font-variant-numeric: tabular-nums;
@@ -25,5 +25,5 @@
 
 .amount:focus {
   outline: none;
-  box-shadow: inset 0 0 0 1.5px var(--color-action), var(--focus-ring);
+  box-shadow: inset 0 0 0 var(--border-width-strong) var(--color-action), var(--focus-ring);
 }

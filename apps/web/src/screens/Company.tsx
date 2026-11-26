@@ -5,6 +5,7 @@ import { ChevronRight } from "lucide-react";
 import { DimensionCard, blockItem, blockList, formatDate } from "@elea/ds";
 import { Icon } from "../blocks/icons";
 import { useMemory } from "../memory/store";
+import { useTheme, type ThemeId } from "../theme/theme";
 import { CompanySources } from "./CompanySources";
 import { latestFindingDate } from "./findings";
 import styles from "./Company.module.css";
@@ -37,6 +38,8 @@ export function Company() {
   const dimensions = useMemory((s) => s.dimensions);
   const topics = useMemory((s) => s.topics);
   const findings = useMemory((s) => s.findings);
+  const theme = useTheme((s) => s.theme);
+  const setTheme = useTheme((s) => s.setTheme);
 
   return (
     <motion.main className={styles.page} variants={blockList} initial="hidden" animate="shown">
@@ -120,6 +123,34 @@ export function Company() {
       <motion.div variants={blockItem}>
         <CompanySources />
       </motion.div>
+
+      <motion.section variants={blockItem} className={styles.prefs} aria-labelledby="prefs-title">
+        <h2 id="prefs-title" className={styles.sectionTitle}>
+          Préférences
+        </h2>
+        <fieldset className={styles.themeField}>
+          <legend className={styles.themeLegend}>Apparence</legend>
+          <div className={styles.themeOptions} role="radiogroup" aria-label="Apparence">
+            {(
+              [
+                { id: "vivant", label: "Vivant" },
+                { id: "classic", label: "Classique" },
+              ] as { id: ThemeId; label: string }[]
+            ).map((opt) => (
+              <label key={opt.id} className={[styles.themeOption, theme === opt.id && styles.themeOptionActive].filter(Boolean).join(" ")}>
+                <input
+                  type="radio"
+                  name="appearance"
+                  value={opt.id}
+                  checked={theme === opt.id}
+                  onChange={() => setTheme(opt.id)}
+                />
+                {opt.label}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      </motion.section>
     </motion.main>
   );
 }

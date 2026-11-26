@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DEVICE_SCREEN, DeviceFrame } from "@elea/ds";
 import { useDemo } from "./demo";
+import { useTheme } from "../theme/theme";
 import {
   DEVICE_SAFE,
   registerDemoIframe,
@@ -21,6 +22,7 @@ export function DeviceStage() {
   const findVariant = useDemo((s) => s.findVariant);
   const animations = useDemo((s) => s.animations);
   const mailInterrupted = useDemo((s) => s.mailInterrupted);
+  const theme = useTheme((s) => s.theme);
 
   const kind = device === "tablet" ? "tablet" : "phone";
   const base = DEVICE_SCREEN[kind];
@@ -49,11 +51,12 @@ export function DeviceStage() {
       animations,
       mailInterrupted,
       showVariantPill: false,
+      theme,
       safeTop: safe.top,
       safeBottom: safe.bottom,
     });
     return subscribeDemoReady(getState);
-  }, [homeVariant, menuVariant, findVariant, animations, mailInterrupted, safe.top, safe.bottom]);
+  }, [homeVariant, menuVariant, findVariant, animations, mailInterrupted, theme, safe.top, safe.bottom]);
 
   useEffect(() => {
     return () => registerDemoIframe(null);

@@ -74,7 +74,10 @@ export function App() {
   return (
     <MotionConfig reducedMotion={animations ? "never" : "always"}>
       <ToastProvider>
-        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <BrowserRouter
+          basename={import.meta.env.BASE_URL.replace(/\/$/, "") || undefined}
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
           {deviceHost ? (
             <>
               <DeviceStage />

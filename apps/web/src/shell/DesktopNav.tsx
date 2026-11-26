@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation, useParams } from "react-router-dom";
 import { motion } from "motion/react";
 import { spring } from "@elea/ds";
 import { EleaLogo } from "../demo/EleaLogo";
@@ -12,8 +12,17 @@ type Props = {
 
 /** Colonne gauche desktop : navigation + sujets. */
 export function DesktopNav({ active }: Props) {
+  const location = useLocation();
+  const params = useParams();
   const topics = useMemory((s) => s.topics);
   const findings = useMemory((s) => s.findings);
+
+  const topicFromPath = location.pathname.match(/^\/entreprise\/([^/]+)/)?.[1];
+  const findingFromPath = location.pathname.match(/^\/finding\/([^/]+)/)?.[1];
+  const activeTopicId =
+    topicFromPath ??
+    (findingFromPath ? findings.find((f) => f.id === findingFromPath)?.topicId : undefined) ??
+    (typeof params.topicId === "string" ? params.topicId : undefined);
 
   return (
     <aside className={styles.aside} aria-label="Navigation et sujets">
@@ -45,9 +54,14 @@ export function DesktopNav({ active }: Props) {
         <ul className={styles.topicList}>
           {topics.map((t) => {
             const count = findings.filter((f) => f.topicId === t.id).length;
+            const topicActive = activeTopicId === t.id;
             return (
               <li key={t.id}>
-                <NavLink to={`/entreprise/${t.id}`} className={styles.topic}>
+                <NavLink
+                  to={`/entreprise/${t.id}`}
+                  className={[styles.topic, topicActive && styles.topicActive].filter(Boolean).join(" ")}
+                  aria-current={topicActive ? "page" : undefined}
+                >
                   <span>{t.label}</span>
                   <span className={styles.count}>{count}</span>
                 </NavLink>

@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import { motion } from "motion/react";
 import { X } from "lucide-react";
-import { IconButton, Sheet, formatDate } from "@elea/ds";
+import { IconButton, Sheet, spring } from "@elea/ds";
 import { useMediaQuery } from "../composer/useMediaQuery";
 import { useMemory } from "../memory/store";
 import { BlockRenderer } from "../blocks/BlockRenderer";
@@ -8,6 +9,23 @@ import type { PlanBlock } from "../engine/types";
 import { FindingDetail } from "../screens/FindingDetail";
 import { useDetail } from "./detailStore";
 import styles from "./DetailPanel.module.css";
+
+/** Conteneur partagé (layoutId) + contenu en fondu, pour ne pas embarquer le détail dans la carte. */
+function FindingPanelBody({ findingId, finding }: { findingId: string; finding: NonNullable<ReturnType<typeof useMemory.getState>["findings"][number]> }) {
+  return (
+    <motion.div layoutId={`finding-shell-${findingId}`} className={styles.sharedShell} transition={spring.gentle}>
+      <motion.div
+        key={findingId}
+        className={styles.sharedContent}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.22, delay: 0.14 }}
+      >
+        <FindingDetail finding={finding} showTitle={false} />
+      </motion.div>
+    </motion.div>
+  );
+}
 
 /** Panneau de détail : colonne droite (≥1024) ou feuille (tablette / mobile). */
 export function DetailPanel() {
@@ -42,8 +60,8 @@ export function DetailPanel() {
         : (attention?.title ?? "Détail");
 
   const body =
-    kind === "finding" && finding ? (
-      <FindingDetail finding={finding} showTitle={false} />
+    kind === "finding" && finding && id ? (
+      <FindingPanelBody findingId={id} finding={finding} />
     ) : kind === "plan" && plan ? (
       <BlockRenderer
         block={
@@ -70,19 +88,17 @@ export function DetailPanel() {
           {activePlan && (
             <section className={styles.stack}>
               <p className={styles.eyebrow}>Plan en cours</p>
-              <h2 className={styles.title}>{activePlan.title}</h2>
-              <p className={styles.text}>{activePlan.goal}</p>
-              <ol className={styles.steps}>
-                {activePlan.steps.map((s) => (
-                  <li key={s.id} data-status={s.status}>
-                    <strong>{s.title}</strong>
-                    <span>
-                      {s.detail}
-                      {s.due ? ` · ${formatDate(s.due, "short")}` : ""}
-                    </span>
-                  </li>
-                ))}
-              </ol>
+              <BlockRenderer
+                block={
+                  {
+                    id: `idle-plan-${activePlan.id}`,
+                    type: "plan",
+                    planId: activePlan.id,
+                    mode: "live",
+                  } satisfies PlanBlock
+                }
+                active={false}
+              />
             </section>
           )}
           {connected.length > 0 && (

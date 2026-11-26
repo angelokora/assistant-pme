@@ -5,7 +5,6 @@ import {
   ProviderLogo,
   blockItem,
   blockList,
-  formatDate,
   formatRelativeDate,
   type FindingOrigin,
   type FindingType,
@@ -18,6 +17,7 @@ import { SCENARIOS } from "../engine/scenarios";
 import { lastMainStepId, usePlayer } from "../engine/player";
 import { useMemory } from "../memory/store";
 import { useComposerContext } from "../shell/composerContext";
+import { useDetail } from "../shell/detailStore";
 import { useNavigate } from "react-router-dom";
 import styles from "./FindingDetail.module.css";
 
@@ -48,13 +48,13 @@ type Props = {
   finding: Finding;
   /** Affiche le titre (desktop panneau a déjà un header). */
   showTitle?: boolean;
-  onClose?: () => void;
 };
 
-/** Contenu du détail d'un constat : méta, résumé, body en lecture, actions. */
+/** Contenu du détail d'un constat : méta, résumé, body en lecture, actions. Pas de layoutId ici. */
 export function FindingDetail({ finding, showTitle = true }: Props) {
   const navigate = useNavigate();
   const { show } = useToast();
+  const close = useDetail((s) => s.close);
   const today = useMemory((s) => s.today);
   const topic = useMemory((s) => s.topics.find((t) => t.id === finding.topicId));
   const jumpTo = usePlayer((s) => s.jumpTo);
@@ -70,6 +70,7 @@ export function FindingDetail({ finding, showTitle = true }: Props) {
       show("Ce besoin n'est plus disponible.");
       return;
     }
+    close();
     stop();
     const last = lastMainStepId(scenario);
     jumpTo(scenarioId, last);
@@ -77,18 +78,13 @@ export function FindingDetail({ finding, showTitle = true }: Props) {
   }
 
   function askElea() {
+    close();
     setAbout(finding.title);
     navigate("/", { state: { openComposer: true } });
   }
 
   return (
-    <motion.div
-      className={styles.root}
-      variants={blockList}
-      initial="hidden"
-      animate="shown"
-      layoutId={`finding-${finding.id}`}
-    >
+    <motion.div className={styles.root} variants={blockList} initial="hidden" animate="shown">
       <motion.div variants={blockItem} className={styles.meta}>
         <span className={styles.type}>{TYPE_LABEL[finding.type]}</span>
         {finding.confidence && <ConfidenceBadge value={finding.confidence} />}
@@ -124,7 +120,6 @@ export function FindingDetail({ finding, showTitle = true }: Props) {
           <dt>Date</dt>
           <dd>
             <time dateTime={finding.createdAt}>{formatRelativeDate(finding.createdAt, today)}</time>
-            <span className={styles.dateAbs}> · {formatDate(finding.createdAt, "short")}</span>
           </dd>
         </div>
         {topic && (

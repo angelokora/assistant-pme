@@ -44,8 +44,15 @@ function reduce(m: Memory, e: Effect): Memory {
       return { ...m, sources: exists ? m.sources.map((s) => (s.id === e.source.id ? e.source : s)) : [...m.sources, e.source] };
     }
     case "plan": {
-      const exists = m.plans.some((p) => p.id === e.plan.id);
-      return { ...m, plans: exists ? m.plans.map((p) => (p.id === e.plan.id ? { ...p, ...e.plan } : p)) : [...m.plans, e.plan] };
+      const existing = m.plans.find((p) => p.id === e.plan.id);
+      if (!existing) return { ...m, plans: [...m.plans, e.plan] };
+      // Ne pas écraser un plan déjà avancé (returning) par un brouillon de scénario.
+      if (existing.status !== "draft" && e.plan.status === "draft") return m;
+      const existingDone = existing.steps.filter((s) => s.status === "done").length;
+      const incomingDone = e.plan.steps.filter((s) => s.status === "done").length;
+      if (existingDone > incomingDone) return m;
+      if (existing.steps.length > e.plan.steps.length && existingDone >= incomingDone) return m;
+      return { ...m, plans: m.plans.map((p) => (p.id === e.plan.id ? { ...p, ...e.plan } : p)) };
     }
     case "update-plan":
       return { ...m, plans: m.plans.map((p) => (p.id === e.planId ? { ...p, ...e.patch } : p)) };

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
-import { NotedTag } from "@elea/ds";
+import { NotedTag, useToast } from "@elea/ds";
 import type { NotedBlock } from "../engine/types";
-import { useGauges } from "../memory/store";
+import { useGauges, useMemory } from "../memory/store";
 import { findTarget, useFlights } from "./flight/flights";
 import type { BlockProps } from "./BlockRenderer";
 
@@ -9,6 +9,8 @@ import type { BlockProps } from "./BlockRenderer";
 export function NotedBlockView({ block }: BlockProps<NotedBlock>) {
   const ref = useRef<HTMLDivElement>(null);
   const launch = useFlights((s) => s.launch);
+  const patchFinding = useMemory((s) => s.patchFinding);
+  const { show } = useToast();
 
   useEffect(() => {
     const targetKind = block.target.kind;
@@ -40,8 +42,16 @@ export function NotedBlockView({ block }: BlockProps<NotedBlock>) {
         text={block.text}
         confidence={block.confidence}
         editable={block.editable}
-        // La répercussion de la correction dans la mémoire est traitée par le ticket #23.
-        onSave={() => undefined}
+        onSave={(text) => {
+          if (block.findingId) {
+            patchFinding(block.findingId, {
+              title: text,
+              summary: text,
+              confidence: "confirmed",
+            });
+          }
+          show("C'est noté, j'ai mis à jour ce que j'avais retenu.");
+        }}
       />
     </div>
   );

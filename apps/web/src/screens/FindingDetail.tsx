@@ -1,11 +1,15 @@
+import { useState } from "react";
 import { motion } from "motion/react";
 import {
   Button,
   ConfidenceBadge,
   ProviderLogo,
+  Sheet,
   blockItem,
   blockList,
+  formatEuro,
   formatRelativeDate,
+  hardenMoneySpaces,
   type FindingOrigin,
   type FindingType,
   type ProviderId,
@@ -44,25 +48,98 @@ const PROVIDER_ORIGIN: Partial<Record<FindingOrigin, ProviderId>> = {
   drive: "drive",
 };
 
+const MONEY_RE = /(\d[\d\s\u00a0\u202f]*)[\s\u00a0\u202f]*€/;
+
+function splitMoney(text: string): { label: string; amount: number | null } {
+  const m = text.match(MONEY_RE);
+  if (!m || m.index === undefined) return { label: text, amount: null };
+  const amount = Number(m[1].replace(/[\s\u00a0\u202f]/g, "").replace(",", "."));
+  if (Number.isNaN(amount)) return { label: text, amount: null };
+  const label = `${text.slice(0, m.index).trimEnd()} ${text.slice(m.index + m[0].length).trimStart()}`.trim();
+  return { label: label || text.replace(MONEY_RE, "").trim(), amount };
+}
+
+function joinMoney(label: string, amount: number | null): string {
+  const clean = label.trim();
+  if (amount === null) return hardenMoneySpaces(clean);
+  const money = formatEuro(amount);
+  if (!clean) return money;
+  if (/[,:]$/.test(clean)) return hardenMoneySpaces(`${clean} ${money}`);
+  return hardenMoneySpaces(`${clean}, ${money}`);
+}
+
 type Props = {
   finding: Finding;
   /** Affiche le titre (desktop panneau a déjà un header). */
   showTitle?: boolean;
 };
 
-/** Contenu du détail d'un constat : méta, résumé, body en lecture, actions. Pas de layoutId ici. */
+/** Contenu du détail d'un constat : méta, résumé, body en lecture, correction, suppression. */
 export function FindingDetail({ finding, showTitle = true }: Props) {
   const navigate = useNavigate();
   const { show } = useToast();
   const close = useDetail((s) => s.close);
   const today = useMemory((s) => s.today);
   const topic = useMemory((s) => s.topics.find((t) => t.id === finding.topicId));
+  const patchFinding = useMemory((s) => s.patchFinding);
+  const removeFinding = useMemory((s) => s.removeFinding);
+  const restoreFinding = useMemory((s) => s.restoreFinding);
   const reopen = usePlayer((s) => s.reopen);
   const stop = usePlayer((s) => s.stop);
   const setAbout = useComposerContext((s) => s.setAbout);
   const provider = PROVIDER_ORIGIN[finding.origin];
-  /** Si le body porte déjà une fiche answer, on évite le double titre / résumé. */
   const answerLed = finding.body?.some((b) => b.type === "answer") ?? false;
+
+  const [editing, setEditing] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const titleSplit = splitMoney(finding.title);
+  const [titleLabel, setTitleLabel] = useState(titleSplit.label);
+  const [titleAmount, setTitleAmount] = useState(titleSplit.amount !== null ? String(titleSplit.amount) : "");
+  const [summaryDraft, setSummaryDraft] = useState(finding.summary);
+
+  function beginEdit() {
+    const split = splitMoney(finding.title);
+    setTitleLabel(split.label);
+    setTitleAmount(split.amount !== null ? String(split.amount) : "");
+    setSummaryDraft(finding.summary);
+    setEditing(true);
+  }
+
+  function saveEdit() {
+    const amount =
+      titleAmount.trim() === ""
+        ? null
+        : Number(titleAmount.replace(/[\s\u00a0\u202f]/g, "").replace(",", "."));
+    const title = joinMoney(
+      titleLabel,
+      amount !== null && !Number.isNaN(amount) ? amount : titleSplit.amount,
+    );
+    patchFinding(finding.id, {
+      title,
+      summary: summaryDraft.trim() || finding.summary,
+      confidence: "confirmed",
+    });
+    setEditing(false);
+    show("C'est noté, j'ai mis à jour ce que j'avais retenu.");
+  }
+
+  function confirmForget() {
+    const snapshot = removeFinding(finding.id);
+    setConfirmDelete(false);
+    close();
+    navigate(topic ? `/entreprise/${topic.id}` : "/entreprise");
+    if (!snapshot) return;
+    show("J'ai oublié ce constat.", {
+      durationMs: 5000,
+      action: {
+        label: "Annuler",
+        onClick: () => {
+          restoreFinding(snapshot);
+          show("Le constat est de retour.");
+        },
+      },
+    });
+  }
 
   function reopenNeed() {
     const scenarioId = finding.scenarioId;
@@ -90,24 +167,76 @@ export function FindingDetail({ finding, showTitle = true }: Props) {
         {finding.confidence && <ConfidenceBadge value={finding.confidence} />}
       </motion.div>
 
-      {showTitle && !answerLed && (
-        <motion.h2 variants={blockItem} className={["voice", styles.title].join(" ")}>
-          {finding.title}
-        </motion.h2>
-      )}
+      {editing ? (
+        <motion.form
+          variants={blockItem}
+          className={styles.editForm}
+          onSubmit={(e) => {
+            e.preventDefault();
+            saveEdit();
+          }}
+        >
+          <label className={styles.field}>
+            <span>Titre</span>
+            <input
+              className={styles.input}
+              value={titleLabel}
+              onChange={(e) => setTitleLabel(e.target.value)}
+              aria-label="Titre du constat"
+            />
+          </label>
+          {(titleSplit.amount !== null || titleAmount.trim() !== "") && (
+            <label className={styles.field}>
+              <span>Montant (€)</span>
+              <input
+                className={styles.input}
+                type="text"
+                inputMode="decimal"
+                value={titleAmount}
+                onChange={(e) => setTitleAmount(e.target.value)}
+                aria-label="Montant en euros"
+              />
+            </label>
+          )}
+          <label className={styles.field}>
+            <span>Résumé</span>
+            <textarea
+              className={styles.textarea}
+              rows={3}
+              value={summaryDraft}
+              onChange={(e) => setSummaryDraft(e.target.value)}
+              aria-label="Résumé du constat"
+            />
+          </label>
+          <div className={styles.editActions}>
+            <Button type="submit">Enregistrer</Button>
+            <Button type="button" variant="ghost" onClick={() => setEditing(false)}>
+              Annuler
+            </Button>
+          </div>
+        </motion.form>
+      ) : (
+        <>
+          {showTitle && !answerLed && (
+            <motion.h2 variants={blockItem} className={["voice", styles.title].join(" ")}>
+              {finding.title}
+            </motion.h2>
+          )}
 
-      {!answerLed && (
-        <motion.p variants={blockItem} className={styles.summary}>
-          {finding.summary}
-        </motion.p>
-      )}
+          {!answerLed && (
+            <motion.p variants={blockItem} className={styles.summary}>
+              {finding.summary}
+            </motion.p>
+          )}
 
-      {finding.body && finding.body.length > 0 && (
-        <motion.div variants={blockItem} className={styles.body} aria-label="Contenu du constat">
-          {finding.body.map((b) => (
-            <BlockRenderer key={b.id} block={b} active={false} />
-          ))}
-        </motion.div>
+          {finding.body && finding.body.length > 0 && (
+            <motion.div variants={blockItem} className={styles.body} aria-label="Contenu du constat">
+              {finding.body.map((b) => (
+                <BlockRenderer key={b.id} block={b} active={false} />
+              ))}
+            </motion.div>
+          )}
+        </>
       )}
 
       <motion.dl variants={blockItem} className={styles.facts}>
@@ -132,17 +261,34 @@ export function FindingDetail({ finding, showTitle = true }: Props) {
         )}
       </motion.dl>
 
-      <motion.div variants={blockItem} className={styles.actions}>
-        {finding.scenarioId && (
-          <Button variant="secondary" onClick={reopenNeed}>
-            Rouvrir le besoin
+      {!editing && (
+        <motion.div variants={blockItem} className={styles.actions}>
+          {finding.scenarioId && (
+            <Button variant="secondary" onClick={reopenNeed}>
+              Rouvrir le besoin
+            </Button>
+          )}
+          <Button onClick={askElea}>Demander à Éléa</Button>
+          <Button variant="ghost" onClick={beginEdit}>
+            Modifier
           </Button>
-        )}
-        <Button onClick={askElea}>Demander à Éléa</Button>
-        <Button variant="ghost" onClick={() => show("Bientôt disponible")}>
-          Modifier
-        </Button>
-      </motion.div>
+          <Button variant="ghost" onClick={() => setConfirmDelete(true)}>
+            Ce n'est pas juste, oubliez-le
+          </Button>
+        </motion.div>
+      )}
+
+      <Sheet open={confirmDelete} onClose={() => setConfirmDelete(false)} title="Oublier ce constat ?">
+        <p className={styles.confirmText}>
+          Je retirerai « {finding.title} » de la mémoire. Vous pourrez annuler pendant quelques secondes.
+        </p>
+        <div className={styles.editActions}>
+          <Button onClick={confirmForget}>Oublier</Button>
+          <Button variant="ghost" onClick={() => setConfirmDelete(false)}>
+            Garder
+          </Button>
+        </div>
+      </Sheet>
     </motion.div>
   );
 }

@@ -51,6 +51,7 @@ type NotedBlock = BaseBlock & {
   text: string;                                   // « Charges : environ 58 000 € par mois »
   confidence?: "confirmed" | "estimated" | "to-check";
   editable?: boolean;
+  findingId?: string;                             // constat à mettre à jour si « Modifier »
 };
 ```
 

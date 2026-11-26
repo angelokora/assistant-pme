@@ -10,6 +10,17 @@
   display: grid;
   align-content: start;
   gap: var(--space-4);
+  min-width: 0;
+}
+
+.sharedShell {
+  min-width: 0;
+  width: 100%;
+}
+
+.sharedContent {
+  min-width: 0;
+  pointer-events: auto;
 }
 
 .empty {

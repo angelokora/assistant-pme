@@ -606,6 +606,8 @@
 .plan {
   display: grid;
   gap: var(--space-4);
+  min-width: 0;
+  width: 100%;
 }
 
 .planHeader {

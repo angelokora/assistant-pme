@@ -27,4 +27,4 @@ export {
   type DeviceOrientation,
 } from "./ui/DeviceFrame/DeviceFrame";
 export { spring, blockList, blockItem, press } from "./motion/springs";
-export { formatEuro, formatDate, formatRelativeDate } from "./format";
+export { formatEuro, formatDate, formatRelativeDate, hardenMoneySpaces, NNBSP } from "./format";

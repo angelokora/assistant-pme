@@ -72,10 +72,6 @@
   gap: 6px;
 }
 
-.dateAbs {
-  color: var(--color-text-muted);
-}
-
 .actions {
   display: flex;
   flex-wrap: wrap;

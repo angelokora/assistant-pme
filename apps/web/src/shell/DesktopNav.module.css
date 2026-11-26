@@ -110,6 +110,16 @@
   box-shadow: var(--focus-ring);
 }
 
+.topicActive {
+  color: var(--color-action-text);
+  background: var(--color-action-soft);
+  font-weight: var(--weight-semibold);
+}
+
+.topicActive .count {
+  color: var(--color-action-text);
+}
+
 .count {
   color: var(--color-text-muted);
   font-variant-numeric: tabular-nums;

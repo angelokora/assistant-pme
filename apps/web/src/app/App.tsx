@@ -7,6 +7,7 @@ import { Company } from "../screens/Company";
 import { Topic } from "../screens/Topic";
 import { DimensionPage } from "../screens/DimensionPage";
 import { FindingPage } from "../screens/FindingPage";
+import { Profile } from "../screens/Profile";
 import { Plans } from "../screens/Plans";
 import { PlanDetail } from "../screens/PlanDetail";
 import { NeedView } from "../screens/NeedView";
@@ -42,6 +43,7 @@ function PrototypeRoutes() {
         <Route path="/plans" element={<Plans />} />
         <Route path="/plans/:planId" element={<PlanDetail />} />
         <Route path="/recherche" element={<Search />} />
+        <Route path="/profil" element={<Profile />} />
         <Route path="/finding/:findingId" element={<FindingPage />} />
         <Route path="/besoin/:scenarioId" element={<NeedView />} />
         <Route path="*" element={<Navigate to="/" replace />} />

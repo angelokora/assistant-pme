@@ -1,6 +1,6 @@
-import { NavLink, useLocation, useParams } from "react-router-dom";
+import { NavLink, useLocation, useNavigate, useParams } from "react-router-dom";
 import { motion } from "motion/react";
-import { spring } from "@elea/ds";
+import { Avatar, spring } from "@elea/ds";
 import { EleaLogo } from "../demo/EleaLogo";
 import { useMemory } from "../memory/store";
 import { DESTINATIONS, type DestinationId } from "./destinations";
@@ -10,14 +10,18 @@ type Props = {
   active: DestinationId | null;
 };
 
-/** Colonne gauche desktop : navigation + sujets traités. */
+/** Colonne gauche desktop : navigation + sujets traités + profil. */
 export function DesktopNav({ active }: Props) {
   const location = useLocation();
+  const navigate = useNavigate();
   const params = useParams();
   const subjects = useMemory((s) => s.subjects);
   const findings = useMemory((s) => s.findings);
+  const owner = useMemory((s) => s.owner);
+  const onProfile = location.pathname.startsWith("/profil");
+  const initials = `${owner.firstName.charAt(0)}${owner.lastName.charAt(0)}`.toUpperCase();
 
-  const subjectFromPath = location.pathname.match(/^\/entreprise\/([^/]+)/)?.[1];
+  const subjectFromPath = location.pathname.match(/^\/sujet\/([^/]+)/)?.[1];
   const findingFromPath = location.pathname.match(/^\/finding\/([^/]+)/)?.[1];
   const activeSubjectId =
     subjectFromPath ??
@@ -70,6 +74,21 @@ export function DesktopNav({ active }: Props) {
             );
           })}
         </ul>
+      </div>
+
+      <div className={styles.profile}>
+        <Avatar
+          initials={initials}
+          label={`Profil de ${owner.firstName} ${owner.lastName}`}
+          active={onProfile}
+          onClick={() => navigate("/profil")}
+        />
+        <button type="button" className={styles.profileText} onClick={() => navigate("/profil")}>
+          <span className={styles.profileName}>
+            {owner.firstName} {owner.lastName}
+          </span>
+          <span className={styles.profileHint}>Profil</span>
+        </button>
       </div>
     </aside>
   );

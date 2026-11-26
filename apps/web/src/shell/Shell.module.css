@@ -23,6 +23,10 @@
 }
 
 .mobileBrand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
   padding: calc(var(--space-3) + max(env(safe-area-inset-top, 0px), var(--safe-top, 0px))) var(--space-5) 0;
   font-family: var(--font-voice);
   font-variation-settings: var(--voice-variation);

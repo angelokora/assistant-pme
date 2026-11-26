@@ -7,6 +7,7 @@ export {
   type ElephantMic,
 } from "./ui/Elephant/Elephant";
 export { Button, IconButton } from "./ui/Button/Button";
+export { Avatar } from "./ui/Avatar/Avatar";
 export { Chip } from "./ui/Chip/Chip";
 export { Card } from "./ui/Card/Card";
 export { Gauge } from "./ui/Gauge/Gauge";

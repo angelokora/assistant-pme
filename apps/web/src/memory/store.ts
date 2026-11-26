@@ -21,6 +21,8 @@ type MemoryState = Memory & {
   setSourceStatus: (sourceId: string, status: Memory["sources"][number]["status"], patch?: Partial<Memory["sources"][number]>) => void;
   /** Met à jour un sujet traité (statut, résumé…). */
   patchSubject: (id: string, patch: Partial<Memory["subjects"][number]>) => void;
+  patchOwner: (patch: Partial<Memory["owner"]>) => void;
+  patchCompany: (patch: Partial<Memory["company"]>) => void;
 };
 
 const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v));
@@ -172,6 +174,8 @@ export const useMemory = create<MemoryState>()(
         })),
       patchSubject: (id, patch) =>
         set((s) => ({ subjects: s.subjects.map((sub) => (sub.id === id ? { ...sub, ...patch } : sub)) })),
+      patchOwner: (patch) => set((s) => ({ owner: { ...s.owner, ...patch } })),
+      patchCompany: (patch) => set((s) => ({ company: { ...s.company, ...patch } })),
     }),
     {
       name: "elea-memory",

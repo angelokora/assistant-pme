@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Briefcase, Mic, Target, User, Wallet } from "lucide-react";
 import {
-  ActionDock, AnswerCard, Button, Callout, Chip, ChoiceCard, ChoiceGroup, ConfidenceBadge, DateField, DeviceFrame, DimensionCard, DropZone, Elephant, FileTile, FindingCard, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, Skeleton, StepList, ToastProvider, TranscriptText, Waveform, useToast,
+  ActionDock, AnswerCard, Avatar, Button, Callout, Chip, ChoiceCard, ChoiceGroup, ConfidenceBadge, DateField, DeviceFrame, DimensionCard, DropZone, Elephant, FileTile, FindingCard, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, Skeleton, StepList, ToastProvider, TranscriptText, Waveform, useToast,
   type ElephantState, type ProviderId, type StepItem, type StepStatus,
 } from "../index";
 import { NBSP, NNBSP } from "../format";
@@ -161,6 +161,12 @@ function ShowcaseInner() {
       </section>
 
       <section className={styles.section}>
+        <h2 className={styles.h2}>Avatar</h2>
+        <div className={styles.row}>
+          <Avatar initials="TM" label="Profil de Thomas Morel" />
+          <Avatar initials="TM" label="Profil actif" size="sm" active />
+        </div>
+
         <h2 className={styles.h2}>Boutons et puces</h2>
         <div className={styles.row}>
           <Button>Commencer par celle-ci</Button>

@@ -1,8 +1,10 @@
 import type { CSSProperties } from "react";
-import { Outlet, useLocation, useSearchParams } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { Avatar } from "@elea/ds";
 import { useMediaQuery } from "../composer/useMediaQuery";
 import { EleaLogo } from "../demo/EleaLogo";
 import { useDemo } from "../demo/demo";
+import { useMemory } from "../memory/store";
 import { BottomNav } from "./BottomNav";
 import { DesktopNav } from "./DesktopNav";
 import { DetailPanel } from "./DetailPanel";
@@ -15,7 +17,9 @@ import styles from "./Shell.module.css";
 /** Squelette responsive : barre basse / rail / trois colonnes. */
 export function Shell() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [params] = useSearchParams();
+  const owner = useMemory((s) => s.owner);
   const menuFromDemo = useDemo((s) => s.menuVariant);
   const homeFromDemo = useDemo((s) => s.homeVariant);
   const menuVariant = (params.get("menu") === "b" || params.get("menu") === "a" ? params.get("menu") : menuFromDemo) as
@@ -29,9 +33,11 @@ export function Shell() {
   const desktop = useMediaQuery("(min-width: 1024px)");
   const inNeed = location.pathname.startsWith("/besoin/");
   const onHome = location.pathname === "/";
+  const onProfile = location.pathname.startsWith("/profil");
   const active = destinationForPath(location.pathname);
   const hideComposer = onHome && homeVariant === "c";
   const menuB = menuVariant === "b";
+  const initials = `${owner.firstName.charAt(0)}${owner.lastName.charAt(0)}`.toUpperCase();
 
   return (
     <div
@@ -61,6 +67,13 @@ export function Shell() {
         {mobile && !inNeed && (
           <header className={styles.mobileBrand}>
             <EleaLogo />
+            <Avatar
+              initials={initials}
+              label={`Profil de ${owner.firstName} ${owner.lastName}`}
+              size="sm"
+              active={onProfile}
+              onClick={() => navigate("/profil")}
+            />
           </header>
         )}
         <Outlet />

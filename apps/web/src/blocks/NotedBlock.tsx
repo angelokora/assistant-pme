@@ -5,21 +5,28 @@ import { useGauges } from "../memory/store";
 import { findTarget, useFlights } from "./flight/flights";
 import type { BlockProps } from "./BlockRenderer";
 
-/** « Noté dans… » : à l'apparition, une pastille s'envole vers la carte de la dimension. */
+/** « Noté dans… » : à l'apparition, une pastille s'envole vers la dimension ou le sujet. */
 export function NotedBlockView({ block }: BlockProps<NotedBlock>) {
   const ref = useRef<HTMLDivElement>(null);
   const launch = useFlights((s) => s.launch);
 
   useEffect(() => {
-    if (block.target.kind !== "dimension") return;
-    const dimensionId = block.target.id;
+    const targetKind = block.target.kind;
+    const targetId = block.target.id;
     const t = setTimeout(() => {
       const from = ref.current?.getBoundingClientRect();
-      const target = findTarget(dimensionId);
+      const target = findTarget(targetKind, targetId);
       if (from && target) {
-        launch({ id: block.id, dimensionId, from, to: target.getBoundingClientRect(), label: block.target.label });
-      } else {
-        useGauges.getState().land(dimensionId);
+        launch({
+          id: block.id,
+          targetKind,
+          targetId,
+          from,
+          to: target.getBoundingClientRect(),
+          label: block.target.label,
+        });
+      } else if (targetKind === "dimension") {
+        useGauges.getState().land(targetId);
       }
     }, 750);
     return () => clearTimeout(t);

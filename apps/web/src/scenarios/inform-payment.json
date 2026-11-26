@@ -29,6 +29,14 @@
             "confidence": "confirmed",
             "scenarioId": "inform-payment"
           }
+        },
+        {
+          "kind": "update-attention",
+          "attentionId": "a2",
+          "patch": {
+            "title": "4 800 € encore attendus du Comptoir des Halles",
+            "text": "Facture de novembre à échéance le 30 décembre. Leur délai réel est passé de 30 à 46 jours."
+          }
         }
       ],
       "blocks": [
@@ -57,7 +65,7 @@
           "items": [
             {
               "id": "remind",
-              "label": "Prévoir une relance le 2 décembre",
+              "label": "Prévoir une relance le 2 janvier",
               "action": {
                 "kind": "route",
                 "target": "/plans"

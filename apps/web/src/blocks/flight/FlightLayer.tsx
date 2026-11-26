@@ -33,7 +33,7 @@ export function FlightLayer() {
             exit={{ opacity: 0, scale: 0.3, transition: { duration: 0.2 } }}
             transition={{ ...spring.travel, duration: 0.9, type: "tween", ease: [0.5, 0, 0.2, 1], times: [0, 0.45, 1] }}
             onAnimationComplete={() => {
-              land(f.dimensionId);
+              if (f.targetKind === "dimension") land(f.targetId);
               done(f.id);
             }}
           >

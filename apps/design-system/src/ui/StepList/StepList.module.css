@@ -1,6 +1,8 @@
 .list {
   display: grid;
   gap: var(--space-3);
+  min-width: 0;
+  width: 100%;
 }
 
 .title {
@@ -18,9 +20,17 @@
   padding: 0;
   display: grid;
   gap: var(--space-3);
+  min-width: 0;
+  width: 100%;
 }
 
 .item {
+  min-width: 0;
+  width: 100%;
+}
+
+/* Même grille pour done / active / pending (bouton ou simple rangée). */
+.row {
   display: grid;
   grid-template-columns: 28px minmax(0, 1fr);
   gap: var(--space-3);
@@ -28,15 +38,6 @@
   min-height: var(--tap-min);
   min-width: 0;
   width: 100%;
-}
-
-.clickable .stepButton {
-  display: grid;
-  grid-template-columns: 28px minmax(0, 1fr);
-  gap: var(--space-3);
-  align-items: start;
-  width: 100%;
-  min-width: 0;
   margin: 0;
   padding: 0;
   border: 0;
@@ -44,15 +45,19 @@
   text-align: left;
   font: inherit;
   color: inherit;
+  box-sizing: border-box;
+}
+
+button.row {
   cursor: pointer;
   border-radius: var(--radius-sm);
 }
 
-.clickable .stepButton:hover .label {
+button.row:hover .label {
   color: var(--color-action-text);
 }
 
-.clickable .stepButton:focus-visible {
+button.row:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }
@@ -64,6 +69,7 @@
   height: 28px;
   margin-top: 2px;
   color: var(--color-action);
+  flex-shrink: 0;
 }
 
 .icon {
@@ -111,7 +117,6 @@
   gap: 2px;
   padding-top: 4px;
   min-width: 0;
-  flex: 1;
 }
 
 .label {
@@ -119,14 +124,14 @@
   line-height: var(--leading-snug);
   color: var(--color-text-muted);
   transition: color var(--dur-fast) var(--ease-out);
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
 }
 
 .detail {
   font-size: var(--text-sm);
   color: var(--color-text-muted);
   line-height: var(--leading-snug);
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
 }
 
 .due {

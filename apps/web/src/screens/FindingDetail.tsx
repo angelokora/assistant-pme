@@ -14,7 +14,7 @@ import {
 import type { Finding } from "../engine/types";
 import { BlockRenderer } from "../blocks/BlockRenderer";
 import { SCENARIOS } from "../engine/scenarios";
-import { lastMainStepId, usePlayer } from "../engine/player";
+import { usePlayer } from "../engine/player";
 import { useMemory } from "../memory/store";
 import { useComposerContext } from "../shell/composerContext";
 import { useDetail } from "../shell/detailStore";
@@ -57,7 +57,7 @@ export function FindingDetail({ finding, showTitle = true }: Props) {
   const close = useDetail((s) => s.close);
   const today = useMemory((s) => s.today);
   const topic = useMemory((s) => s.topics.find((t) => t.id === finding.topicId));
-  const jumpTo = usePlayer((s) => s.jumpTo);
+  const reopen = usePlayer((s) => s.reopen);
   const stop = usePlayer((s) => s.stop);
   const setAbout = useComposerContext((s) => s.setAbout);
   const provider = PROVIDER_ORIGIN[finding.origin];
@@ -65,15 +65,13 @@ export function FindingDetail({ finding, showTitle = true }: Props) {
   function reopenNeed() {
     const scenarioId = finding.scenarioId;
     if (!scenarioId) return;
-    const scenario = SCENARIOS[scenarioId];
-    if (!scenario) {
+    if (!SCENARIOS[scenarioId]) {
       show("Ce besoin n'est plus disponible.");
       return;
     }
     close();
     stop();
-    const last = lastMainStepId(scenario);
-    jumpTo(scenarioId, last);
+    reopen(scenarioId);
     navigate(`/besoin/${scenarioId}`);
   }
 

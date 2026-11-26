@@ -213,6 +213,11 @@ export type Scenario = {
   userUtterance?: string;
   start: string;
   steps: Record<string, Step>;
+  /**
+   * Rouverture d'un besoin déjà joué : blocs affichés après l'historique (lecture seule),
+   * avec jetons mémoire ({{planTitle}}, {{planDoneCount}}, …).
+   */
+  resume?: { blocks: Block[] };
 };
 
 /** Ce que l'utilisateur renvoie au moteur. */

@@ -4,6 +4,7 @@ import { Check, EyeOff, ShieldCheck } from "lucide-react";
 import type { ConnectorBlock } from "../engine/types";
 import { useDemo } from "../demo/demo";
 import { usePlayer } from "../engine/player";
+import { useMemory } from "../memory/store";
 import { ActionSlot } from "./ActionSlot";
 import { BlockDone } from "./BlockDone";
 import type { BlockProps } from "./BlockRenderer";
@@ -15,17 +16,24 @@ const PROVIDER_LABEL: Record<"gmail" | "outlook" | "drive", string> = {
   drive: "Drive",
 };
 
-/** Écran de réassurance pour connecter une source (mails, Drive). */
+type ConnectChoice = "gmail" | "outlook" | "drive" | "google";
+
+/**
+ * Écran de réassurance pour connecter une source (mails, Drive).
+ * Avec `googleOneGesture` et un compte Google, un seul geste connecte Gmail et Drive.
+ */
 export function ConnectorBlockView({ block, active }: BlockProps<ConnectorBlock>) {
   const reply = usePlayer((s) => s.reply);
   const awaiting = usePlayer((s) => s.awaiting);
   const resolution = usePlayer((s) => s.resolutions[block.id]);
+  const accountMethod = useMemory((s) => s.account.method);
+  const oneGesture = !!block.googleOneGesture && accountMethod === "google";
   const mailInterrupted = useDemo((s) => s.mailInterrupted);
   const [interrupted, setInterrupted] = useState(false);
-  const [pendingProvider, setPendingProvider] = useState<"gmail" | "outlook" | "drive" | null>(null);
+  const [pendingProvider, setPendingProvider] = useState<ConnectChoice | null>(null);
   const canAct = active && awaiting?.kind === "connector" && awaiting.blockId === block.id;
 
-  function connect(provider: "gmail" | "outlook" | "drive", { force = false }: { force?: boolean } = {}) {
+  function connect(provider: ConnectChoice, { force = false }: { force?: boolean } = {}) {
     if (!canAct) return;
     if (mailInterrupted && !force) {
       setPendingProvider(provider);
@@ -34,12 +42,12 @@ export function ConnectorBlockView({ block, active }: BlockProps<ConnectorBlock>
     }
     setInterrupted(false);
     setPendingProvider(null);
-    const label = PROVIDER_LABEL[provider];
+    const label = provider === "google" ? "Gmail et Drive" : PROVIDER_LABEL[provider];
     reply({
       kind: "event",
       blockId: block.id,
       value: `connect:${provider}`,
-      doneLabel: `${label} choisi`,
+      doneLabel: provider === "google" ? `${label} choisis` : `${label} choisi`,
     });
   }
 
@@ -63,30 +71,32 @@ export function ConnectorBlockView({ block, active }: BlockProps<ConnectorBlock>
         <p className={styles.connectorWhy}>{block.why}</p>
       </header>
 
-      <div className={styles.connectorColumns}>
-        <Card tone="info" padding="md" className={styles.connectorCol}>
-          <p className={styles.connectorColTitle}>
-            <Check size={16} strokeWidth={2.2} aria-hidden />
-            Ce que je lis
-          </p>
-          <ul className={styles.connectorList}>
-            {block.willRead.map((line) => (
-              <li key={line}>{line}</li>
-            ))}
-          </ul>
-        </Card>
-        <Card tone="sunken" padding="md" className={styles.connectorCol}>
-          <p className={styles.connectorColTitle}>
-            <EyeOff size={16} strokeWidth={2.2} aria-hidden />
-            Ce que je ne lis pas
-          </p>
-          <ul className={styles.connectorList}>
-            {block.willNotRead.map((line) => (
-              <li key={line}>{line}</li>
-            ))}
-          </ul>
-        </Card>
-      </div>
+      {!oneGesture && (
+        <div className={styles.connectorColumns}>
+          <Card tone="info" padding="md" className={styles.connectorCol}>
+            <p className={styles.connectorColTitle}>
+              <Check size={16} strokeWidth={2.2} aria-hidden />
+              Ce que je lis
+            </p>
+            <ul className={styles.connectorList}>
+              {block.willRead.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+          </Card>
+          <Card tone="sunken" padding="md" className={styles.connectorCol}>
+            <p className={styles.connectorColTitle}>
+              <EyeOff size={16} strokeWidth={2.2} aria-hidden />
+              Ce que je ne lis pas
+            </p>
+            <ul className={styles.connectorList}>
+              {block.willNotRead.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+          </Card>
+        </div>
+      )}
 
       <ul className={styles.reassurance}>
         {block.reassurance.map((line) => (
@@ -117,6 +127,22 @@ export function ConnectorBlockView({ block, active }: BlockProps<ConnectorBlock>
               </Button>
               <Button variant="secondary" full disabled={!canAct} onClick={skip}>
                 Passer au dépôt
+              </Button>
+            </>
+          ) : oneGesture ? (
+            <>
+              <Button
+                variant="primary"
+                full
+                disabled={!canAct}
+                icon={<ProviderLogo provider="google" size={20} labelled={false} />}
+                onClick={() => connect("google")}
+              >
+                Utiliser votre compte Google
+              </Button>
+              <p className={styles.connectorWhy}>Gmail et Drive, en lecture seule.</p>
+              <Button variant="secondary" full disabled={!canAct} onClick={skip}>
+                {block.skipLabel}
               </Button>
             </>
           ) : (

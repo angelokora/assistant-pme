@@ -177,8 +177,10 @@ type ConnectorBlock = BaseBlock & {
   willNotRead: string[];           // « Vos échanges personnels »
   reassurance: string[];           // « Lecture seule », « Chiffré », « Révocable à tout moment »
   skipLabel: string;               // « Plus tard »
+  googleOneGesture?: boolean;      // compte Google : un seul bouton « Utiliser votre compte Google » (Gmail + Drive)
 };
 ```
+Avec `googleOneGesture` et `memory.account.method === "google"`, l'écran se simplifie : réassurance courte, un bouton qui répond `connect:google` (route `onConnectGoogle` de l'attente, qui connecte Gmail et Drive), et le refus habituel. Sinon l'écran complet reste affiché.
 
 ### `upload` : déposer des documents
 Zone de dépôt (glisser-déposer sur ordinateur, sélection ou photo sur mobile). Les fichiers apparaissent avec une progression.

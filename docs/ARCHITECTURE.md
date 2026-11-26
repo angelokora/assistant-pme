@@ -91,7 +91,7 @@ type Step = {
 type Await =
   | { kind: "input"; simulated: string; next: string; quickRoutes?: Record<string, string> }
   | { kind: "choice"; blockId: string; routes: Record<string, string> }
-  | { kind: "connector"; blockId: string; onConnect: string; onSkip: string }
+  | { kind: "connector"; blockId: string; onConnect: string; onConnectGoogle?: string; onSkip: string }
   | { kind: "upload"; blockId: string; onUpload: string; onSkip: string }
   | { kind: "form"; blockId: string; next: string }
   | { kind: "auth"; next: string }

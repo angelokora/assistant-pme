@@ -2,12 +2,14 @@ import { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion } from "motion/react";
 import { ArrowLeft, ChevronRight, MessageCircleQuestion, Search } from "lucide-react";
-import { Button, Elephant, Gauge, blockItem, blockList, formatDate } from "@elea/ds";
+import { Button, Elephant, Gauge, Sheet, blockItem, blockList, formatDate } from "@elea/ds";
 import type { SubjectStatus } from "../engine/types";
 import { SCENARIOS } from "../engine/scenarios";
 import { Icon } from "../blocks/icons";
+import { useMediaQuery } from "../composer/useMediaQuery";
 import { useMemory } from "../memory/store";
 import { useComposerContext } from "../shell/composerContext";
+import { HomeComposer } from "./HomeComposer";
 import { TopicFindings } from "./TopicFindings";
 import { findingMatchesQuery } from "./searchText";
 import styles from "./Topic.module.css";
@@ -30,13 +32,16 @@ export function Topic() {
   const { subjectId = "" } = useParams();
   const navigate = useNavigate();
   const setAbout = useComposerContext((s) => s.setAbout);
+  const clearAbout = useComposerContext((s) => s.clear);
   const subjects = useMemory((s) => s.subjects);
   const findings = useMemory((s) => s.findings);
   const plans = useMemory((s) => s.plans);
   const patchSubject = useMemory((s) => s.patchSubject);
   const subject = subjects.find((t) => t.id === subjectId);
+  const desktop = useMediaQuery("(min-width: 1024px)");
 
   const [query, setQuery] = useState("");
+  const [askOpen, setAskOpen] = useState(false);
 
   const subjectFindings = useMemo(
     () => findings.filter((f) => f.subjectId === subjectId),
@@ -80,8 +85,22 @@ export function Topic() {
 
   function askAboutSubject() {
     setAbout(subject!.title);
-    navigate("/", { state: { openComposer: true } });
+    setAskOpen(true);
   }
+
+  function closeAsk() {
+    setAskOpen(false);
+    clearAbout();
+  }
+
+  const askComposer = (
+    <HomeComposer
+      forceOpen
+      onHandled={() => {
+        /* reste sur la page ; le lancement navigue vers /besoin */
+      }}
+    />
+  );
 
   return (
     <motion.main className={styles.page} variants={blockList} initial="hidden" animate="shown">
@@ -131,11 +150,29 @@ export function Topic() {
       </motion.section>
 
       <motion.div variants={blockItem} className={styles.askDock}>
-        <Button full onClick={askAboutSubject}>
-          <MessageCircleQuestion size={18} strokeWidth={1.75} aria-hidden />
-          Poser une question sur ce sujet
-        </Button>
+        {askOpen && desktop ? (
+          <div className={styles.askInline}>
+            <div className={styles.askInlineTop}>
+              <p className={styles.askInlineTitle}>Question sur ce sujet</p>
+              <button type="button" className={styles.askClose} onClick={closeAsk}>
+                Fermer
+              </button>
+            </div>
+            {askComposer}
+          </div>
+        ) : (
+          <Button full onClick={askAboutSubject}>
+            <MessageCircleQuestion size={18} strokeWidth={1.75} aria-hidden />
+            Poser une question sur ce sujet
+          </Button>
+        )}
       </motion.div>
+
+      {!desktop && (
+        <Sheet open={askOpen} onClose={closeAsk} title="Poser une question">
+          <div className={styles.askSheet}>{askComposer}</div>
+        </Sheet>
+      )}
 
       <motion.div variants={blockItem} className={styles.searchWrap}>
         <Search size={18} strokeWidth={1.75} aria-hidden className={styles.searchIcon} />
@@ -240,7 +277,7 @@ export function Topic() {
           Documents
         </h2>
         <p className={["voice", styles.emptyVoice].join(" ")}>
-          Aucun document rattaché pour l'instant. Ils arriveront avec l'import (#41).
+          Aucun document rattaché pour l'instant.
         </p>
       </motion.section>
     </motion.main>

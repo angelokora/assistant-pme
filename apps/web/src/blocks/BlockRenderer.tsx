@@ -48,7 +48,7 @@ export function BlockRenderer({ block, active }: BlockProps) {
       console.warn(`[blocks] pas de rendu pour « ${block.type} »`);
       return (
         <motion.div variants={blockItem} className={styles.pending}>
-          Bloc <code>{block.type}</code> : rendu à venir (voir le backlog)
+          Bloc <code>{block.type}</code> : affichage non disponible
         </motion.div>
       );
     }

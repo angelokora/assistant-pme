@@ -6,6 +6,7 @@ import { IconButton, blockList, spring } from "@elea/ds";
 import { usePlayer, type Turn } from "../engine/player";
 import { presetFor, SCENARIOS } from "../engine/scenarios";
 import { useMemory } from "../memory/store";
+import { useComposerContext } from "../shell/composerContext";
 import { BlockRenderer } from "../blocks/BlockRenderer";
 import { DimensionGrid } from "../blocks/DimensionsBlock";
 import { useStrip } from "../blocks/strip";
@@ -49,6 +50,8 @@ export function NeedView() {
   const preset = useMemory((s) => s.preset);
   const reset = useMemory((s) => s.reset);
   const strip = useStrip();
+  const aboutTitle = useComposerContext((s) => s.aboutTitle);
+  const clearAbout = useComposerContext((s) => s.clear);
   const flowRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLElement>(null);
   /** L'utilisateur remonte volontairement dans le fil : on ne force pas le suivi. */
@@ -168,9 +171,23 @@ export function NeedView() {
       <header ref={headerRef} className={styles.top}>
         <EleaLogo className={styles.brand} />
         <span className={styles.title}>{scenario?.title ?? SCENARIOS[scenarioId]?.title}</span>
-        <IconButton label="Fermer ce besoin" variant="soft" size="sm" onClick={() => (stop(), navigate("/"))}>
+        <IconButton
+          label="Fermer ce besoin"
+          variant="soft"
+          size="sm"
+          onClick={() => {
+            stop();
+            clearAbout();
+            navigate(-1);
+          }}
+        >
           <X size={18} />
         </IconButton>
+        {aboutTitle && (
+          <p className={styles.about} role="status">
+            <span className={styles.aboutLabel}>À propos de :</span> {aboutTitle}
+          </p>
+        )}
         <AnimatePresence>
           {showStrip && (
             <motion.div

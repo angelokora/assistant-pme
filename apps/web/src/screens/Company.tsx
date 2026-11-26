@@ -126,9 +126,6 @@ export function Company() {
         )}
       </motion.section>
 
-      <motion.p variants={blockItem} className={styles.docsHint}>
-        Les documents arriveront ici avec #41. Sources et préférences sont dans le Profil.
-      </motion.p>
     </motion.main>
   );
 }

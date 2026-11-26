@@ -8,7 +8,7 @@
   align-content: start;
   gap: var(--space-6);
   border-right: var(--border-width) solid var(--color-border);
-  background: var(--color-bg);
+  background: var(--color-surface-side);
   overflow: auto;
 }
 
@@ -52,11 +52,13 @@
 }
 
 .itemActive {
-  color: var(--color-action-text);
+  color: var(--color-on-action-soft);
+  background: var(--color-action-soft);
+  font-weight: var(--weight-semibold);
 }
 
 .itemActive:hover {
-  background: transparent;
+  background: var(--color-action-soft);
 }
 
 .pip {
@@ -111,13 +113,13 @@
 }
 
 .topicActive {
-  color: var(--color-action-text);
+  color: var(--color-on-action-soft);
   background: var(--color-action-soft);
   font-weight: var(--weight-semibold);
 }
 
 .topicActive .count {
-  color: var(--color-action-text);
+  color: var(--color-on-action-soft);
 }
 
 .count {

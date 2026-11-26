@@ -4,6 +4,7 @@
   place-items: center;
   flex-shrink: 0;
   line-height: 0;
+  overflow: visible;
 }
 
 .svg {
@@ -24,6 +25,15 @@
 
 :global(html:not([data-theme="classic"])) .root[data-compact] .simple {
   display: block;
+}
+
+/*
+ * Le viewBox garde une marge (~35 %) pour les animations : à petite taille le
+ * glyphe paraît trop petit. On scale pour remplir la case demandée.
+ */
+.root[data-compact] .svg {
+  transform: scale(1.45);
+  transform-origin: 50% 42%;
 }
 
 /* Origines de transformation (réf. elephant.css). */
@@ -173,22 +183,23 @@
   opacity: 1;
 }
 
-/* Option 1 (défaut) : pastille micro blanche à côté de la tête */
+/* Option 1 (défaut) : pastille micro blanche hors du visage, bas droite */
 .micBadge {
   position: absolute;
-  right: -2%;
-  bottom: 8%;
+  right: -18%;
+  bottom: -14%;
   display: grid;
   place-items: center;
-  width: 34%;
-  height: 34%;
-  min-width: 14px;
-  min-height: 14px;
+  width: 30%;
+  height: 30%;
+  min-width: 16px;
+  min-height: 16px;
   border-radius: var(--radius-full);
   background: var(--color-surface);
   color: var(--color-text);
   box-shadow: inset 0 0 0 var(--border-width) var(--color-border), var(--shadow-card);
   pointer-events: none;
+  z-index: 1;
 }
 
 .micBadge svg {
@@ -199,20 +210,20 @@
 /* Option 2 : micro sous la trompe */
 .micTrunk {
   position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translate(-35%, 15%);
+  left: 58%;
+  bottom: -8%;
   display: grid;
   place-items: center;
   width: 28%;
   height: 28%;
-  min-width: 12px;
-  min-height: 12px;
+  min-width: 14px;
+  min-height: 14px;
   border-radius: var(--radius-full);
   background: var(--color-surface);
   color: var(--color-text);
   box-shadow: inset 0 0 0 var(--border-width) var(--color-border), var(--shadow-card);
   pointer-events: none;
+  z-index: 1;
 }
 
 .micTrunk svg {
@@ -220,7 +231,9 @@
   height: 55%;
 }
 
-.root[data-size="s"] .micBadge,
-.root[data-size="s"] .micTrunk {
-  display: none;
+.dot {
+  display: inline-block;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-presence);
 }

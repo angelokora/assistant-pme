@@ -50,5 +50,5 @@
 
 .optActive {
   background: var(--color-action-soft);
-  color: var(--color-action-text);
+  color: var(--color-on-action-soft);
 }

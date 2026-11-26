@@ -121,12 +121,12 @@
   font-weight: var(--weight-semibold);
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--color-action-text);
+  color: var(--color-on-action-soft);
 }
 
 .recoText {
   margin: 0;
-  color: var(--color-text);
+  color: var(--color-on-action-soft);
   font-size: var(--text-sm);
   line-height: var(--leading-snug);
   text-wrap: pretty;

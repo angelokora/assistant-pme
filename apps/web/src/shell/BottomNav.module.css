@@ -9,10 +9,8 @@
   align-items: end;
   gap: 2px;
   padding: var(--space-2) var(--space-2) calc(var(--space-2) + max(env(safe-area-inset-bottom, 0px), var(--safe-bottom, 0px)));
-  background: rgb(251 248 243 / 0.92);
-  backdrop-filter: saturate(1.4) blur(14px);
-  -webkit-backdrop-filter: saturate(1.4) blur(14px);
-  box-shadow: 0 -1px 0 var(--color-border);
+  background: var(--color-surface);
+  box-shadow: 0 -2px 0 var(--color-border);
 }
 
 .barNoComposer {
@@ -42,7 +40,12 @@
 }
 
 .itemActive {
-  color: var(--color-action-text);
+  color: var(--color-on-action-soft);
+}
+
+.itemActive .iconWrap {
+  background: var(--color-action-soft);
+  border-radius: var(--radius-full);
 }
 
 .iconWrap {
@@ -72,6 +75,10 @@
   max-width: 100%;
 }
 
+.itemActive .label {
+  color: var(--color-action-text);
+}
+
 .composer {
   position: relative;
   display: grid;
@@ -81,26 +88,21 @@
   margin: 0 var(--space-1) 10px;
   border: 0;
   border-radius: var(--radius-full);
-  background: transparent;
-  color: #fff;
-  box-shadow: var(--shadow-presence);
+  background: var(--color-surface);
+  color: var(--color-text);
+  /* Ombre 2 px : l'ombre 4 px de --shadow-2 dépassait en croissant sous le rond. */
+  box-shadow: inset 0 0 0 var(--border-width) var(--color-border), 2px 2px 0 var(--ink-900);
   transform: translateY(-10px);
   cursor: pointer;
-}
-
-.composerOrb {
-  position: absolute;
-  inset: 0;
-}
-
-.composerMic {
-  position: relative;
-  z-index: 1;
-  color: #fff;
-  filter: drop-shadow(0 1px 2px rgb(107 7 36 / 0.5));
+  overflow: visible;
 }
 
 .composer:focus-visible {
   outline: none;
-  box-shadow: var(--focus-ring), var(--shadow-presence);
+  box-shadow: var(--focus-ring), inset 0 0 0 var(--border-width) var(--color-border), 2px 2px 0 var(--ink-900);
+}
+
+.composer:active {
+  transform: translate(var(--press-shift), calc(-10px + var(--press-shift)));
+  box-shadow: inset 0 0 0 var(--border-width) var(--color-border), 1px 1px 0 var(--ink-900);
 }

@@ -1,6 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
-import { Mic } from "lucide-react";
 import { Elephant, spring } from "@elea/ds";
 import { DESTINATIONS, type DestinationId } from "./destinations";
 import styles from "./BottomNav.module.css";
@@ -32,8 +31,7 @@ export function BottomNav({ active, hideComposer }: Props) {
           aria-label="Demander à Éléa"
           onClick={() => navigate("/", { state: { openComposer: true } })}
         >
-          <Elephant size={56} state="idle" decorative className={styles.composerOrb} />
-          <Mic size={20} strokeWidth={1.75} className={styles.composerMic} aria-hidden />
+          <Elephant size={48} state="idle" decorative mic="badge" />
         </button>
       )}
       {right.map((d) => (

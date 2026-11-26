@@ -139,8 +139,8 @@ function ShowcaseInner() {
           ))}
         </div>
         <div className={styles.orbs}>
-          {([16, 24, 32, 56, 120] as const).map((sz) => (
-            <Elephant key={sz} size={sz} state={orb} level={level} />
+          {([16, 22, 24, 32, 56, 120] as const).map((sz) => (
+            <Elephant key={sz} size={sz} state={orb} level={level} fallbackDot={sz < 22} />
           ))}
         </div>
         <div className={styles.row}>

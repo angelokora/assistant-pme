@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { ChevronRight } from "lucide-react";
-import { blockItem, blockList, formatDate } from "@elea/ds";
+import { Gauge, blockItem, blockList, formatDate } from "@elea/ds";
 import type { Plan } from "../engine/types";
 import { useMemory } from "../memory/store";
 import styles from "./Plans.module.css";
@@ -23,10 +23,14 @@ function ProgressBar({ plan }: { plan: Plan }) {
   const done = plan.steps.filter((s) => s.status === "done").length;
   const total = plan.steps.length || 1;
   return (
-    <div className={styles.progress} aria-label={`${done} sur ${total} étapes`}>
-      <div className={styles.progressTrack}>
-        <div className={styles.progressFill} style={{ width: `${(done / total) * 100}%` }} />
-      </div>
+    <div className={styles.progress}>
+      <Gauge
+        value={done / total}
+        segments={total}
+        status={done >= total ? "enough" : done > 0 ? "active" : "todo"}
+        label={`${done} sur ${total} étapes`}
+        className={styles.progressGauge}
+      />
       <span className={styles.progressLabel}>
         {done}/{total}
       </span>

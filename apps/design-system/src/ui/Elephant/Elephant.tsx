@@ -8,6 +8,9 @@ export type ElephantState = "idle" | "listening" | "thinking" | "speaking" | "do
 /** Pastille micro : à côté de la tête (défaut) ou sous la trompe. */
 export type ElephantMic = "badge" | "trunk" | "none";
 
+/** En dessous : pas d'éléphant (trop petit pour la version simplifiée). */
+export const ELEPHANT_MIN_SIZE = 22;
+
 const LABELS: Record<ElephantState, string> = {
   idle: "Éléa est disponible",
   listening: "Éléa vous écoute",
@@ -24,13 +27,19 @@ type Props = {
   className?: string;
   decorative?: boolean;
   layoutId?: string;
-  /** Afficher une pastille micro (bouton composer). Défaut : badge. */
+  /** Afficher une pastille micro (bouton composer). Défaut : none. */
   mic?: ElephantMic;
+  /**
+   * Si true et size < ELEPHANT_MIN_SIZE : point Cherry à la place.
+   * Sinon : rien n'est rendu.
+   */
+  fallbackDot?: boolean;
 };
 
 /**
  * Mascotte Éléa (tête d'éléphant). SVG complets dans le DOM (pas de use href).
  * Variante via CSS : détaillée / simplifiée (Vivant) ou classique.
+ * Taille minimale de la version simplifiée : 22 px.
  */
 export function Elephant({
   state = "idle",
@@ -39,11 +48,25 @@ export function Elephant({
   decorative,
   layoutId,
   mic = "none",
+  fallbackDot = false,
 }: Props) {
+  if (size < ELEPHANT_MIN_SIZE) {
+    if (!fallbackDot) return null;
+    return (
+      <span
+        className={[styles.dot, className].filter(Boolean).join(" ")}
+        style={{ width: size, height: size }}
+        role={decorative ? undefined : "img"}
+        aria-label={decorative ? undefined : LABELS[state]}
+        aria-hidden={decorative || undefined}
+      />
+    );
+  }
+
   const animState: Exclude<ElephantState, "done"> = state === "done" ? "idle" : state;
   const compact = size <= 32;
   const sizeBucket = size <= 24 ? "s" : size <= 64 ? "m" : "l";
-  const showMic = mic !== "none" && sizeBucket !== "s";
+  const showMic = mic !== "none";
 
   return (
     <motion.span
@@ -56,6 +79,7 @@ export function Elephant({
       data-state={animState}
       data-compact={compact || undefined}
       data-size={sizeBucket}
+      data-mic={showMic ? mic : undefined}
     >
       <svg
         className={[styles.svg, styles.detailed].join(" ")}

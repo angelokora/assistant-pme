@@ -53,11 +53,13 @@
 }
 
 .itemActive {
-  color: var(--color-action-text);
+  color: var(--color-on-action-soft);
+  background: var(--color-action-soft);
+  font-weight: var(--weight-semibold);
 }
 
 .itemActive:hover {
-  background: transparent;
+  background: var(--color-action-soft);
 }
 
 .pip {

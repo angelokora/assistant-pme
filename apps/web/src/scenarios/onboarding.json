@@ -270,6 +270,20 @@
           "summary": "Charges connues, heures à préciser"
         },
         {
+          "kind": "subject",
+          "subject": {
+            "id": "rentabilite-affaire",
+            "title": "Rentabilité par affaire",
+            "icon": "target",
+            "status": "active",
+            "openedAt": "2026-11-25T10:43:00",
+            "lastExchangeAt": "2026-11-25T10:43:00",
+            "scenarioIds": ["onboarding"],
+            "planIds": [],
+            "summary": "Charges et heures en cours de collecte pour savoir quelles affaires gagnent de l'argent."
+          }
+        },
+        {
           "kind": "finding",
           "finding": {
             "id": "f-charges",
@@ -356,6 +370,20 @@
           "to": 0.7,
           "status": "active",
           "summary": "Charges connues, heures à préciser"
+        },
+        {
+          "kind": "subject",
+          "subject": {
+            "id": "rentabilite-affaire",
+            "title": "Rentabilité par affaire",
+            "icon": "target",
+            "status": "active",
+            "openedAt": "2026-11-25T10:43:00",
+            "lastExchangeAt": "2026-11-25T10:43:00",
+            "scenarioIds": ["onboarding"],
+            "planIds": [],
+            "summary": "Charges et heures en cours de collecte pour savoir quelles affaires gagnent de l'argent."
+          }
         },
         {
           "kind": "finding",
@@ -479,6 +507,20 @@
           "to": 0.6,
           "status": "active",
           "summary": "Charges connues, heures à préciser"
+        },
+        {
+          "kind": "subject",
+          "subject": {
+            "id": "rentabilite-affaire",
+            "title": "Rentabilité par affaire",
+            "icon": "target",
+            "status": "active",
+            "openedAt": "2026-11-25T10:43:00",
+            "lastExchangeAt": "2026-11-25T10:43:00",
+            "scenarioIds": ["onboarding"],
+            "planIds": [],
+            "summary": "Charges et heures en cours de collecte pour savoir quelles affaires gagnent de l'argent."
+          }
         },
         {
           "kind": "finding",
@@ -845,6 +887,15 @@
       "delayMs": 900,
       "effects": [
         {
+          "kind": "update-subject",
+          "subjectId": "rentabilite-affaire",
+          "patch": {
+            "planIds": ["p-rentabilite"],
+            "lastExchangeAt": "2026-11-25T10:50:00",
+            "summary": "Plan proposé : connaître la rentabilité de chaque affaire."
+          }
+        },
+        {
           "kind": "plan",
           "plan": {
             "id": "p-rentabilite",
@@ -1121,6 +1172,15 @@
           "planId": "{{planId}}",
           "patch": {
             "status": "active"
+          }
+        },
+        {
+          "kind": "update-subject",
+          "subjectId": "rentabilite-affaire",
+          "patch": {
+            "planIds": ["{{planId}}"],
+            "lastExchangeAt": "2026-11-25T10:52:00",
+            "summary": "Plan démarré : {{planTitle}}. Première étape : {{planFirstStep}}."
           }
         },
         {

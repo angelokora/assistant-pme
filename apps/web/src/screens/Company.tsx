@@ -87,37 +87,43 @@ export function Company() {
         <h2 id="subjects-title" className={styles.sectionTitle}>
           Sujets traités
         </h2>
-        <ul className={styles.topicList}>
-          <AnimatePresence initial={false}>
-            {subjects.map((s) => {
-              const list = findings.filter((f) => f.subjectId === s.id);
-              const latest = latestFindingDate(list);
-              return (
-                <motion.li key={s.id} layout transition={{ type: "spring", stiffness: 420, damping: 32 }}>
-                  <button type="button" className={styles.topicRow} onClick={() => navigate(`/entreprise/${s.id}`)}>
-                    <span className={styles.topicIcon} aria-hidden>
-                      <Icon name={s.icon} />
-                    </span>
-                    <span className={styles.topicBody}>
-                      <span className={styles.topicLabel}>{s.title}</span>
-                      <span className={styles.topicMeta}>
-                        {list.length === 0
-                          ? "Aucun constat"
-                          : latest
-                            ? `Dernier ajout ${formatDate(latest, "short")}`
-                            : null}
+        {subjects.length === 0 ? (
+          <p className={["voice", styles.emptyVoice].join(" ")}>
+            Aucun sujet traité pour l'instant. Dès qu'une problématique se dessine, je la range ici.
+          </p>
+        ) : (
+          <ul className={styles.topicList}>
+            <AnimatePresence initial={false}>
+              {subjects.map((s) => {
+                const list = findings.filter((f) => f.subjectId === s.id);
+                const latest = latestFindingDate(list);
+                return (
+                  <motion.li key={s.id} layout transition={{ type: "spring", stiffness: 420, damping: 32 }}>
+                    <button type="button" className={styles.topicRow} onClick={() => navigate(`/entreprise/${s.id}`)}>
+                      <span className={styles.topicIcon} aria-hidden>
+                        <Icon name={s.icon} />
                       </span>
-                    </span>
-                    <span className={styles.topicCount} aria-label={`${list.length} constats`}>
-                      <AnimatedCount value={list.length} />
-                    </span>
-                    <ChevronRight size={18} strokeWidth={1.75} aria-hidden className={styles.chevron} />
-                  </button>
-                </motion.li>
-              );
-            })}
-          </AnimatePresence>
-        </ul>
+                      <span className={styles.topicBody}>
+                        <span className={styles.topicLabel}>{s.title}</span>
+                        <span className={styles.topicMeta}>
+                          {list.length === 0
+                            ? "Aucun constat"
+                            : latest
+                              ? `Dernier ajout ${formatDate(latest, "short")}`
+                              : null}
+                        </span>
+                      </span>
+                      <span className={styles.topicCount} aria-label={`${list.length} constats`}>
+                        <AnimatedCount value={list.length} />
+                      </span>
+                      <ChevronRight size={18} strokeWidth={1.75} aria-hidden className={styles.chevron} />
+                    </button>
+                  </motion.li>
+                );
+              })}
+            </AnimatePresence>
+          </ul>
+        )}
       </motion.section>
 
       <motion.div variants={blockItem}>

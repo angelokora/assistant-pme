@@ -63,21 +63,20 @@
   flex-shrink: 0;
 }
 
-.foot .topic,
-.foot .origin,
-.foot time {
+/* Le sujet traité peut être long : ellipse. Date et origine restent entières. */
+.foot .topic {
+  flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.foot .topic {
-  flex-shrink: 1;
-}
-
+.foot time,
 .foot .origin {
-  flex-shrink: 1;
+  flex: 0 0 auto;
+  overflow: visible;
+  white-space: nowrap;
 }
 
 .topic {

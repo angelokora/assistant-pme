@@ -3,7 +3,7 @@
   "intent": "inform",
   "title": "Paiement du Comptoir des Halles",
   "start": "noted",
-  "userUtterance": "Le Comptoir des Halles m'a enfin réglé la facture d'octobre, 4 800 €.",
+  "userUtterance": "Le Comptoir des Halles m'a enfin réglé la facture d'octobre, 4 800 €.",
   "steps": {
     "noted": {
       "delayMs": 700,
@@ -13,7 +13,7 @@
           "findingId": "f-comptoir",
           "patch": {
             "title": "Le Comptoir des Halles : novembre en attente",
-            "summary": "Facture d'octobre (4 800 €) réglée le 16 décembre, 16 jours après l'échéance. Facture de novembre (4 800 €) à échéance le 30 décembre."
+            "summary": "Facture d'octobre (4 800 €) réglée le 16 décembre, 16 jours après l'échéance. Facture de novembre (4 800 €) à échéance le 30 décembre."
           }
         },
         {
@@ -23,7 +23,7 @@
             "type": "fact",
             "topicId": "clients",
             "title": "Comptoir des Halles : octobre réglé",
-            "summary": "4 800 € reçus le 16 décembre, 16 jours après l'échéance.",
+            "summary": "4 800 € reçus le 16 décembre, 16 jours après l'échéance.",
             "createdAt": "2026-12-16T11:10:00",
             "origin": "conversation",
             "confidence": "confirmed",
@@ -34,7 +34,7 @@
           "kind": "update-attention",
           "attentionId": "a2",
           "patch": {
-            "title": "4 800 € encore attendus du Comptoir des Halles",
+            "title": "4 800 € encore attendus du Comptoir des Halles",
             "text": "Facture de novembre à échéance le 30 décembre. Leur délai réel est passé de 30 à 46 jours."
           }
         }
@@ -48,7 +48,7 @@
             "id": "clients",
             "label": "Clients"
           },
-          "text": "Comptoir des Halles : octobre réglé, 4 800 €",
+          "text": "Comptoir des Halles : octobre réglé, 4 800 €",
           "confidence": "confirmed",
           "editable": true,
           "findingId": "f-payment-oct"
@@ -58,7 +58,7 @@
           "type": "callout",
           "tone": "memory",
           "title": "Il reste novembre",
-          "text": "La facture de novembre (4 800 €) arrive à échéance le 30 décembre. Leur délai réel est passé de 30 à 46 jours depuis l'été."
+          "text": "La facture de novembre (4 800 €) arrive à échéance le 30 décembre. Leur délai réel est passé de 30 à 46 jours depuis l'été."
         },
         {
           "id": "ip-suggestions",

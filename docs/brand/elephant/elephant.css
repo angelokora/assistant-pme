@@ -1,0 +1,42 @@
+/* Référence des états d'Éléa. Appliquer data-state sur le <svg> (ou un parent direct) : idle | listening | thinking | speaking.
+   Important : le SVG doit être inséré en entier dans le DOM (pas de <use href>), sinon ces règles ne s'appliquent pas. */
+.elephant * { transform-box: fill-box; }
+.elephant .ear-left  { transform-origin: 100% 45%; }
+.elephant .ear-right { transform-origin: 0% 45%; }
+.elephant .eyes   { transform-origin: 50% 50%; }
+.elephant .trunk  { transform-origin: 50% 0%; }
+.elephant .head   { transform-origin: 50% 100%; }
+.elephant .dots circle { opacity: 0; }
+
+/* Repos : clignement, oreilles qui respirent (vers l'intérieur uniquement, jamais au-delà de 1) */
+[data-state="idle"] .eyes { animation: el-blink 4s infinite; }
+[data-state="idle"] .ear-left, [data-state="idle"] .ear-right { animation: el-breathe 3.2s ease-in-out infinite alternate; }
+
+/* Écoute : battement d'oreilles entre 1 et 0,72, tête légèrement inclinée */
+[data-state="listening"] .ear-left, [data-state="listening"] .ear-right { animation: el-flap .45s ease-in-out infinite alternate; }
+[data-state="listening"] .head { transform: rotate(-5deg); }
+
+/* Réflexion : regard vers le haut, trompe qui s'enroule, trois points */
+[data-state="thinking"] .eyes   { transform: translateY(-1.5px); }
+[data-state="thinking"] .pupils { transform: translate(1.5px, -2px); }
+[data-state="thinking"] .trunk  { animation: el-curl 1.6s ease-in-out infinite alternate; }
+[data-state="thinking"] .dots circle { animation: el-dot 1.2s infinite; }
+[data-state="thinking"] .dots circle:nth-child(2) { animation-delay: .2s; }
+[data-state="thinking"] .dots circle:nth-child(3) { animation-delay: .4s; }
+
+/* Parole : tête qui bouge, trompe qui se balance */
+[data-state="speaking"] .head  { animation: el-bob .32s ease-in-out infinite alternate; }
+[data-state="speaking"] .trunk { animation: el-sway .32s ease-in-out infinite alternate; }
+
+@keyframes el-blink   { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+@keyframes el-breathe { from { transform: scaleX(1); } to { transform: scaleX(.94); } }
+@keyframes el-flap    { from { transform: scaleX(1); } to { transform: scaleX(.72); } }
+@keyframes el-curl    { from { transform: rotate(0); } to { transform: rotate(-28deg); } }
+@keyframes el-dot     { 0%, 100% { opacity: .15; } 50% { opacity: 1; } }
+@keyframes el-bob     { from { transform: translateY(0); } to { transform: translateY(-2.5px); } }
+@keyframes el-sway    { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .elephant *, .elephant .dots circle { animation: none !important; }
+  [data-state="thinking"] .dots circle { opacity: 1; }
+}

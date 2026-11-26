@@ -19,6 +19,8 @@ type MemoryState = Memory & {
   completePlanStep: (planId: string, stepId: string) => void;
   /** Change l'état d'une source (déconnexion / reconnexion). */
   setSourceStatus: (sourceId: string, status: Memory["sources"][number]["status"], patch?: Partial<Memory["sources"][number]>) => void;
+  /** Met à jour un sujet traité (statut, résumé…). */
+  patchSubject: (id: string, patch: Partial<Memory["subjects"][number]>) => void;
 };
 
 const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v));
@@ -168,6 +170,8 @@ export const useMemory = create<MemoryState>()(
               : src,
           ),
         })),
+      patchSubject: (id, patch) =>
+        set((s) => ({ subjects: s.subjects.map((sub) => (sub.id === id ? { ...sub, ...patch } : sub)) })),
     }),
     {
       name: "elea-memory",

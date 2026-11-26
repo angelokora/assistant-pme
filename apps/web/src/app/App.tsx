@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useParams } from "react-router-dom";
 import { MotionConfig } from "motion/react";
 import { ToastProvider } from "@elea/ds";
 import { Home } from "../screens/Home";
@@ -23,6 +23,11 @@ import { FlightLayer } from "../blocks/flight/FlightLayer";
 import { Shell } from "../shell/Shell";
 import { Search } from "../screens/Search";
 
+function LegacySubjectRedirect() {
+  const { subjectId = "" } = useParams();
+  return <Navigate to={`/sujet/${subjectId}`} replace />;
+}
+
 function PrototypeRoutes() {
   useDemoBridge();
 
@@ -32,7 +37,8 @@ function PrototypeRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/entreprise" element={<Company />} />
         <Route path="/entreprise/dimension/:dimensionId" element={<DimensionPage />} />
-        <Route path="/entreprise/:subjectId" element={<Topic />} />
+        <Route path="/sujet/:subjectId" element={<Topic />} />
+        <Route path="/entreprise/:subjectId" element={<LegacySubjectRedirect />} />
         <Route path="/plans" element={<Plans />} />
         <Route path="/plans/:planId" element={<PlanDetail />} />
         <Route path="/recherche" element={<Search />} />

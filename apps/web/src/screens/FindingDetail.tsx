@@ -118,7 +118,7 @@ export function FindingDetail({ finding, showTitle = true }: Props) {
     const snapshot = removeFinding(finding.id);
     setConfirmDelete(false);
     close();
-    navigate(subject ? `/entreprise/${subject.id}` : "/entreprise");
+    navigate(subject ? `/sujet/${subject.id}` : "/entreprise");
     if (!snapshot) return;
     show("J'ai oublié ce constat.", {
       durationMs: 5000,

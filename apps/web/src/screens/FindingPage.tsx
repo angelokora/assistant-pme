@@ -44,7 +44,7 @@ export function FindingPage() {
   }
 
   const backLabel = subject?.title ?? dimension?.label ?? "Mon entreprise";
-  const backTo = subject ? `/entreprise/${subject.id}` : "/entreprise";
+  const backTo = subject ? `/sujet/${subject.id}` : "/entreprise";
 
   if (!desktop) {
     return (

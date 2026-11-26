@@ -38,8 +38,11 @@ export function Company() {
   const dimensions = useMemory((s) => s.dimensions);
   const subjects = useMemory((s) => s.subjects);
   const findings = useMemory((s) => s.findings);
+  const plans = useMemory((s) => s.plans);
   const theme = useTheme((s) => s.theme);
   const setTheme = useTheme((s) => s.setTheme);
+
+  const STATUS_LABEL = { active: "En cours", paused: "En pause", resolved: "Résolu" } as const;
 
   return (
     <motion.main className={styles.page} variants={blockList} initial="hidden" animate="shown">
@@ -98,20 +101,26 @@ export function Company() {
               {subjects.map((s) => {
                 const list = findings.filter((f) => f.subjectId === s.id);
                 const latest = latestFindingDate(list);
+                const plan = plans.find((p) => s.planIds.includes(p.id) || p.subjectId === s.id);
                 return (
                   <motion.li key={s.id} layout transition={{ type: "spring", stiffness: 420, damping: 32 }}>
-                    <button type="button" className={styles.topicRow} onClick={() => navigate(`/entreprise/${s.id}`)}>
+                    <button type="button" className={styles.topicRow} onClick={() => navigate(`/sujet/${s.id}`)}>
                       <span className={styles.topicIcon} aria-hidden>
                         <Icon name={s.icon} />
                       </span>
                       <span className={styles.topicBody}>
                         <span className={styles.topicLabel}>{s.title}</span>
                         <span className={styles.topicMeta}>
+                          {STATUS_LABEL[s.status]}
+                          {" · "}
                           {list.length === 0
                             ? "Aucun constat"
                             : latest
-                              ? `Dernier ajout ${formatDate(latest, "short")}`
+                              ? `Dernier échange ${formatDate(latest, "short")}`
                               : null}
+                          {plan
+                            ? ` · ${plan.steps.filter((st) => st.status === "done").length}/${plan.steps.length} étapes`
+                            : null}
                         </span>
                       </span>
                       <span className={styles.topicCount} aria-label={`${list.length} constats`}>

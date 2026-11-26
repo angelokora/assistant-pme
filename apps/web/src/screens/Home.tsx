@@ -270,7 +270,7 @@ export function Home() {
                 key={s.id}
                 type="button"
                 className={styles.topicRow}
-                onClick={() => navigate(`/entreprise/${s.id}`)}
+                onClick={() => navigate(`/sujet/${s.id}`)}
               >
                 <Icon name={s.icon} />
                 <span>{s.title}</span>

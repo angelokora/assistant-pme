@@ -126,7 +126,10 @@ export function Topic() {
                       origin={f.origin}
                       confidence={f.confidence}
                       variant="compact"
-                      onClick={() => openDetail("finding", f.id)}
+                      onClick={() => {
+                        openDetail("finding", f.id);
+                        navigate(`/finding/${f.id}`);
+                      }}
                     />
                   </motion.li>
                 ))}

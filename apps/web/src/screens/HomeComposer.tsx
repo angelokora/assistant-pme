@@ -10,6 +10,7 @@ import { useMemory } from "../memory/store";
 import { useDemo } from "../demo/demo";
 import { useSimulatedSpeech } from "../composer/useSimulatedSpeech";
 import { useRadialMic } from "../shell/useRadialMic";
+import { useComposerContext } from "../shell/composerContext";
 import styles from "./HomeComposer.module.css";
 
 const FALLBACK_SIMULATED = "Je veux embaucher une vendeuse pour les week-ends. Je fais un CDD ou un CDI ?";
@@ -41,6 +42,8 @@ export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeC
   const stop = usePlayer((s) => s.stop);
   const start = usePlayer((s) => s.start);
   const suggestions = useMemory((s) => s.home?.suggestions ?? []);
+  const aboutTitle = useComposerContext((s) => s.aboutTitle);
+  const clearAbout = useComposerContext((s) => s.clear);
   const [mode, setMode] = useState<"voice" | "listening" | "text">(forceOpen ? "text" : "voice");
   const [draft, setDraft] = useState("");
   const [unknown, setUnknown] = useState(false);
@@ -103,6 +106,14 @@ export const HomeComposer = forwardRef<HomeComposerHandle, Props>(function HomeC
 
   return (
     <div className={styles.wrap}>
+      {aboutTitle && (
+        <div className={styles.about} role="status">
+          <span className={styles.aboutLabel}>À propos de :</span> {aboutTitle}
+          <button type="button" className={styles.aboutClear} onClick={clearAbout} aria-label="Retirer le contexte">
+            ×
+          </button>
+        </div>
+      )}
       {unknown && (
         <div className={styles.unknown}>
           <Callout tone="info" title="Je n'ai pas reconnu cette demande">

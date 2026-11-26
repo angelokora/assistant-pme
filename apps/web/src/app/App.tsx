@@ -5,6 +5,7 @@ import { ToastProvider } from "@elea/ds";
 import { Home } from "../screens/Home";
 import { Company } from "../screens/Company";
 import { Topic } from "../screens/Topic";
+import { FindingPage } from "../screens/FindingPage";
 import { NeedView } from "../screens/NeedView";
 import { DemoPanel } from "../demo/DemoPanel";
 import { DeviceStage } from "../demo/DeviceStage";
@@ -19,17 +20,6 @@ import { FlightLayer } from "../blocks/flight/FlightLayer";
 import { Shell } from "../shell/Shell";
 import { PlaceholderScreen } from "../shell/PlaceholderScreen";
 import { DESTINATIONS } from "../shell/destinations";
-
-function FindingPlaceholder() {
-  const { findingId } = useParams();
-  return (
-    <PlaceholderScreen
-      title={findingId ? "Détail d'un finding" : "Finding"}
-      ticketId={26}
-      ticketName="Détail d'un finding"
-    />
-  );
-}
 
 function PlanPlaceholder() {
   const { planId } = useParams();
@@ -62,7 +52,7 @@ function PrototypeRoutes() {
           path="/recherche"
           element={<PlaceholderScreen title={search.label} ticketId={22} ticketName="Retrouver une information" />}
         />
-        <Route path="/finding/:findingId" element={<FindingPlaceholder />} />
+        <Route path="/finding/:findingId" element={<FindingPage />} />
         <Route path="/besoin/:scenarioId" element={<NeedView />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

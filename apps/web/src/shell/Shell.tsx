@@ -66,8 +66,7 @@ export function Shell() {
         <Outlet />
       </div>
 
-      {desktop && <DetailPanel />}
-      {tablet && <DetailPanel />}
+      {(desktop || tablet || mobile) && <DetailPanel />}
 
       {mobile && !inNeed && !menuB && <BottomNav active={active} hideComposer={hideComposer} />}
       {mobile && menuB && <RadialMenu active={active} needsFallbackOrb={!onHome && !inNeed} />}

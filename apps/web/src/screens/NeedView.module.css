@@ -9,9 +9,8 @@
   align-items: center;
   gap: var(--space-3);
   padding: calc(var(--space-3) + max(env(safe-area-inset-top, 0px), var(--safe-top, 0px))) var(--space-5) var(--space-3);
-  background: rgb(251 248 243 / 0.86);
-  backdrop-filter: saturate(1.4) blur(14px);
-  -webkit-backdrop-filter: saturate(1.4) blur(14px);
+  background: var(--color-surface);
+  box-shadow: 0 2px 0 var(--color-border);
 }
 .brand { font-family: var(--font-voice); font-variation-settings: var(--voice-variation); font-weight: 600; font-size: var(--text-lg); }
 .title { font-size: var(--text-sm); color: var(--color-text-muted); font-weight: var(--weight-medium); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

@@ -38,9 +38,9 @@ function StepMarker({ status }: { status: StepStatus }) {
           >
             <circle cx="12" cy="12" r="10" className={styles.doneRing} />
             <motion.path
+              className={styles.doneCheck}
               d="M7.5 12.5 10.5 15.5 16.5 9"
               fill="none"
-              stroke="currentColor"
               strokeWidth="2.2"
               strokeLinecap="round"
               strokeLinejoin="round"

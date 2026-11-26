@@ -8,7 +8,7 @@ export function LeadBlockView({ block, active }: BlockProps<LeadBlock>) {
   const orb = usePlayer((s) => s.orb);
   return (
     <p className={styles.lead}>
-      <Elephant size={20} state={active ? orb : "idle"} decorative />
+      <Elephant size={24} state={active ? orb : "idle"} decorative />
       <span>{block.text}</span>
     </p>
   );

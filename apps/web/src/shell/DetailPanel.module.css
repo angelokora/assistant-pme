@@ -5,7 +5,7 @@
   width: min(360px, 32vw);
   padding: var(--space-5);
   border-left: var(--border-width) solid var(--color-border);
-  background: var(--color-bg);
+  background: var(--color-surface-side);
   overflow: auto;
   display: grid;
   align-content: start;

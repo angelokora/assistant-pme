@@ -194,7 +194,7 @@ export function Composer() {
         </ActionDock>
       ) : silentAwait ? null : !inputOpen ? (
         <div className={styles.status}>
-          <Elephant size={20} state={orb} decorative />
+          <Elephant size={24} state={orb} decorative />
           <span>{orb === "thinking" ? "Éléa réfléchit…" : orb === "speaking" ? "Éléa vous répond" : "Éléa est là"}</span>
         </div>
       ) : useCompact && !compactOpen ? (
@@ -226,7 +226,7 @@ export function Composer() {
               listen();
             }}
           >
-            <Mic size={18} strokeWidth={2} />
+            <Elephant size={32} state="idle" decorative mic="badge" />
           </button>
         </div>
       ) : (

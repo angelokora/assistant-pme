@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, Reorder, motion, useDragControls } from "motion/react";
 import { Check, GripVertical } from "lucide-react";
-import { Button, DateField, StepList, formatDate, spring } from "@elea/ds";
+import { Button, DateField, Gauge, StepList, formatDate, spring } from "@elea/ds";
 import type { PlanBlock as PlanBlockType, PlanStep } from "../engine/types";
 import { usePlayer } from "../engine/player";
 import { useMemory } from "../memory/store";
@@ -110,15 +110,14 @@ export function PlanBlockView({ block, active }: BlockProps<PlanBlockType>) {
         <header className={styles.planHeader}>
           <h2 className="voice">{plan.title}</h2>
           <p className={styles.planGoal}>{plan.goal}</p>
-          <div className={styles.planProgress} aria-label={`${done} sur ${total} étapes`}>
-            <div className={styles.planProgressTrack}>
-              <motion.div
-                className={styles.planProgressFill}
-                initial={false}
-                animate={{ width: `${total ? (done / total) * 100 : 0}%` }}
-                transition={spring.gentle}
-              />
-            </div>
+          <div className={styles.planProgress}>
+            <Gauge
+              value={total ? done / total : 0}
+              segments={total || 1}
+              status={done >= total && total > 0 ? "enough" : done > 0 ? "active" : "todo"}
+              label={`${done} sur ${total} étapes`}
+              className={styles.planProgressGauge}
+            />
             <span className={styles.planProgressLabel}>
               {done}/{total}
             </span>

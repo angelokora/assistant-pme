@@ -26,6 +26,7 @@ Pilotage : `document.documentElement.dataset.theme = "vivant" | "classic"`.
 | --- | --- | --- |
 | `--color-bg` | `#ffe066` | Papier `#fbf8f3` |
 | `--color-surface` | Blanc | Blanc |
+| `--color-surface-side` | Blanc (colonnes bureau) | Papier (comme le fond) |
 | `--color-border` | Encre `#011627` | `#e6e1d8` |
 | `--border-width` | `2px` | `1px` |
 | `--border-width-strong` | `2px` | `1.5px` |

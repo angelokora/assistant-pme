@@ -103,6 +103,7 @@
 
 .day:hover {
   background: var(--color-action-soft);
+  color: var(--color-on-action-soft);
 }
 
 .day:focus-visible {
@@ -112,7 +113,7 @@
 
 .daySelected {
   background: var(--color-action);
-  color: #fff;
+  color: var(--color-text-on-action);
   font-weight: var(--weight-semibold);
 }
 

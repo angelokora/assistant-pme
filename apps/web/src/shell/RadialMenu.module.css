@@ -31,20 +31,20 @@
   height: 64px;
   border: 0;
   border-radius: var(--radius-full);
-  background: transparent;
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-2);
   cursor: pointer;
 }
 
 .orbBtn:focus-visible {
   outline: none;
-  box-shadow: var(--focus-ring);
+  box-shadow: var(--focus-ring), var(--shadow-2);
 }
 
-.orbMic {
-  position: absolute;
-  color: #fff;
-  filter: drop-shadow(0 1px 2px rgb(107 7 36 / 0.5));
-  pointer-events: none;
+.orbBtn:active {
+  transform: translate(var(--press-shift), var(--press-shift));
+  box-shadow: var(--press-shadow);
 }
 
 .hint {

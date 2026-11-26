@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "motion/react";
-import { ArrowRight, ChevronUp, Mic } from "lucide-react";
+import { ArrowRight, ChevronUp } from "lucide-react";
 import {
   Button,
   Card,
@@ -166,8 +166,7 @@ export function Home() {
               aria-label="Toucher pour parler, glisser ou appui long pour le menu"
               {...presenceRadial}
             >
-              <Elephant size={96} state="idle" decorative />
-              <Mic size={28} strokeWidth={1.75} className={styles.presenceMicIcon} aria-hidden />
+              <Elephant size={88} state="idle" decorative mic="badge" />
             </button>
           </motion.div>
         ) : (

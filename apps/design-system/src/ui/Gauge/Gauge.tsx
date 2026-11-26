@@ -2,13 +2,19 @@ import { motion } from "motion/react";
 import { spring } from "../../motion/springs";
 import styles from "./Gauge.module.css";
 
-const SEGMENTS = 5;
+type Props = {
+  value: number;
+  /** Nombre de segments (défaut 5). Un plan passe le nombre d'étapes. */
+  segments?: number;
+  status?: "todo" | "active" | "enough";
+  label?: string;
+  className?: string;
+};
 
-type Props = { value: number; status?: "todo" | "active" | "enough"; label?: string; className?: string };
-
-/** Jauge de connaissance. Segments tokenisés (continus en Classique via gap 0). */
-export function Gauge({ value, status = "todo", label, className }: Props) {
+/** Jauge segmentée. En Classique, gap 0 → rendu continu. */
+export function Gauge({ value, segments = 5, status = "todo", label, className }: Props) {
   const v = Math.max(0, Math.min(1, value));
+  const count = Math.max(1, Math.round(segments));
   return (
     <div
       className={[styles.track, styles[status], className].filter(Boolean).join(" ")}
@@ -18,8 +24,8 @@ export function Gauge({ value, status = "todo", label, className }: Props) {
       aria-valuemax={100}
       aria-valuenow={Math.round(v * 100)}
     >
-      {Array.from({ length: SEGMENTS }, (_, i) => {
-        const fill = Math.max(0, Math.min(1, v * SEGMENTS - i));
+      {Array.from({ length: count }, (_, i) => {
+        const fill = Math.max(0, Math.min(1, v * count - i));
         return (
           <div key={i} className={styles.seg}>
             <motion.div

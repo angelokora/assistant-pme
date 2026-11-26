@@ -43,6 +43,20 @@ function reduce(m: Memory, e: Effect): Memory {
     }
     case "update-finding":
       return { ...m, findings: m.findings.map((f) => (f.id === e.findingId ? { ...f, ...e.patch } : f)) };
+    case "subject": {
+      const exists = m.subjects.some((s) => s.id === e.subject.id);
+      return {
+        ...m,
+        subjects: exists
+          ? m.subjects.map((s) => (s.id === e.subject.id ? { ...s, ...e.subject } : s))
+          : [...m.subjects, e.subject],
+      };
+    }
+    case "update-subject":
+      return {
+        ...m,
+        subjects: m.subjects.map((s) => (s.id === e.subjectId ? { ...s, ...e.patch } : s)),
+      };
     case "source": {
       const exists = m.sources.some((s) => s.id === e.source.id);
       return { ...m, sources: exists ? m.sources.map((s) => (s.id === e.source.id ? e.source : s)) : [...m.sources, e.source] };

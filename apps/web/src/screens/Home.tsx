@@ -319,7 +319,7 @@ export function Home() {
 
       <motion.section variants={blockItem} aria-labelledby="findings-title">
         <h2 id="findings-title" className={styles.sectionTitle}>
-          Derniers findings
+          Derniers constats
         </h2>
         <FindingsList
           findings={recentFindings}
@@ -410,7 +410,7 @@ function FindingsList({
   today: string;
   onOpen: (id: string) => void;
 }) {
-  if (!findings.length) return <p className={styles.empty}>Aucun finding pour l'instant.</p>;
+  if (!findings.length) return <p className={styles.empty}>Aucun constat pour l'instant.</p>;
   return (
     <ul className={styles.stack}>
       {findings.map((f) => (

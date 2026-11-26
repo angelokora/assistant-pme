@@ -212,6 +212,8 @@ export type Effect =
   | { kind: "progress"; dimensionId: string; to: number; status?: DimensionStatus; summary?: string }
   | { kind: "finding"; finding: Finding }
   | { kind: "update-finding"; findingId: string; patch: Partial<Finding> }
+  | { kind: "subject"; subject: Subject }
+  | { kind: "update-subject"; subjectId: string; patch: Partial<Subject> }
   | { kind: "source"; source: Source }
   | { kind: "plan"; plan: Plan }
   | { kind: "update-plan"; planId: string; patch: Partial<Plan> }

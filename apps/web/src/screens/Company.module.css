@@ -124,6 +124,14 @@
   color: var(--color-text-muted);
 }
 
+.emptyVoice {
+  margin: 0;
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--color-text-muted);
+  text-wrap: pretty;
+}
+
 .prefs {
   display: flex;
   flex-direction: column;

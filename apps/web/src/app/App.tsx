@@ -3,6 +3,8 @@ import { BrowserRouter, Navigate, Route, Routes, useParams } from "react-router-
 import { MotionConfig } from "motion/react";
 import { ToastProvider } from "@elea/ds";
 import { Home } from "../screens/Home";
+import { Company } from "../screens/Company";
+import { Topic } from "../screens/Topic";
 import { NeedView } from "../screens/NeedView";
 import { DemoPanel } from "../demo/DemoPanel";
 import { DeviceStage } from "../demo/DeviceStage";
@@ -17,17 +19,6 @@ import { FlightLayer } from "../blocks/flight/FlightLayer";
 import { Shell } from "../shell/Shell";
 import { PlaceholderScreen } from "../shell/PlaceholderScreen";
 import { DESTINATIONS } from "../shell/destinations";
-
-function TopicPlaceholder() {
-  const { topicId } = useParams();
-  return (
-    <PlaceholderScreen
-      title={topicId ? `Sujet « ${topicId} »` : "Sujet"}
-      ticketId={25}
-      ticketName="Mon entreprise et sujets"
-    />
-  );
-}
 
 function FindingPlaceholder() {
   const { findingId } = useParams();
@@ -53,7 +44,6 @@ function PlanPlaceholder() {
 
 function PrototypeRoutes() {
   useDemoBridge();
-  const company = DESTINATIONS.find((d) => d.id === "company")!;
   const plans = DESTINATIONS.find((d) => d.id === "plans")!;
   const search = DESTINATIONS.find((d) => d.id === "search")!;
 
@@ -61,11 +51,8 @@ function PrototypeRoutes() {
     <Routes>
       <Route element={<Shell />}>
         <Route path="/" element={<Home />} />
-        <Route
-          path="/entreprise"
-          element={<PlaceholderScreen title={company.label} ticketId={company.ticket!.id} ticketName={company.ticket!.name} />}
-        />
-        <Route path="/entreprise/:topicId" element={<TopicPlaceholder />} />
+        <Route path="/entreprise" element={<Company />} />
+        <Route path="/entreprise/:topicId" element={<Topic />} />
         <Route
           path="/plans"
           element={<PlaceholderScreen title={plans.label} ticketId={plans.ticket!.id} ticketName={plans.ticket!.name} />}

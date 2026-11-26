@@ -1,12 +1,19 @@
 import type { ReactNode } from "react";
 import { motion, type HTMLMotionProps } from "motion/react";
 import { ConfidenceBadge, type Confidence } from "../ConfidenceBadge/ConfidenceBadge";
+import { ProviderLogo, type ProviderId } from "../ProviderLogo/ProviderLogo";
 import { press, spring } from "../../motion/springs";
 import { formatRelativeDate } from "../../format";
 import styles from "./FindingCard.module.css";
 
 export type FindingType = "answer" | "fact" | "decision" | "plan" | "document" | "action";
 export type FindingOrigin = "conversation" | "document" | "gmail" | "outlook" | "drive";
+
+const PROVIDER_ORIGIN: Partial<Record<FindingOrigin, ProviderId>> = {
+  gmail: "gmail",
+  outlook: "outlook",
+  drive: "drive",
+};
 
 const TYPE_LABEL: Record<FindingType, string> = {
   answer: "Réponse",
@@ -76,7 +83,12 @@ export function FindingCard({
         <span aria-hidden>·</span>
         <time dateTime={createdAt}>{relative}</time>
         <span aria-hidden>·</span>
-        <span className={styles.origin}>{ORIGIN_LABEL[origin]}</span>
+        <span className={styles.origin}>
+          {PROVIDER_ORIGIN[origin] ? (
+            <ProviderLogo provider={PROVIDER_ORIGIN[origin]!} size={14} labelled={false} />
+          ) : null}
+          {ORIGIN_LABEL[origin]}
+        </span>
       </div>
     </motion.button>
   );

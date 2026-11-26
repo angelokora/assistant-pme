@@ -146,6 +146,17 @@ type Attention = {
   planId?: string; stepId?: string; findingId?: string;
 };
 
+type Dimension = {
+  id: string;
+  label: string;
+  icon: string;
+  tone: "icy" | "teal" | "cherry" | "bronze";
+  progress: number;
+  status: "todo" | "active" | "enough";
+  summary: string;
+  gaps?: { id: string; question: string; scenarioId?: string }[]; // « Ce qui manque »
+};
+
 type Subject = {
   id: string;
   title: string;
@@ -222,7 +233,7 @@ Quand `planId` est posé (choix de plan), le moteur enrichit automatiquement les
 
 **Auth déjà faite.** Si l'étape attend un `await.kind === "auth"` et que `account.created` est vrai en mémoire (compte créé plus tôt, p.ex. au connecteur), le moteur saute l'étape sans afficher le bloc.
 
-Routes (`react-router`) : `/`, `/entreprise`, `/entreprise/:subjectId`, `/plans`, `/plans/:planId`, `/recherche`, `/besoin/:scenarioId`, `/finding/:findingId`. Le paramètre `?v=a|b|c` choisit la variante de l'accueil ; `?menu=a|b` le menu mobile ; `?find=a|b` la variante Recherche (liste ou tuiles). Les choix du panneau démo sont persistés et utilisés en l'absence de paramètre d'URL.
+Routes (`react-router`) : `/`, `/entreprise`, `/entreprise/dimension/:dimensionId`, `/entreprise/:subjectId`, `/plans`, `/plans/:planId`, `/recherche`, `/besoin/:scenarioId`, `/finding/:findingId`. Le paramètre `?v=a|b|c` choisit la variante de l'accueil ; `?menu=a|b` le menu mobile ; `?find=a|b` la variante Recherche (liste ou tuiles). Les choix du panneau démo sont persistés et utilisés en l'absence de paramètre d'URL.
 
 ## 6. Mouvement
 

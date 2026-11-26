@@ -5,6 +5,7 @@ import { ToastProvider } from "@elea/ds";
 import { Home } from "../screens/Home";
 import { Company } from "../screens/Company";
 import { Topic } from "../screens/Topic";
+import { DimensionPage } from "../screens/DimensionPage";
 import { FindingPage } from "../screens/FindingPage";
 import { Plans } from "../screens/Plans";
 import { PlanDetail } from "../screens/PlanDetail";
@@ -30,6 +31,7 @@ function PrototypeRoutes() {
       <Route element={<Shell />}>
         <Route path="/" element={<Home />} />
         <Route path="/entreprise" element={<Company />} />
+        <Route path="/entreprise/dimension/:dimensionId" element={<DimensionPage />} />
         <Route path="/entreprise/:subjectId" element={<Topic />} />
         <Route path="/plans" element={<Plans />} />
         <Route path="/plans/:planId" element={<PlanDetail />} />

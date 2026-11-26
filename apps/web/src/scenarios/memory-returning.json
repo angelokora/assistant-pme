@@ -20,7 +20,18 @@
       "tone": "icy",
       "progress": 0.75,
       "status": "enough",
-      "summary": "Bureau d'études fluides et thermique, 18 salariés, Nantes"
+      "summary": "Bureau d'études fluides et thermique, 18 salariés, Nantes",
+      "gaps": [
+        {
+          "id": "g-act-1",
+          "question": "Quelles affaires occupent le plus vos équipes en ce moment ?",
+          "scenarioId": "ask-subcontract"
+        },
+        {
+          "id": "g-act-2",
+          "question": "Combien d'affaires structure prévoyez-vous cette année ?"
+        }
+      ]
     },
     {
       "id": "finances",
@@ -29,7 +40,19 @@
       "tone": "teal",
       "progress": 0.9,
       "status": "enough",
-      "summary": "Revient connu : 58 € de l'heure"
+      "summary": "Revient connu : 58 € de l'heure",
+      "gaps": [
+        {
+          "id": "g-fin-1",
+          "question": "Quelles collectivités vous doivent encore de l'argent ?",
+          "scenarioId": "inform-payment"
+        },
+        {
+          "id": "g-fin-2",
+          "question": "Votre taux de revient a-t-il bougé depuis les dernières embauches ?",
+          "scenarioId": "find-hourly-rate"
+        }
+      ]
     },
     {
       "id": "profile",
@@ -38,7 +61,13 @@
       "tone": "cherry",
       "progress": 0.55,
       "status": "active",
-      "summary": "Études le matin, gestion le soir"
+      "summary": "Études le matin, gestion le soir",
+      "gaps": [
+        {
+          "id": "g-pro-1",
+          "question": "Qui prend les décisions commerciales quand vous êtes en étude ?"
+        }
+      ]
     },
     {
       "id": "priorities",
@@ -47,7 +76,13 @@
       "tone": "bronze",
       "progress": 0.8,
       "status": "enough",
-      "summary": "1 plan en cours, 1 en attente"
+      "summary": "1 plan en cours, 1 en attente",
+      "gaps": [
+        {
+          "id": "g-pri-1",
+          "question": "Souhaitez-vous mettre en pause un plan pour accélérer un autre ?"
+        }
+      ]
     }
   ],
   "findings": [

@@ -79,3 +79,33 @@
   color: var(--color-text-muted);
   max-width: 40ch;
 }
+
+.mobileFilters {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.activeFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.filterSheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.filterSheetGroups {
+  margin-bottom: 0;
+  gap: var(--space-5);
+}
+
+.filterSheetActions {
+  display: grid;
+  gap: var(--space-2);
+}

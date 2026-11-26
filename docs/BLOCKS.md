@@ -95,7 +95,7 @@ type AnalysisBlock = BaseBlock & {
 ## 3. Décision et action
 
 ### `choice` : choisir parmi des options
-Options en cartes (`ChoiceCard`), une seule sélectionnable, une recommandée (badge). L'option recommandée est présélectionnée. Bouton de confirmation (ActionDock sur mobile, sauf si `allowFreeInput` : le bouton reste dans le bloc pour laisser le composer accessible). Une fois terminé, le bloc se réduit en un **résumé de décision** (voir section 7) : pas d'écho « Vous : … » pour la même option.
+Options en cartes (`ChoiceCard`), une seule sélectionnable, une recommandée (badge). L'option recommandée est présélectionnée. Bouton de confirmation (ActionDock sur mobile, sauf si `allowFreeInput` : le bouton reste dans le bloc pour laisser le composer accessible). **Une seule option** (sans `allowFreeInput` ni `sideDetail`) : plus de carte ni de badge, le bloc affiche le titre, le sous-titre et un bouton principal portant le titre de l'option (ex. « Créer mon espace »). Une fois terminé, le bloc se réduit en un **résumé de décision** (voir section 7) : pas d'écho « Vous : … » pour la même option.
 ```ts
 type ChoiceBlock = BaseBlock & {
   type: "choice";

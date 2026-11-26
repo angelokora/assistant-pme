@@ -112,6 +112,25 @@
   color: var(--color-text);
 }
 
+.subject a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-action-text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.subject a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.subject a:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
 .subjectNone {
   font-weight: var(--weight-regular);
   color: var(--color-text-muted);

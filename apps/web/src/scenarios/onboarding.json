@@ -22,16 +22,13 @@
           "id": "welcome-go",
           "type": "choice",
           "title": "Faisons connaissance ?",
-          "subtitle": "Commençons par créer votre espace, ça prend quelques secondes.",
+          "subtitle": "Commençons par créer votre espace, ça prend quelques secondes. Ce que vous me direz restera rangé dans la mémoire de Morel Ingénierie.",
           "options": [
             {
               "id": "start",
-              "title": "Créer mon espace",
-              "body": "Ce que vous me direz restera rangé dans la mémoire de Morel Ingénierie.",
-              "recommended": true
+              "title": "Créer mon espace"
             }
           ],
-          "confirmLabel": "Continuer",
           "doneLabel": "Première étape"
         }
       ],
@@ -243,6 +240,97 @@
       ],
       "next": "extraction-mail"
     },
+    "mail-search-soft": {
+      "effects": [
+        {
+          "kind": "source",
+          "source": {
+            "id": "{{provider}}",
+            "provider": "{{provider}}",
+            "label": "{{providerLabel}}",
+            "status": "connected",
+            "detail": "thomas@morel-ingenierie.fr",
+            "lastSync": "2026-11-25T10:42:00"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "ms-analysis-soft",
+          "type": "analysis",
+          "title": "Je parcours vos mails",
+          "steps": [
+            {
+              "id": "ms-1-soft",
+              "label": "Je repère les factures des trois derniers mois…",
+              "durationMs": 1400
+            },
+            {
+              "id": "ms-2-soft",
+              "label": "Je lis les montants et les échéances…",
+              "durationMs": 1600
+            },
+            {
+              "id": "ms-3-soft",
+              "label": "Je classe vos charges par nature…",
+              "durationMs": 1200
+            }
+          ]
+        }
+      ],
+      "next": "extraction-mail-soft"
+    },
+    "mail-search-google-soft": {
+      "effects": [
+        {
+          "kind": "source",
+          "source": {
+            "id": "gmail",
+            "provider": "gmail",
+            "label": "Gmail",
+            "status": "connected",
+            "detail": "thomas@morel-ingenierie.fr",
+            "lastSync": "2026-11-25T10:42:00"
+          }
+        },
+        {
+          "kind": "source",
+          "source": {
+            "id": "drive",
+            "provider": "drive",
+            "label": "Google Drive",
+            "status": "connected",
+            "detail": "Dossier « Affaires 2026 »",
+            "lastSync": "2026-11-25T10:42:00"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "msg-analysis-soft",
+          "type": "analysis",
+          "title": "Je parcours vos mails et votre Drive",
+          "steps": [
+            {
+              "id": "msg-1-soft",
+              "label": "Je repère les factures des trois derniers mois dans Gmail…",
+              "durationMs": 1400
+            },
+            {
+              "id": "msg-2-soft",
+              "label": "Je lis les montants et les échéances, et je regarde le dossier « Affaires 2026 »…",
+              "durationMs": 1600
+            },
+            {
+              "id": "msg-3-soft",
+              "label": "Je classe vos charges par nature…",
+              "durationMs": 1200
+            }
+          ]
+        }
+      ],
+      "next": "extraction-mail-soft"
+    },
     "upload": {
       "delayMs": 400,
       "blocks": [
@@ -408,7 +496,111 @@
           "editable": true
         }
       ],
-      "next": "docs-notes"
+      "next": "sources-open"
+    },
+    "extraction-mail-soft": {
+      "delayMs": 300,
+      "effects": [
+        {
+          "kind": "progress",
+          "dimensionId": "finances",
+          "to": 0.7,
+          "status": "active",
+          "summary": "Charges connues, heures à préciser"
+        },
+        {
+          "kind": "subject",
+          "subject": {
+            "id": "rentabilite-affaire",
+            "title": "Rentabilité par affaire",
+            "icon": "target",
+            "status": "active",
+            "openedAt": "2026-11-25T10:43:00",
+            "lastExchangeAt": "2026-11-25T10:43:00",
+            "scenarioIds": [
+              "onboarding"
+            ],
+            "planIds": [],
+            "summary": "Charges et heures en cours de collecte pour savoir quelles affaires gagnent de l'argent."
+          }
+        },
+        {
+          "kind": "finding",
+          "finding": {
+            "id": "f-charges",
+            "type": "fact",
+            "title": "Charges mensuelles : 115 000 €",
+            "summary": "Salaires chargés 99 000 €, loyer 4 800 €, licences logicielles 3 200 €, véhicules 2 400 €, assurance RC pro et divers 5 600 €.",
+            "createdAt": "2026-11-25T10:43:00",
+            "origin": "{{provider}}",
+            "confidence": "estimated",
+            "scenarioId": "onboarding",
+            "dimensionId": "finances",
+            "subjectId": "rentabilite-affaire"
+          }
+        }
+      ],
+      "blocks": [
+        {
+          "id": "exm-extraction-soft",
+          "type": "extraction",
+          "title": "J'ai trouvé 9 factures et 3 relevés",
+          "items": [
+            {
+              "id": "ex-1",
+              "label": "Salaires chargés",
+              "value": "99 000 € / mois",
+              "source": "Bulletins et charges sociales, oct. 2026",
+              "confidence": "confirmed"
+            },
+            {
+              "id": "ex-2",
+              "label": "Loyer",
+              "value": "4 800 € / mois",
+              "source": "Bail bureaux quai de la Fosse, nov. 2026",
+              "confidence": "confirmed"
+            },
+            {
+              "id": "ex-3",
+              "label": "Licences logicielles",
+              "value": "3 200 € / mois",
+              "source": "Abonnements de calcul et de dessin, moyenne 3 mois",
+              "confidence": "estimated"
+            },
+            {
+              "id": "ex-4",
+              "label": "Véhicules",
+              "value": "2 400 € / mois",
+              "source": "Leasing et carburant, relevés bancaires",
+              "confidence": "estimated"
+            },
+            {
+              "id": "ex-5",
+              "label": "Assurance RC pro et divers",
+              "value": "5 600 € / mois",
+              "source": "Relevés bancaires",
+              "confidence": "to-check"
+            }
+          ],
+          "total": {
+            "label": "Charges mensuelles",
+            "value": "115 000 €"
+          }
+        },
+        {
+          "id": "exm-noted-soft",
+          "type": "noted",
+          "target": {
+            "kind": "dimension",
+            "id": "finances",
+            "label": "Mes finances"
+          },
+          "text": "Charges : 115 000 € par mois",
+          "confidence": "estimated",
+          "editable": true
+        }
+      ],
+      "next": "charges-confirm"
     },
     "extraction-upload": {
       "delayMs": 300,
@@ -512,48 +704,140 @@
           "editable": true
         }
       ],
-      "next": "docs-notes"
+      "next": "sources-open"
     },
-    "docs-notes": {
+    "sources-open": {
+      "delayMs": 700,
+      "blocks": [
+        {
+          "id": "so-lead",
+          "type": "lead",
+          "text": "J'ai lu vos factures."
+        },
+        {
+          "id": "so-q",
+          "type": "question",
+          "text": "Et vous, qu'est-ce qui vous occupe le plus en ce moment dans votre entreprise ?",
+          "hint": "Parlez librement, je fais le tri.",
+          "inputModes": [
+            "voice",
+            "text"
+          ]
+        }
+      ],
+      "await": {
+        "kind": "input",
+        "simulated": "J'ai monté le bureau d'études il y a neuf ans. On est dix-huit, on a du boulot par-dessus la tête, mais je ne sais pas quelles affaires me font vraiment gagner de l'argent. Et les mairies me paient de plus en plus tard.",
+        "next": "sources-first-notes"
+      }
+    },
+    "sources-first-notes": {
       "delayMs": 900,
       "effects": [
         {
           "kind": "progress",
           "dimensionId": "activity",
-          "to": 0.5,
+          "to": 0.4,
           "status": "active",
-          "summary": "Bureau d'études fluides et thermique, 18 salariés dont 14 en production"
+          "summary": "Bureau d'études fluides et thermique, 18 salariés, Nantes"
         },
         {
           "kind": "progress",
           "dimensionId": "priorities",
-          "to": 0.4,
-          "status": "active",
-          "summary": "Délais de paiement des collectivités à surveiller"
+          "to": 0.3,
+          "summary": "2 sujets identifiés",
+          "status": "active"
         }
       ],
       "blocks": [
         {
-          "id": "dn-noted-1",
+          "id": "sfn-noted-1",
           "type": "noted",
           "target": {
             "kind": "dimension",
             "id": "activity",
             "label": "Mon activité"
           },
-          "text": "Bureau d'études fluides et thermique à Nantes, 18 salariés dont 14 en production",
+          "text": "Bureau d'études fluides et thermique, 18 salariés, Nantes",
           "editable": true
         },
         {
-          "id": "dn-noted-2",
+          "id": "sfn-noted-2",
           "type": "noted",
           "target": {
             "kind": "dimension",
             "id": "priorities",
             "label": "Mes priorités"
           },
-          "text": "Les collectivités paient de plus en plus tard : 61 jours en moyenne, contre 45 en juin",
-          "confidence": "estimated",
+          "text": "Savoir quelles affaires sont rentables ; être payé plus vite par les collectivités",
+          "editable": true
+        }
+      ],
+      "next": "charges-confirm"
+    },
+    "charges-confirm": {
+      "delayMs": 700,
+      "blocks": [
+        {
+          "id": "cc-lead",
+          "type": "lead",
+          "text": "D'après vos factures, vos charges tournent autour de 115 000 € par mois."
+        },
+        {
+          "id": "cc-q",
+          "type": "question",
+          "text": "C'est bien ça ?",
+          "hint": "Je ne vous redemande pas le détail, il est dans ce que j'ai lu.",
+          "quickReplies": [
+            {
+              "id": "c-est-ca",
+              "label": "C'est ça"
+            },
+            {
+              "id": "corriger",
+              "label": "Je veux corriger"
+            }
+          ]
+        }
+      ],
+      "await": {
+        "kind": "input",
+        "simulated": "Oui, c'est ça.",
+        "next": "charges-confirmed",
+        "quickRoutes": {
+          "c-est-ca": "charges-confirmed",
+          "corriger": "charges-question"
+        }
+      }
+    },
+    "charges-confirmed": {
+      "delayMs": 500,
+      "effects": [
+        {
+          "kind": "update-finding",
+          "findingId": "f-charges",
+          "patch": {
+            "confidence": "confirmed"
+          }
+        },
+        {
+          "kind": "progress",
+          "dimensionId": "finances",
+          "to": 0.7,
+          "status": "active",
+          "summary": "Charges confirmées, heures à préciser"
+        }
+      ],
+      "blocks": [
+        {
+          "id": "ccd-noted",
+          "type": "noted",
+          "target": {
+            "kind": "dimension",
+            "id": "finances",
+            "label": "Mes finances"
+          },
+          "text": "Charges confirmées : 115 000 € par mois",
           "editable": true
         }
       ],
@@ -678,8 +962,8 @@
       "await": {
         "kind": "connector",
         "blockId": "sc-connector",
-        "onConnect": "mail-search",
-        "onConnectGoogle": "mail-search-google",
+        "onConnect": "mail-search-soft",
+        "onConnectGoogle": "mail-search-google-soft",
         "onSkip": "charges-question"
       }
     },

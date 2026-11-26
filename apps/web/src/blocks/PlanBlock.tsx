@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, Reorder, motion, useDragControls } from "motion/react";
 import { Check, GripVertical } from "lucide-react";
-import { Button, DateField, Gauge, StepList, formatDate, spring } from "@elea/ds";
+import { Button, DateField, Elephant, Gauge, StepList, formatDate, spring } from "@elea/ds";
 import type { PlanBlock as PlanBlockType, PlanStep } from "../engine/types";
 import { usePlayer } from "../engine/player";
 import { useMemory } from "../memory/store";
@@ -17,9 +17,11 @@ export function PlanBlockView({ block, active }: BlockProps<PlanBlockType>) {
   const awaiting = usePlayer((s) => s.awaiting);
   const resolution = usePlayer((s) => s.resolutions[block.id]);
   const plan = useMemory((s) => s.plans.find((p) => p.id === block.planId));
+  const subjects = useMemory((s) => s.subjects);
   const patchPlanSteps = useMemory((s) => s.patchPlanSteps);
   const completePlanStep = useMemory((s) => s.completePlanStep);
   const [celebrating, setCelebrating] = useState(false);
+  const [planFinished, setPlanFinished] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
   const canAct =
     active &&
@@ -105,11 +107,33 @@ export function PlanBlockView({ block, active }: BlockProps<PlanBlockType>) {
   if (block.mode === "live") {
     const done = plan.steps.filter((s) => s.status === "done").length;
     const total = plan.steps.length;
+    const subject = subjects.find((s) => s.id === plan.subjectId);
+    const finished = plan.status === "done" || planFinished;
     return (
       <section className={styles.plan}>
+        <AnimatePresence>
+          {planFinished && (
+            <motion.div
+              className={styles.planCelebrate}
+              role="status"
+              aria-live="polite"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={spring.gentle}
+            >
+              <Elephant size={72} state="speaking" decorative />
+              <p className="voice">Bravo. Ce plan est terminé.</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
         <header className={styles.planHeader}>
           <h2 className="voice">{plan.title}</h2>
           <p className={styles.planGoal}>{plan.goal}</p>
+          {subject ? <p className={styles.planSubject}>Sujet : {subject.title}</p> : null}
+          {finished && plan.completedAt ? (
+            <p className={styles.planCompleted}>Terminé le {formatDate(plan.completedAt, "short")}</p>
+          ) : null}
           <div className={styles.planProgress}>
             <Gauge
               value={total ? done / total : 0}
@@ -131,7 +155,18 @@ export function PlanBlockView({ block, active }: BlockProps<PlanBlockType>) {
             due: formatDate(s.due, "weekday"),
             status: s.status === "done" ? "done" : s.status === "doing" ? "active" : "pending",
           }))}
-          onStepComplete={(stepId) => completePlanStep(plan.id, stepId)}
+          onStepComplete={
+            finished
+              ? undefined
+              : (stepId) => {
+                  const remaining = plan.steps.filter((s) => s.status !== "done" && s.id !== stepId);
+                  completePlanStep(plan.id, stepId);
+                  if (remaining.length === 0) {
+                    setPlanFinished(true);
+                    window.setTimeout(() => setPlanFinished(false), 4200);
+                  }
+                }
+          }
         />
       </section>
     );

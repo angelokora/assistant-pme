@@ -114,6 +114,19 @@
   font-weight: var(--weight-medium);
 }
 
+.subject {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.completed {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-weight: var(--weight-medium);
+}
+
 .empty {
   color: var(--color-text-muted);
 }

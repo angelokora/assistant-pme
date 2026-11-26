@@ -3,6 +3,8 @@ import { X } from "lucide-react";
 import { IconButton, Sheet, formatDate } from "@elea/ds";
 import { useMediaQuery } from "../composer/useMediaQuery";
 import { useMemory } from "../memory/store";
+import { BlockRenderer } from "../blocks/BlockRenderer";
+import type { PlanBlock } from "../engine/types";
 import { FindingDetail } from "../screens/FindingDetail";
 import { useDetail } from "./detailStore";
 import styles from "./DetailPanel.module.css";
@@ -42,18 +44,18 @@ export function DetailPanel() {
   const body =
     kind === "finding" && finding ? (
       <FindingDetail finding={finding} showTitle={false} />
-    ) : kind === "plan" ? (
-      <div className={styles.stack}>
-        <p className={styles.text}>{plan?.goal}</p>
-        <ol className={styles.steps}>
-          {plan?.steps.map((s) => (
-            <li key={s.id}>
-              <strong>{s.title}</strong>
-              <span>{s.detail}</span>
-            </li>
-          ))}
-        </ol>
-      </div>
+    ) : kind === "plan" && plan ? (
+      <BlockRenderer
+        block={
+          {
+            id: `panel-plan-${plan.id}`,
+            type: "plan",
+            planId: plan.id,
+            mode: "live",
+          } satisfies PlanBlock
+        }
+        active={false}
+      />
     ) : (
       <p className={styles.text}>{attention?.text}</p>
     );

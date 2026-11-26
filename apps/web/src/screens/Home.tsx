@@ -195,7 +195,10 @@ export function Home() {
             <PlanCard
               plan={activePlan}
               currentStepId={currentStep?.id}
-              onOpen={() => openDetail("plan", activePlan.id)}
+              onOpen={() => {
+                openDetail("plan", activePlan.id);
+                navigate(`/plans/${activePlan.id}`);
+              }}
             />
           )}
           <FindingsList
@@ -286,7 +289,10 @@ export function Home() {
           <PlanCard
             plan={activePlan}
             currentStepId={currentStep?.id}
-            onOpen={() => openDetail("plan", activePlan.id)}
+            onOpen={() => {
+              openDetail("plan", activePlan.id);
+              navigate(`/plans/${activePlan.id}`);
+            }}
           />
         </motion.section>
       )}

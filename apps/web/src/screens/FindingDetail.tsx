@@ -3,13 +3,15 @@ import { motion } from "motion/react";
 import {
   Button,
   ConfidenceBadge,
+  MoneyPhraseEditor,
   ProviderLogo,
   Sheet,
   blockItem,
   blockList,
-  formatEuro,
+  formatAmountDraft,
   formatRelativeDate,
-  hardenMoneySpaces,
+  parseMoneyPhrase,
+  replaceMoneyAmount,
   type FindingOrigin,
   type FindingType,
   type ProviderId,
@@ -19,6 +21,7 @@ import type { Finding } from "../engine/types";
 import { BlockRenderer } from "../blocks/BlockRenderer";
 import { SCENARIOS } from "../engine/scenarios";
 import { usePlayer } from "../engine/player";
+import { rewriteFindingBodyMoney } from "../memory/rewriteMoney";
 import { useMemory } from "../memory/store";
 import { useComposerContext } from "../shell/composerContext";
 import { useDetail } from "../shell/detailStore";
@@ -48,26 +51,6 @@ const PROVIDER_ORIGIN: Partial<Record<FindingOrigin, ProviderId>> = {
   drive: "drive",
 };
 
-const MONEY_RE = /(\d[\d\s\u00a0\u202f]*)[\s\u00a0\u202f]*€/;
-
-function splitMoney(text: string): { label: string; amount: number | null } {
-  const m = text.match(MONEY_RE);
-  if (!m || m.index === undefined) return { label: text, amount: null };
-  const amount = Number(m[1].replace(/[\s\u00a0\u202f]/g, "").replace(",", "."));
-  if (Number.isNaN(amount)) return { label: text, amount: null };
-  const label = `${text.slice(0, m.index).trimEnd()} ${text.slice(m.index + m[0].length).trimStart()}`.trim();
-  return { label: label || text.replace(MONEY_RE, "").trim(), amount };
-}
-
-function joinMoney(label: string, amount: number | null): string {
-  const clean = label.trim();
-  if (amount === null) return hardenMoneySpaces(clean);
-  const money = formatEuro(amount);
-  if (!clean) return money;
-  if (/[,:]$/.test(clean)) return hardenMoneySpaces(`${clean} ${money}`);
-  return hardenMoneySpaces(`${clean}, ${money}`);
-}
-
 type Props = {
   finding: Finding;
   /** Affiche le titre (desktop panneau a déjà un header). */
@@ -92,31 +75,38 @@ export function FindingDetail({ finding, showTitle = true }: Props) {
 
   const [editing, setEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const titleSplit = splitMoney(finding.title);
-  const [titleLabel, setTitleLabel] = useState(titleSplit.label);
-  const [titleAmount, setTitleAmount] = useState(titleSplit.amount !== null ? String(titleSplit.amount) : "");
+  const titleParts = parseMoneyPhrase(finding.title);
+  const [amountDraft, setAmountDraft] = useState(titleParts ? formatAmountDraft(titleParts.amount) : "");
+  const [titleDraft, setTitleDraft] = useState(finding.title);
   const [summaryDraft, setSummaryDraft] = useState(finding.summary);
 
   function beginEdit() {
-    const split = splitMoney(finding.title);
-    setTitleLabel(split.label);
-    setTitleAmount(split.amount !== null ? String(split.amount) : "");
+    const parts = parseMoneyPhrase(finding.title);
+    setAmountDraft(parts ? formatAmountDraft(parts.amount) : "");
+    setTitleDraft(finding.title);
     setSummaryDraft(finding.summary);
     setEditing(true);
   }
 
   function saveEdit() {
-    const amount =
-      titleAmount.trim() === ""
-        ? null
-        : Number(titleAmount.replace(/[\s\u00a0\u202f]/g, "").replace(",", "."));
-    const title = joinMoney(
-      titleLabel,
-      amount !== null && !Number.isNaN(amount) ? amount : titleSplit.amount,
-    );
+    let title = titleDraft.trim() || finding.title;
+    let summary = summaryDraft.trim() || finding.summary;
+    let body = finding.body;
+    if (titleParts) {
+      const amount = Number(amountDraft.replace(/[\s\u00a0\u202f]/g, "").replace(",", "."));
+      if (!Number.isNaN(amount)) {
+        const from = titleParts.amount;
+        title = replaceMoneyAmount(finding.title, from, amount);
+        summary = replaceMoneyAmount(summaryDraft.trim() || finding.summary, from, amount);
+        if (body?.length) {
+          body = rewriteFindingBodyMoney(body, from, amount);
+        }
+      }
+    }
     patchFinding(finding.id, {
       title,
-      summary: summaryDraft.trim() || finding.summary,
+      summary,
+      ...(body ? { body } : {}),
       confidence: "confirmed",
     });
     setEditing(false);
@@ -160,6 +150,8 @@ export function FindingDetail({ finding, showTitle = true }: Props) {
     navigate("/", { state: { openComposer: true } });
   }
 
+  const editParts = parseMoneyPhrase(finding.title);
+
   return (
     <motion.div className={styles.root} variants={blockList} initial="hidden" animate="shown">
       <motion.div variants={blockItem} className={styles.meta}>
@@ -178,26 +170,23 @@ export function FindingDetail({ finding, showTitle = true }: Props) {
         >
           <label className={styles.field}>
             <span>Titre</span>
-            <input
-              className={styles.input}
-              value={titleLabel}
-              onChange={(e) => setTitleLabel(e.target.value)}
-              aria-label="Titre du constat"
-            />
-          </label>
-          {(titleSplit.amount !== null || titleAmount.trim() !== "") && (
-            <label className={styles.field}>
-              <span>Montant (€)</span>
+            {editParts ? (
+              <MoneyPhraseEditor
+                before={editParts.before}
+                after={editParts.after}
+                amountDraft={amountDraft}
+                onAmountChange={setAmountDraft}
+                className={["voice", styles.titleEdit].join(" ")}
+              />
+            ) : (
               <input
                 className={styles.input}
-                type="text"
-                inputMode="decimal"
-                value={titleAmount}
-                onChange={(e) => setTitleAmount(e.target.value)}
-                aria-label="Montant en euros"
+                value={titleDraft}
+                onChange={(e) => setTitleDraft(e.target.value)}
+                aria-label="Titre du constat"
               />
-            </label>
-          )}
+            )}
+          </label>
           <label className={styles.field}>
             <span>Résumé</span>
             <textarea

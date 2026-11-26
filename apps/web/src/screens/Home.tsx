@@ -87,8 +87,10 @@ export function Home() {
   const suggestions = home?.suggestions ?? [];
   const stop = usePlayer((s) => s.stop);
   const start = usePlayer((s) => s.start);
+  const [unknownAsk, setUnknownAsk] = useState(false);
 
   function launchSuggestion(label: string, scenarioId: string) {
+    setUnknownAsk(false);
     const routed = routeUtterance(label) ?? scenarioId;
     stop();
     start(routed, { withUtterance: label });
@@ -129,16 +131,21 @@ export function Home() {
       forceOpen={openComposer}
       onHandled={clearComposerState}
       hideVoiceOrb={menuB && variant === "c"}
+      onUnknownChange={setUnknownAsk}
     />
   );
 
   const suggestionChips = (
-    <div className={styles.suggestions} role="list">
+    <div
+      className={[styles.suggestions, unknownAsk && styles.suggestionsHighlight].filter(Boolean).join(" ")}
+      role="list"
+      aria-label={unknownAsk ? "Exemples à essayer" : undefined}
+    >
       {suggestions.map((s) => (
         <button
           key={s.id}
           type="button"
-          className={styles.suggestion}
+          className={[styles.suggestion, unknownAsk && styles.suggestionPulse].filter(Boolean).join(" ")}
           role="listitem"
           onClick={() => launchSuggestion(s.label, s.scenarioId)}
         >

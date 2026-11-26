@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
-import { NotedTag, useToast } from "@elea/ds";
+import { NotedTag, parseMoneyPhrase, replaceMoneyAmount, useToast } from "@elea/ds";
 import type { NotedBlock } from "../engine/types";
+import { rewriteFindingBodyMoney } from "../memory/rewriteMoney";
 import { useGauges, useMemory } from "../memory/store";
 import { findTarget, useFlights } from "./flight/flights";
 import type { BlockProps } from "./BlockRenderer";
@@ -44,11 +45,25 @@ export function NotedBlockView({ block }: BlockProps<NotedBlock>) {
         editable={block.editable}
         onSave={(text) => {
           if (block.findingId) {
-            patchFinding(block.findingId, {
-              title: text,
-              summary: text,
-              confidence: "confirmed",
-            });
+            const current = useMemory.getState().findings.find((f) => f.id === block.findingId);
+            const nextMoney = parseMoneyPhrase(text);
+            const prevMoney = parseMoneyPhrase(block.text);
+            if (current && nextMoney && prevMoney) {
+              const from = prevMoney.amount;
+              const to = nextMoney.amount;
+              patchFinding(block.findingId, {
+                title: text,
+                summary: replaceMoneyAmount(current.summary, from, to),
+                ...(current.body ? { body: rewriteFindingBodyMoney(current.body, from, to) } : {}),
+                confidence: "confirmed",
+              });
+            } else {
+              patchFinding(block.findingId, {
+                title: text,
+                summary: current?.summary ?? text,
+                confidence: "confirmed",
+              });
+            }
           }
           show("C'est noté, j'ai mis à jour ce que j'avais retenu.");
         }}

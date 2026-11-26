@@ -391,7 +391,7 @@ export const usePlayer = create<PlayerState>((set, get) => {
       let next: string | undefined;
       let echo: Turn | null = null;
       let nextVars: StepVars = get().vars;
-      let resolution: { blockId: string; summary: string } | null = null;
+      let resolution: { blockId: string; summary: string; value?: string } | null = null;
 
       if (awaiting.kind === "input") {
         if (reply.kind !== "text" && reply.kind !== "quick") return;
@@ -401,7 +401,13 @@ export const usePlayer = create<PlayerState>((set, get) => {
           next = awaiting.next;
         }
         if (reply.kind === "text") echo = { id: `u-${Date.now()}`, from: "user", text: reply.text, mode: reply.mode };
-        if (reply.kind === "quick") echo = { id: `u-${Date.now()}`, from: "user", text: reply.label, mode: "choice" };
+        if (reply.kind === "quick") {
+          echo = { id: `u-${Date.now()}`, from: "user", text: reply.label, mode: "choice" };
+          const stepId = get().currentStep;
+          const turn = [...get().turns].reverse().find((t) => t.from === "elea" && t.stepId === stepId);
+          const qBlock = turn && turn.from === "elea" ? turn.blocks.find((b) => b.type === "question") : undefined;
+          if (qBlock) resolution = { blockId: qBlock.id, summary: reply.label, value: reply.id };
+        }
       } else if (awaiting.kind === "choice" && reply.kind === "text") {
         // Saisie libre sous un choix (allowFreeInput) : on suit la route recommandée / première.
         const stepId = get().currentStep;
@@ -459,16 +465,29 @@ export const usePlayer = create<PlayerState>((set, get) => {
         if (reply.kind === "event" && silent) {
           const blockId = reply.blockId;
           const summary = reply.doneLabel ?? label ?? value;
-          if (summary) resolution = { blockId, summary };
+          if (summary) resolution = { blockId, summary, value };
         } else if (label) {
           echo = { id: `u-${Date.now()}`, from: "user", text: label, mode: "choice" };
+        }
+        // Choix / question : garder l'id pour marquer la puce sélectionnée.
+        if (!resolution && awaiting.kind === "choice" && (reply.kind === "event" || reply.kind === "quick")) {
+          resolution = {
+            blockId: awaiting.blockId,
+            summary: label ?? value,
+            value,
+          };
         }
       }
       if (!next) return console.warn("[engine] aucune route pour cette réponse", reply, awaiting);
 
       // Après auth : le connecteur passe de « choisi » à « connecté ».
       let resolutions = get().resolutions;
-      if (resolution) resolutions = { ...resolutions, [resolution.blockId]: { summary: resolution.summary } };
+      if (resolution) {
+        resolutions = {
+          ...resolutions,
+          [resolution.blockId]: { summary: resolution.summary, value: resolution.value },
+        };
+      }
       if (awaiting.kind === "auth" && nextVars.connectorBlockId && nextVars.providerLabel) {
         resolutions = {
           ...resolutions,

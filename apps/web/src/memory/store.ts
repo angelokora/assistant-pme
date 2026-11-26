@@ -19,6 +19,8 @@ type MemoryState = Memory & {
   completePlanStep: (planId: string, stepId: string) => void;
   /** Change l'état d'une source (déconnexion / reconnexion). */
   setSourceStatus: (sourceId: string, status: Memory["sources"][number]["status"], patch?: Partial<Memory["sources"][number]>) => void;
+  /** Met à jour un document (rattachement à un sujet, résumé…). */
+  patchDocument: (id: string, patch: Partial<Memory["documents"][number]>) => void;
   /** Met à jour un sujet traité (statut, résumé…). */
   patchSubject: (id: string, patch: Partial<Memory["subjects"][number]>) => void;
   patchOwner: (patch: Partial<Memory["owner"]>) => void;
@@ -47,6 +49,17 @@ function reduce(m: Memory, e: Effect): Memory {
     }
     case "update-finding":
       return { ...m, findings: m.findings.map((f) => (f.id === e.findingId ? { ...f, ...e.patch } : f)) };
+    case "document": {
+      const exists = m.documents.some((d) => d.id === e.document.id);
+      return {
+        ...m,
+        documents: exists
+          ? m.documents.map((d) => (d.id === e.document.id ? { ...d, ...e.document } : d))
+          : [e.document, ...m.documents],
+      };
+    }
+    case "update-document":
+      return { ...m, documents: m.documents.map((d) => (d.id === e.documentId ? { ...d, ...e.patch } : d)) };
     case "subject": {
       const exists = m.subjects.some((s) => s.id === e.subject.id);
       return {
@@ -172,6 +185,8 @@ export const useMemory = create<MemoryState>()(
               : src,
           ),
         })),
+      patchDocument: (id, patch) =>
+        set((s) => ({ documents: s.documents.map((d) => (d.id === id ? { ...d, ...patch } : d)) })),
       patchSubject: (id, patch) =>
         set((s) => ({ subjects: s.subjects.map((sub) => (sub.id === id ? { ...sub, ...patch } : sub)) })),
       patchOwner: (patch) => set((s) => ({ owner: { ...s.owner, ...patch } })),
@@ -179,7 +194,7 @@ export const useMemory = create<MemoryState>()(
     }),
     {
       name: "elea-memory",
-      version: 3,
+      version: 4,
       migrate: () => clone(PRESETS["first-visit"]),
     },
   ),

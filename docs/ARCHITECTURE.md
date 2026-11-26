@@ -126,6 +126,7 @@ type Memory = {
   dimensions: Dimension[];       // Mon activité, Mes finances, Mon profil, Mes priorités (standard)
   subjects: Subject[];           // sujets traités : problématiques travaillées avec Éléa
   findings: Finding[];
+  documents: EleaDocument[];     // documents de l'entreprise (page /documents), rattachables à un sujet
   sources: Source[];             // Gmail, Outlook, Drive, Documents déposés
   plans: Plan[];                 // schéma dans docs/BLOCKS.md
   attention: Attention[];        // ce que l'accueil met en avant aujourd'hui
@@ -182,7 +183,20 @@ type Finding = {
   scenarioId?: string;           // besoin d'origine, pour le rouvrir
   body?: Block[];                // contenu détaillé, affiché par le même BlockRenderer
 };
+
+type EleaDocument = {
+  id: string;
+  title: string;                 // nom du fichier
+  kind: "facture" | "devis" | "contrat" | "releve" | "heures" | "autre";
+  origin: "import" | "gmail" | "drive" | "outlook";
+  addedAt: string;               // ISO datetime
+  subjectId?: string;            // sujet traité rattaché (ou détaché : absent)
+  findingIds: string[];          // constats tirés du document
+  summary?: string;
+};
 ```
+
+Effets associés : `{ kind: "document", document }` (création ou fusion par `id`) et `{ kind: "update-document", documentId, patch }` (rattachement, détachement). Le scénario `add-document` joue le dépôt, la lecture, les « Noté dans… » puis le choix du sujet. La page `/documents` (liste, filtres type, source, sujet, période) et la page d'un sujet rattachent ou détachent via `patchDocument`.
 
 Les écrans Accueil, Mon entreprise, sujet traité, Plans et Recherche **ne lisent que la mémoire**. Ils n'ont aucune donnée en dur.
 
@@ -193,7 +207,7 @@ Pas de liste de conversations. Quatre destinations, plus une porte d'entrée tou
 | Destination | Contenu |
 | --- | --- |
 | **Aujourd'hui** | Accueil hors besoin : ce qui demande attention, plan en cours, derniers findings, suggestions |
-| **Mon entreprise** | Les dimensions, les sujets et leurs findings, les sources connectées |
+| **Mon entreprise** | Les dimensions, les sujets et leurs findings, les documents, les sources connectées |
 | **Plans** | Les plans en cours et terminés, avec leurs étapes |
 | **Recherche** | Retrouver n'importe quel finding (texte ou voix) |
 | **Demander** (composer) | La porte d'entrée unique : voix, texte, dépôt de document |
@@ -233,7 +247,7 @@ Quand `planId` est posé (choix de plan), le moteur enrichit automatiquement les
 
 **Auth déjà faite.** Si l'étape attend un `await.kind === "auth"` et que `account.created` est vrai en mémoire (compte créé plus tôt, p.ex. au connecteur), le moteur saute l'étape sans afficher le bloc.
 
-Routes (`react-router`) : `/`, `/entreprise`, `/entreprise/dimension/:dimensionId`, `/sujet/:subjectId` (redirection depuis `/entreprise/:subjectId`), `/profil`, `/plans`, `/plans/:planId`, `/recherche`, `/besoin/:scenarioId`, `/finding/:findingId`. Le paramètre `?v=a|b|c` choisit la variante de l'accueil ; `?menu=a|b` le menu mobile ; `?find=a|b` la variante Recherche (liste ou tuiles). Les choix du panneau démo sont persistés et utilisés en l'absence de paramètre d'URL.
+Routes (`react-router`) : `/`, `/entreprise`, `/entreprise/dimension/:dimensionId`, `/sujet/:subjectId` (redirection depuis `/entreprise/:subjectId`), `/profil`, `/documents` (`?doc=` met un document en avant), `/plans`, `/plans/:planId`, `/recherche`, `/besoin/:scenarioId`, `/finding/:findingId`. Le paramètre `?v=a|b|c` choisit la variante de l'accueil ; `?menu=a|b` le menu mobile ; `?find=a|b` la variante Recherche (liste ou tuiles). Les choix du panneau démo sont persistés et utilisés en l'absence de paramètre d'URL.
 
 ## 6. Mouvement
 

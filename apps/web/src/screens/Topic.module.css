@@ -306,3 +306,28 @@
   padding: 0;
   min-height: 44px;
 }
+
+.docList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.attachField {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  max-width: 100%;
+}
+
+.attachField .statusSelect {
+  max-width: 100%;
+  min-height: 44px;
+}

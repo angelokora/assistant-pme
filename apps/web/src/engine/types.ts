@@ -172,6 +172,23 @@ export type Finding = {
   scenarioId?: string;
   body?: Block[];
 };
+/** Nature d'un document de l'entreprise (facture, devis, contrat…). */
+export type DocKind = "facture" | "devis" | "contrat" | "releve" | "heures" | "autre";
+/** D'où vient le document : dépôt direct ou source connectée. */
+export type DocOrigin = "import" | "gmail" | "drive" | "outlook";
+/** Document de l'entreprise, lu par Éléa, rattachable à un sujet traité. */
+export type EleaDocument = {
+  id: string;
+  title: string;
+  kind: DocKind;
+  origin: DocOrigin;
+  /** ISO datetime. */
+  addedAt: string;
+  subjectId?: string;
+  /** Constats tirés du document. */
+  findingIds: string[];
+  summary?: string;
+};
 export type Source = {
   id: string;
   provider: "gmail" | "outlook" | "drive" | "upload";
@@ -213,6 +230,7 @@ export type Memory = {
   dimensions: Dimension[];
   subjects: Subject[];
   findings: Finding[];
+  documents: EleaDocument[];
   sources: Source[];
   plans: Plan[];
   attention: Attention[];
@@ -226,6 +244,8 @@ export type Effect =
   | { kind: "progress"; dimensionId: string; to: number; status?: DimensionStatus; summary?: string }
   | { kind: "finding"; finding: Finding }
   | { kind: "update-finding"; findingId: string; patch: Partial<Finding> }
+  | { kind: "document"; document: EleaDocument }
+  | { kind: "update-document"; documentId: string; patch: Partial<EleaDocument> }
   | { kind: "subject"; subject: Subject }
   | { kind: "update-subject"; subjectId: string; patch: Partial<Subject> }
   | { kind: "source"; source: Source }

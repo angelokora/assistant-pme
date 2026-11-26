@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Briefcase, Mic, Target, User, Wallet } from "lucide-react";
 import {
-  ActionDock, AnswerCard, Avatar, Button, Callout, Chip, ChoiceCard, ChoiceGroup, ConfidenceBadge, DateField, DeviceFrame, DimensionCard, DropZone, Elephant, FileTile, FindingCard, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, Skeleton, StepList, ToastProvider, TranscriptText, Waveform, useToast,
+  ActionDock, AnswerCard, Avatar, Button, Callout, Chip, ChoiceCard, ChoiceGroup, ConfidenceBadge, DateField, DeviceFrame, DimensionCard, DocumentCard, DropZone, Elephant, FileTile, FindingCard, Gauge, IconButton, NotedTag, Orb, ProviderLogo, Sheet, Skeleton, StepList, ToastProvider, TranscriptText, Waveform, useToast,
   type ElephantState, type ProviderId, type StepItem, type StepStatus,
 } from "../index";
 import { NBSP, NNBSP } from "../format";
@@ -400,6 +400,40 @@ function ShowcaseInner() {
             origin="gmail"
             confidence="to-check"
             summary="La situation n° 3 est échue depuis 38 jours."
+          />
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2 className={styles.h2}>DocumentCard</h2>
+        <p className="muted">default avec actions, compact, sans sujet.</p>
+        <div style={{ maxWidth: 420, display: "grid", gap: 12 }}>
+          <DocumentCard
+            kindLabel="Facture"
+            title="Situation n° 3 école Jean-Jaurès.pdf"
+            summary="Situation de travaux adressée à la mairie de Rezé, échue depuis le 8 novembre."
+            addedAt="2026-11-25T10:46:00"
+            origin="gmail"
+            subjectLabel="Retards de paiement des collectivités"
+            findingCount={1}
+            actions={<Button size="sm" variant="secondary">Détacher</Button>}
+          />
+          <DocumentCard
+            variant="compact"
+            kindLabel="Contrat"
+            title="Bail bureaux quai de la Fosse.pdf"
+            addedAt="2026-11-28T08:40:00"
+            origin="drive"
+            findingCount={1}
+            onOpen={() => undefined}
+          />
+          <DocumentCard
+            variant="compact"
+            kindLabel="Relevé"
+            title="Relevé bancaire novembre.pdf"
+            addedAt="2026-12-01T20:25:00"
+            origin="import"
+            findingCount={0}
           />
         </div>
       </section>

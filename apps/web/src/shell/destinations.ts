@@ -30,7 +30,14 @@ export const DESTINATIONS: Destination[] = [
 
 export function destinationForPath(pathname: string): DestinationId | null {
   if (pathname === "/" || pathname.startsWith("/besoin")) return "today";
-  if (pathname.startsWith("/entreprise") || pathname.startsWith("/finding")) return "company";
+  if (
+    pathname.startsWith("/entreprise") ||
+    pathname.startsWith("/finding") ||
+    pathname.startsWith("/sujet") ||
+    pathname.startsWith("/documents")
+  ) {
+    return "company";
+  }
   if (pathname.startsWith("/plans")) return "plans";
   if (pathname.startsWith("/recherche")) return "search";
   return null;

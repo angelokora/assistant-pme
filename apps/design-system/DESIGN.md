@@ -116,6 +116,10 @@ Voir le tableau historique des composants dans le dépôt ; les nouveautés (#33
 
 Quand le moteur attend un événement de bloc, les actions principales restent accessibles sur mobile via `ActionDock`.
 
+### DocumentCard
+
+Carte d'un document de l'entreprise (#41) : icône de fichier, type, nom, sujet traité rattaché (« Sans sujet » sinon), date, source (Import, Gmail, Drive, Outlook) et nombre de constats tirés. Variantes `default` (avec résumé) et `compact` (recherche, page d'un sujet). La zone principale devient un bouton avec `onOpen` ; l'emplacement `actions` accueille le rattachement ou le détachement (jamais un bouton imbriqué dans la zone principale).
+
 ## 8. Accessibilité
 
 - Contrastes de la section 2. Focus visible (`--ring-focus`).

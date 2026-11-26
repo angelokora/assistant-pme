@@ -1,0 +1,133 @@
+.card {
+  display: grid;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 var(--border-width) var(--color-border), var(--shadow-1);
+  color: var(--color-text);
+  scroll-margin-top: var(--space-8);
+  transition: box-shadow var(--dur-fast) var(--ease-out);
+}
+
+.compact {
+  padding: var(--space-3);
+  gap: var(--space-2);
+}
+
+.highlighted {
+  box-shadow: inset 0 0 0 2px var(--color-action), var(--shadow-2);
+}
+
+.main {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-3);
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+.interactive {
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.interactive:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-action-text);
+}
+
+.compact .icon {
+  width: 32px;
+  height: 32px;
+}
+
+.compact .main {
+  grid-template-columns: 32px minmax(0, 1fr);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.kind {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.title {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+
+.compact .title {
+  font-size: var(--text-sm);
+}
+
+.summary {
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-text-muted);
+  text-wrap: pretty;
+}
+
+.foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  margin-top: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.subject {
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.subjectNone {
+  font-weight: var(--weight-regular);
+  color: var(--color-text-muted);
+}
+
+.origin {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: var(--border-width) solid var(--color-border);
+}

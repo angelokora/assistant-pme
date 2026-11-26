@@ -1,17 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AnimatePresence, LayoutGroup, motion } from "motion/react";
-import { Button, FindingCard, Elephant, blockItem, blockList, type FindingType } from "@elea/ds";
+import { Button, DocumentCard, FindingCard, Elephant, blockItem, blockList, type FindingType } from "@elea/ds";
 import { Icon } from "../blocks/icons";
 import { useSimulatedSpeech } from "../composer/useSimulatedSpeech";
 import { foldText } from "../engine/router";
 import { useDemo, type FindVariant } from "../demo/demo";
 import { useMemory } from "../memory/store";
+import type { EleaDocument } from "../engine/types";
 import { useDetail } from "../shell/detailStore";
 import { FilterBar, FilterChip, FilterSection } from "./FilterBar";
 import { FINDING_TYPE_FILTER, sortFindingsRecent, typesPresent } from "./findings";
 import { HighlightText } from "./HighlightText";
 import { findingMatchesQuery } from "./searchText";
+import { DOC_KIND_LABEL, documentFindingCount, documentMatchesQuery, sortDocumentsRecent } from "./documentLabels";
 import styles from "./Search.module.css";
 
 const VOICE_SAMPLE = "Qu'est-ce qu'on avait dit sur notre taux horaire pour les marchés publics ?";
@@ -32,6 +34,7 @@ export function Search() {
 
   const subjects = useMemory((s) => s.subjects);
   const findings = useMemory((s) => s.findings);
+  const documents = useMemory((s) => s.documents);
   const today = useMemory((s) => s.today);
   const openDetail = useDetail((s) => s.open);
 
@@ -47,6 +50,12 @@ export function Search() {
     [findings, query],
   );
 
+  /** Documents qui correspondent à la saisie seule (avant filtres sujet/type). */
+  const docQueryMatches = useMemo(
+    () => documents.filter((d) => documentMatchesQuery(d, query)),
+    [documents, query],
+  );
+
   const matched = useMemo(() => {
     let list = queryMatches;
     if (subjectFilter !== "all") list = list.filter((f) => f.subjectId === subjectFilter);
@@ -54,7 +63,20 @@ export function Search() {
     return sortFindingsRecent(list);
   }, [queryMatches, subjectFilter, typeFilter]);
 
-  const presentTypes = useMemo(() => typesPresent(findings), [findings]);
+  /** Fichiers : visibles avec « Tous » et avec le filtre « Documents ». */
+  const matchedDocs = useMemo(() => {
+    if (typeFilter !== "all" && typeFilter !== "document") return [];
+    let list = docQueryMatches;
+    if (subjectFilter !== "all") list = list.filter((d) => d.subjectId === subjectFilter);
+    return sortDocumentsRecent(list);
+  }, [docQueryMatches, subjectFilter, typeFilter]);
+
+  const presentTypes = useMemo(() => {
+    const types = typesPresent(findings);
+    if (documents.length === 0 || types.includes("document")) return types;
+    const order: FindingType[] = ["answer", "fact", "decision", "document", "plan", "action"];
+    return order.filter((t) => t === "document" || types.includes(t));
+  }, [findings, documents.length]);
 
   const subjectCounts = useMemo(() => {
     const map = new Map<string, number>();
@@ -62,14 +84,20 @@ export function Search() {
       if (!f.subjectId) continue;
       map.set(f.subjectId, (map.get(f.subjectId) ?? 0) + 1);
     }
+    for (const d of docQueryMatches) {
+      if (!d.subjectId) continue;
+      map.set(d.subjectId, (map.get(d.subjectId) ?? 0) + 1);
+    }
     return map;
-  }, [queryMatches]);
+  }, [queryMatches, docQueryMatches]);
 
   const typeCounts = useMemo(() => {
     const map = new Map<FindingType, number>();
     for (const f of queryMatches) map.set(f.type, (map.get(f.type) ?? 0) + 1);
+    // Le filtre « Documents » compte aussi les fichiers déposés.
+    if (docQueryMatches.length) map.set("document", (map.get("document") ?? 0) + docQueryMatches.length);
     return map;
-  }, [queryMatches]);
+  }, [queryMatches, docQueryMatches]);
 
   useEffect(() => {
     if (subjectFilter !== "all" && (subjectCounts.get(subjectFilter) ?? 0) === 0) setSubjectFilter("all");
@@ -113,11 +141,42 @@ export function Search() {
         const items = q
           ? sortFindingsRecent(all.filter((f) => findingMatchesQuery(f.title, f.summary, query)))
           : [];
-        const show = !q || items.length > 0;
-        return { subject: s, count: all.length, items, show };
+        const allDocs = documents.filter((d) => d.subjectId === s.id);
+        const docs = q ? sortDocumentsRecent(allDocs.filter((d) => documentMatchesQuery(d, query))) : [];
+        const show = !q || items.length > 0 || docs.length > 0;
+        return { subject: s, count: all.length, docCount: allDocs.length, items, docs, show };
       })
       .filter((t) => t.show);
-  }, [subjects, findings, query]);
+  }, [subjects, findings, documents, query]);
+
+  /** Variante B : documents trouvés qui n'appartiennent à aucun sujet. */
+  const looseDocs = useMemo(
+    () =>
+      query.trim()
+        ? sortDocumentsRecent(docQueryMatches.filter((d) => !d.subjectId || !subjects.some((s) => s.id === d.subjectId)))
+        : [],
+    [docQueryMatches, subjects, query],
+  );
+
+  function openDocument(id: string) {
+    navigate(`/documents?doc=${id}`);
+  }
+
+  function renderDoc(d: EleaDocument) {
+    return (
+      <DocumentCard
+        variant="compact"
+        title={d.title}
+        titleNode={query.trim() ? <HighlightText text={d.title} query={query} /> : undefined}
+        kindLabel={DOC_KIND_LABEL[d.kind]}
+        addedAt={d.addedAt}
+        origin={d.origin}
+        subjectLabel={subjects.find((s) => s.id === d.subjectId)?.title}
+        findingCount={documentFindingCount(d, findings)}
+        onOpen={() => openDocument(d.id)}
+      />
+    );
+  }
 
   function openFinding(id: string) {
     openDetail("finding", id);
@@ -141,15 +200,15 @@ export function Search() {
 
   const empty =
     variant === "a"
-      ? matched.length === 0 && (query.trim().length > 0 || typeFilter !== "all" || subjectFilter !== "all")
-      : query.trim().length > 0 && tiles.every((t) => t.items.length === 0);
+      ? matched.length === 0 && matchedDocs.length === 0 && (query.trim().length > 0 || typeFilter !== "all" || subjectFilter !== "all")
+      : query.trim().length > 0 && tiles.every((t) => t.items.length === 0 && t.docs.length === 0) && looseDocs.length === 0;
 
   return (
     <motion.main className={styles.page} variants={blockList} initial="hidden" animate="shown">
       <motion.header variants={blockItem} className={styles.header}>
         <p className="eyebrow">Mémoire</p>
         <h1 className={["voice", styles.title].join(" ")}>Recherche</h1>
-        <p className={styles.lede}>Retrouvez un constat sans feuilleter des conversations.</p>
+        <p className={styles.lede}>Retrouvez un constat ou un document sans feuilleter des conversations.</p>
       </motion.header>
 
       <motion.div variants={blockItem} className={styles.searchBar}>
@@ -187,8 +246,8 @@ export function Search() {
                 active={subjectFilter === "all"}
                 onClick={() => setSubjectFilter("all")}
                 label="Tous les sujets"
-                count={queryMatches.length}
-                muted={queryMatches.length === 0}
+                count={queryMatches.length + docQueryMatches.length}
+                muted={queryMatches.length + docQueryMatches.length === 0}
               />
               {subjects.map((s) => {
                 const count = subjectCounts.get(s.id) ?? 0;
@@ -209,8 +268,8 @@ export function Search() {
                 active={typeFilter === "all"}
                 onClick={() => setTypeFilter("all")}
                 label="Tous"
-                count={queryMatches.length}
-                muted={queryMatches.length === 0}
+                count={queryMatches.length + docQueryMatches.length}
+                muted={queryMatches.length + docQueryMatches.length === 0}
               />
               {presentTypes.map((t) => {
                 const count = typeCounts.get(t) ?? 0;
@@ -277,10 +336,22 @@ export function Search() {
               </ul>
             </motion.section>
           ))}
+          {matchedDocs.length > 0 && (
+            <motion.section variants={blockItem} className={styles.group} aria-labelledby="search-documents">
+              <h2 id="search-documents" className={styles.groupTitle}>
+                Documents
+              </h2>
+              <ul className={styles.list}>
+                {matchedDocs.map((d) => (
+                  <li key={d.id}>{renderDoc(d)}</li>
+                ))}
+              </ul>
+            </motion.section>
+          )}
         </LayoutGroup>
       ) : (
         <motion.div variants={blockItem} className={styles.tiles}>
-          {tiles.map(({ subject, count, items }) => (
+          {tiles.map(({ subject, count, docCount, items, docs }) => (
             <article key={subject.id} className={styles.tile}>
               <div className={styles.tileHead}>
                 <span className={styles.tileIcon}>
@@ -290,8 +361,9 @@ export function Search() {
                   <h2 className={styles.tileTitle}>{subject.title}</h2>
                   <p className={styles.tileCount}>
                     {count} {count > 1 ? "constats" : "constat"}
-                    {query.trim() && items.length
-                      ? ` · ${items.length} trouvé${items.length > 1 ? "s" : ""}`
+                    {docCount > 0 ? ` · ${docCount} ${docCount > 1 ? "documents" : "document"}` : ""}
+                    {query.trim() && items.length + docs.length
+                      ? ` · ${items.length + docs.length} trouvé${items.length + docs.length > 1 ? "s" : ""}`
                       : ""}
                   </p>
                 </div>
@@ -317,8 +389,35 @@ export function Search() {
                   ))}
                 </ul>
               )}
+              {docs.length > 0 && (
+                <ul className={styles.tileFindings} aria-label={`Documents de ${subject.title}`}>
+                  {docs.map((d) => (
+                    <li key={d.id}>{renderDoc(d)}</li>
+                  ))}
+                </ul>
+              )}
             </article>
           ))}
+          {looseDocs.length > 0 && (
+            <article className={styles.tile}>
+              <div className={styles.tileHead}>
+                <span className={styles.tileIcon}>
+                  <Icon name="briefcase" size={22} />
+                </span>
+                <div>
+                  <h2 className={styles.tileTitle}>Documents sans sujet</h2>
+                  <p className={styles.tileCount}>
+                    {looseDocs.length} {looseDocs.length > 1 ? "documents" : "document"}
+                  </p>
+                </div>
+              </div>
+              <ul className={styles.tileFindings}>
+                {looseDocs.map((d) => (
+                  <li key={d.id}>{renderDoc(d)}</li>
+                ))}
+              </ul>
+            </article>
+          )}
         </motion.div>
       )}
     </motion.main>

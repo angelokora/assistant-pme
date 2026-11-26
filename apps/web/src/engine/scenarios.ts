@@ -5,6 +5,7 @@ import onboarding from "../scenarios/onboarding.json";
 import askSubcontract from "../scenarios/ask-subcontract.json";
 import informPayment from "../scenarios/inform-payment.json";
 import findHourlyRate from "../scenarios/find-hourly-rate.json";
+import addDocument from "../scenarios/add-document.json";
 import firstVisit from "../scenarios/memory-first-visit.json";
 import returning from "../scenarios/memory-returning.json";
 
@@ -18,6 +19,7 @@ export const SCENARIOS: Record<string, Scenario> = {
   "ask-subcontract": hardenData(askSubcontract as Scenario),
   "inform-payment": hardenData(informPayment as Scenario),
   "find-hourly-rate": hardenData(findHourlyRate as Scenario),
+  "add-document": hardenData(addDocument as Scenario),
 };
 
 export type PresetId = "first-visit" | "returning";

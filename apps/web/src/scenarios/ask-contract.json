@@ -57,7 +57,46 @@
             "createdAt": "2026-12-16T11:05:00",
             "origin": "conversation",
             "confidence": "to-check",
-            "scenarioId": "ask-contract"
+            "scenarioId": "ask-contract",
+            "body": [
+              {
+                "id": "ac-answer",
+                "type": "answer",
+                "title": "Plutôt un CDI à temps partiel",
+                "summary": "Un besoin qui revient chaque week-end toute l'année est un besoin permanent : il se couvre en principe par un CDI.",
+                "confidence": "to-check",
+                "sections": [
+                  {
+                    "heading": "Pourquoi pas un CDD",
+                    "text": "Un CDD doit reposer sur un motif précis prévu par la loi, comme un surcroît temporaire d'activité ou un remplacement. Pour les fêtes de fin d'année seulement, un CDD pour surcroît d'activité est envisageable."
+                  },
+                  {
+                    "heading": "Le point de vigilance",
+                    "text": "Le temps partiel a une durée minimale de 24 heures par semaine, sauf exceptions : demande écrite et motivée de la salariée, ou dispositions de votre convention collective. Deux jours de week-end font souvent moins : vérifiez votre convention avant de rédiger le contrat."
+                  }
+                ],
+                "keyPoints": [
+                  "Besoin toute l'année : CDI à temps partiel",
+                  "Besoin limité aux fêtes : CDD pour surcroît d'activité",
+                  "Moins de 24 h par semaine : vérifier la convention collective"
+                ],
+                "recommendation": "Faites valider le contrat par votre expert-comptable ou votre service de paie avant la signature.",
+                "sources": [
+                  {
+                    "label": "Code du travail",
+                    "detail": "CDD (motifs de recours) et temps partiel (durée minimale)"
+                  },
+                  {
+                    "label": "Convention collective",
+                    "detail": "Boulangerie-pâtisserie artisanale, à vérifier"
+                  }
+                ],
+                "savedTo": {
+                  "topicId": "team",
+                  "label": "Équipe"
+                }
+              }
+            ]
           }
         }
       ],
@@ -67,6 +106,7 @@
           "type": "answer",
           "title": "Plutôt un CDI à temps partiel",
           "summary": "Un besoin qui revient chaque week-end toute l'année est un besoin permanent : il se couvre en principe par un CDI.",
+          "confidence": "to-check",
           "sections": [
             {
               "heading": "Pourquoi pas un CDD",
@@ -106,16 +146,16 @@
               "id": "cost",
               "label": "Combien me coûterait-elle ?",
               "action": {
-                "kind": "scenario",
-                "target": "ask-contract"
+                "kind": "route",
+                "target": "/entreprise/team"
               }
             },
             {
               "id": "job",
-              "label": "Préparer l'annonce",
+              "label": "Voir le sujet Équipe",
               "action": {
-                "kind": "scenario",
-                "target": "ask-contract"
+                "kind": "route",
+                "target": "/entreprise/team"
               }
             }
           ]

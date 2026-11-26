@@ -18,6 +18,8 @@ import {
 } from "@elea/ds";
 import { Icon } from "../blocks/icons";
 import { useDemo, type HomeVariant } from "../demo/demo";
+import { routeUtterance } from "../engine/router";
+import { usePlayer } from "../engine/player";
 import { useDetail } from "../shell/detailStore";
 import { useRadialMic } from "../shell/useRadialMic";
 import { useMemory } from "../memory/store";
@@ -83,6 +85,15 @@ export function Home() {
   );
   const topicLabel = (id: string) => topics.find((t) => t.id === id)?.label ?? id;
   const suggestions = home?.suggestions ?? [];
+  const stop = usePlayer((s) => s.stop);
+  const start = usePlayer((s) => s.start);
+
+  function launchSuggestion(label: string, scenarioId: string) {
+    const routed = routeUtterance(label) ?? scenarioId;
+    stop();
+    start(routed, { withUtterance: label });
+    navigate(`/besoin/${routed}`);
+  }
 
   if (empty) {
     return (
@@ -129,7 +140,7 @@ export function Home() {
           type="button"
           className={styles.suggestion}
           role="listitem"
-          onClick={() => navigate(`/besoin/${s.scenarioId}`)}
+          onClick={() => launchSuggestion(s.label, s.scenarioId)}
         >
           {s.label}
         </button>

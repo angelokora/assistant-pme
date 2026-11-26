@@ -15,6 +15,8 @@ import { ChoiceBlockView } from "./ChoiceBlock";
 import { PlanBlockView } from "./PlanBlock";
 import { ExtractionBlockView } from "./ExtractionBlock";
 import { UploadBlockView } from "./UploadBlock";
+import { AnswerBlockView } from "./AnswerBlock";
+import { FindingRefBlockView } from "./FindingRefBlock";
 import styles from "./blocks.module.css";
 
 /** Props communes à tous les rendus de bloc. `active` = le bloc appartient au tour en attente de réponse. */
@@ -35,7 +37,9 @@ const RENDERERS: Partial<Record<Block["type"], ComponentType<BlockProps<never>>>
   plan: PlanBlockView,
   extraction: ExtractionBlockView,
   upload: UploadBlockView,
-};
+  answer: AnswerBlockView,
+  "finding-ref": FindingRefBlockView,
+}
 
 export function BlockRenderer({ block, active }: BlockProps) {
   const R = RENDERERS[block.type] as ComponentType<BlockProps> | undefined;

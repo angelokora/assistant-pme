@@ -1,0 +1,37 @@
+{
+  "unknown": {
+    "title": "Je n'ai pas reconnu cette demande",
+    "text": "Reformulez, ou choisissez l'un de ces trois exemples.",
+    "examples": [
+      {
+        "id": "ex-contract",
+        "label": "CDD ou CDI pour une vendeuse ?",
+        "utterance": "Je veux embaucher une vendeuse pour les week-ends. Je fais un CDD ou un CDI ?"
+      },
+      {
+        "id": "ex-payment",
+        "label": "Le Comptoir a réglé la facture d'octobre",
+        "utterance": "Le Comptoir des Halles a réglé la facture d'octobre."
+      },
+      {
+        "id": "ex-buches",
+        "label": "Qu'est-ce qu'on avait dit pour les bûches ?",
+        "utterance": "Qu'est-ce qu'on avait dit pour le prix des bûches ?"
+      }
+    ]
+  },
+  "routes": [
+    {
+      "scenarioId": "ask-contract",
+      "keywords": ["cdd", "cdi", "contrat", "vendeuse", "embauch", "recrut"]
+    },
+    {
+      "scenarioId": "inform-payment",
+      "keywords": ["regle", "paye", "facture", "verse", "encaiss", "comptoir", "relancer"]
+    },
+    {
+      "scenarioId": "find-buches",
+      "keywords": ["qu'est-ce qu'on avait dit", "on avait dit", "retrouver", "buche", "rappelle"]
+    }
+  ]
+}

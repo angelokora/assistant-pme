@@ -109,7 +109,7 @@ Règles du moteur :
 - **Effets idempotents** : rejouer une étape ne duplique rien (identifiants stables).
 - **Reset** : le panneau démo remet la mémoire à son état initial et relance le scénario.
 
-**Lancer un besoin depuis le composer.** Sans vrai modèle, le composer doit deviner quel scénario jouer. Le prototype utilise un aiguillage simple (`engine/router.ts`) : mots-clés vers scénario (« CDD », « CDI », « embaucher » : `ask-contract` ; « payé », « réglé » : `inform-payment` ; « qu'avait-on dit », « retrouver », « bûche » : `find-buches`). Les suggestions de l'accueil lancent directement le scénario voulu. Une saisie non reconnue affiche un bloc `callout` qui propose les besoins disponibles.
+**Lancer un besoin depuis le composer.** Sans vrai modèle, le composer doit deviner quel scénario jouer. L'aiguillage lit `engine/routes.json` (mots-clés → scénario) via `routeUtterance` ; la comparaison ignore accents et casse. Les jetons de suggestion de l'accueil passent par le même chemin. Une saisie non reconnue affiche un callout avec les trois exemples du fichier de routes.
 
 **Les fichiers de scénario** sont listés dans `apps/web/src/scenarios/index.json`, avec la mémoire de départ (preset) adaptée :
 - `memory-first-visit.json` : premier lancement, avant l'onboarding ;

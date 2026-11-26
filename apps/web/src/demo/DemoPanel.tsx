@@ -167,7 +167,7 @@ export function DemoPanel({ host = false }: Props) {
             </button>
           ))}
 
-          <p className={styles.group}>Retrouver (à venir #22)</p>
+          <p className={styles.group}>Recherche</p>
           {(["a", "b"] as const).map((v) => (
             <button
               key={v}

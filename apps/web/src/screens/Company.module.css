@@ -132,10 +132,4 @@
   text-wrap: pretty;
 }
 
-.docsHint {
-  margin: 0;
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
-  text-wrap: pretty;
-}
 
